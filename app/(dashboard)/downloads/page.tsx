@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function DownloadsPage() {
-  const { isClient } = useAuth();
+  const { isClient, loading: authLoading } = useAuth();
   const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isClient) {
       router.push("/dashboard");
       return;
@@ -35,7 +36,7 @@ export default function DownloadsPage() {
     };
 
     fetchOrders();
-  }, [isClient, router]);
+  }, [isClient, authLoading, router]);
 
   if (loading) {
     return (

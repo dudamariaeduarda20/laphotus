@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 export default function AdminPhotographers() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const [photographers, setPhotographers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,13 +13,14 @@ export default function AdminPhotographers() {
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isAdmin) {
       router.push("/dashboard");
       return;
     }
 
     fetchPhotographers();
-  }, [isAdmin, router]);
+  }, [isAdmin, authLoading, router]);
 
   const fetchPhotographers = async () => {
     try {

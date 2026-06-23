@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function OrganizerDashboard() {
-  const { isOrganizer } = useAuth();
+  const { isOrganizer, loading: authLoading } = useAuth();
   const router = useRouter();
   const [events, setEvents] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
@@ -14,13 +14,14 @@ export default function OrganizerDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isOrganizer) {
       router.push("/dashboard");
       return;
     }
 
     fetchOrganizerData();
-  }, [isOrganizer, router]);
+  }, [isOrganizer, authLoading, router]);
 
   const fetchOrganizerData = async () => {
     try {

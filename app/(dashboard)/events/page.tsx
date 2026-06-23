@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function EventsPage() {
-  const { user, isOrganizer } = useAuth();
+  const { user, isOrganizer, loading: authLoading } = useAuth();
   const router = useRouter();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isOrganizer) {
       router.push("/dashboard");
       return;
@@ -34,7 +35,7 @@ export default function EventsPage() {
     };
 
     fetchEvents();
-  }, [isOrganizer, router]);
+  }, [isOrganizer, authLoading, router]);
 
   const handleDelete = async (eventId: string) => {
     if (!confirm("Delete this event? This cannot be undone.")) return;

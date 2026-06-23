@@ -7,7 +7,7 @@ import Link from "next/link";
 import PhotoBibNumbers from "@/components/PhotoBibNumbers";
 
 export default function MyPhotosPage() {
-  const { isPhotographer } = useAuth();
+  const { isPhotographer, loading: authLoading } = useAuth();
   const router = useRouter();
   const [photos, setPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +15,8 @@ export default function MyPhotosPage() {
   const [editingPhotoId, setEditingPhotoId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
+
     if (!isPhotographer) {
       router.push("/dashboard");
       return;
@@ -37,7 +39,7 @@ export default function MyPhotosPage() {
     };
 
     fetchPhotos();
-  }, [isPhotographer, router]);
+  }, [isPhotographer, authLoading, router]);
 
   const handleUpdateBibNumbers = async (
     photoId: string,

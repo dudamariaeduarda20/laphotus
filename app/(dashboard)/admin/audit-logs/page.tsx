@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 export default function AuditLogs() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,13 +13,14 @@ export default function AuditLogs() {
   const [filterAction, setFilterAction] = useState<string>("");
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isAdmin) {
       router.push("/dashboard");
       return;
     }
 
     fetchLogs();
-  }, [isAdmin, router]);
+  }, [isAdmin, authLoading, router]);
 
   const fetchLogs = async () => {
     try {

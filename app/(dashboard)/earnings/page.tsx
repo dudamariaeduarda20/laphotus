@@ -5,13 +5,15 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 export default function EarningsPage() {
-  const { user, isPhotographer } = useAuth();
+  const { user, isPhotographer, loading: authLoading } = useAuth();
   const router = useRouter();
   const [earnings, setEarnings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
+
     if (!isPhotographer) {
       router.push("/dashboard");
       return;
@@ -36,7 +38,7 @@ export default function EarningsPage() {
     };
 
     fetchEarnings();
-  }, [isPhotographer, router]);
+  }, [isPhotographer, authLoading, router]);
 
   if (loading) {
     return (

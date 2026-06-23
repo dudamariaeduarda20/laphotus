@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 export default function AdminSettings() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const [commissionRate, setCommissionRate] = useState(20);
   const [loading, setLoading] = useState(true);
@@ -16,13 +16,14 @@ export default function AdminSettings() {
   const [history, setHistory] = useState<any[]>([]);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isAdmin) {
       router.push("/dashboard");
       return;
     }
 
     fetchSettings();
-  }, [isAdmin, router]);
+  }, [isAdmin, authLoading, router]);
 
   const fetchSettings = async () => {
     try {

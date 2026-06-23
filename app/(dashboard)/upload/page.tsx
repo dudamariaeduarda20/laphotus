@@ -6,7 +6,7 @@ import PhotoUpload from "@/components/PhotoUpload";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function UploadPage() {
-  const { isPhotographer } = useAuth();
+  const { isPhotographer, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const eventId = searchParams.get("eventId");
@@ -15,6 +15,9 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Aguarda o auth carregar antes de decidir redirecionar
+    if (authLoading) return;
+
     if (!isPhotographer) {
       router.push("/dashboard");
       return;
@@ -39,7 +42,7 @@ export default function UploadPage() {
     };
 
     fetchEvents();
-  }, [isPhotographer, router, selectedEventId]);
+  }, [isPhotographer, authLoading, router, selectedEventId]);
 
   if (loading) {
     return (

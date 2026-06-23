@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function AdminDashboard() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const [stats, setStats] = useState<any>(null);
   const [logs, setLogs] = useState<any[]>([]);
@@ -14,13 +14,14 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
     if (!isAdmin) {
       router.push("/dashboard");
       return;
     }
 
     fetchAdminData();
-  }, [isAdmin, router]);
+  }, [isAdmin, authLoading, router]);
 
   const fetchAdminData = async () => {
     try {
