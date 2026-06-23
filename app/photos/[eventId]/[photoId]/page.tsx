@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCart } from "@/lib/contexts/CartContext";
+import { getPhotoImageUrl } from "@/lib/photoUrl";
 
 export default function PhotoDetailPage() {
   const params = useParams();
@@ -109,14 +110,13 @@ export default function PhotoDetailPage() {
         {/* Imagem (preview com marca d'água) */}
         <div className="relative aspect-[3/2] bg-gray-200 rounded-xl overflow-hidden">
           <Image
-            src={`https://via.placeholder.com/900x600?text=${encodeURIComponent(
-              photo.name
-            )}`}
+            src={getPhotoImageUrl(photo.key, photo.name)}
             alt={photo.name}
             fill
             className="object-cover"
             sizes="(max-width: 1024px) 100vw, 50vw"
             priority
+            unoptimized
           />
           {/* Marca d'água */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

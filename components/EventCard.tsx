@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getPhotoImageUrl } from "@/lib/photoUrl";
 
 interface EventCardProps {
   event: {
@@ -18,18 +19,29 @@ export default function EventCard({ event }: EventCardProps) {
   const eventDate = new Date(event.date);
   const isUpcoming = eventDate > new Date();
 
+  // Capa: 1ª foto carregada (key uploads/) > banner real > emoji
+  const uploadedCover = event.photos?.find((p: any) =>
+    typeof p?.key === "string" && p.key.startsWith("uploads/")
+  );
+  const coverUrl = uploadedCover
+    ? getPhotoImageUrl(uploadedCover.key, event.title)
+    : event.banner && !event.banner.includes("placeholder")
+    ? event.banner
+    : null;
+
   return (
     <Link href={`/photos/${event.id}`}>
       <div className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden cursor-pointer">
         {/* Banner */}
         <div className="relative h-40 bg-gradient-to-r from-blue-400 to-blue-600">
-          {event.banner ? (
+          {coverUrl ? (
             <Image
-              src={event.banner}
+              src={coverUrl}
               alt={event.title}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              unoptimized
             />
           ) : (
             <div className="flex items-center justify-center h-full text-white text-4xl">

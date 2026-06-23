@@ -138,9 +138,18 @@ export async function POST(request: NextRequest) {
         file.type
       );
     } else {
-      // Mock mode: fake S3 key
+      // Mock mode (dev local): grava o ficheiro real em public/uploads/
+      // para que a imagem apareça mesmo sem S3.
+      const { writeFile, mkdir } = await import("fs/promises");
+      const path = await import("path");
+      const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const storedName = `${Date.now()}-${safeName}`;
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+      await mkdir(uploadsDir, { recursive: true });
+      await writeFile(path.join(uploadsDir, storedName), buffer);
+      // key servível diretamente pelo Next a partir de /public
       s3Result = {
-        key: `photos/event-${eventId}/${Date.now()}-${fileName}`,
+        key: `uploads/${storedName}`,
         fileSize: buffer.length,
       };
     }

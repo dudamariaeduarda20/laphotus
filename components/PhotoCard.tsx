@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/lib/contexts/CartContext";
 import { useState } from "react";
+import { getPhotoImageUrl } from "@/lib/photoUrl";
 
 interface PhotoCardProps {
   photo: {
@@ -61,16 +62,15 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
             <div className="text-6xl opacity-20">📸</div>
           </div>
 
-          {/* Image (will be replaced with S3 in Phase 3) */}
+          {/* Imagem real (upload local) ou placeholder */}
           {photo.key && (
             <Image
-              src={`https://via.placeholder.com/300x200?text=${encodeURIComponent(
-                photo.name
-              )}`}
+              src={getPhotoImageUrl(photo.key, photo.name)}
               alt={photo.name}
               fill
               className="object-cover group-hover:scale-105 transition"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              unoptimized
             />
           )}
 

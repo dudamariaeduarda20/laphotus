@@ -105,19 +105,31 @@ export default function EventGalleryPage({
     <div>
       {/* Header with Banner */}
       <div className="relative h-64 bg-gradient-to-r from-blue-400 to-blue-600 overflow-hidden">
-        {event.banner ? (
-          <Image
-            src={event.banner}
-            alt={event.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full text-white text-8xl">
-            📸
-          </div>
-        )}
+        {(() => {
+          const uploadedCover = event.photos?.find(
+            (p: any) =>
+              typeof p?.key === "string" && p.key.startsWith("uploads/")
+          );
+          const coverUrl = uploadedCover
+            ? `/${uploadedCover.key}`
+            : event.banner && !event.banner.includes("placeholder")
+            ? event.banner
+            : null;
+          return coverUrl ? (
+            <Image
+              src={coverUrl}
+              alt={event.title}
+              fill
+              className="object-cover"
+              priority
+              unoptimized
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-white text-8xl">
+              📸
+            </div>
+          );
+        })()}
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/30"></div>
