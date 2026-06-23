@@ -20,19 +20,19 @@ export default function DashboardPage() {
             </h2>
             <div className="space-y-3">
               <Link
-                href="/dashboard/upload"
+                href="/upload"
                 className="block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center transition"
               >
                 Carregar Fotos
               </Link>
               <Link
-                href="/dashboard/my-photos"
+                href="/my-photos"
                 className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition"
               >
                 Minhas Fotos
               </Link>
               <Link
-                href="/dashboard/earnings"
+                href="/earnings"
                 className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition"
               >
                 💰 Meus Ganhos
@@ -49,13 +49,13 @@ export default function DashboardPage() {
             </h2>
             <div className="space-y-3">
               <Link
-                href="/dashboard/events"
+                href="/events"
                 className="block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center transition"
               >
                 Meus Eventos
               </Link>
               <Link
-                href="/dashboard/events/new"
+                href="/events/new"
                 className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition"
               >
                 Criar Evento
@@ -84,13 +84,13 @@ export default function DashboardPage() {
                 Procurar Fotos
               </Link>
               <Link
-                href="/dashboard/downloads"
+                href="/downloads"
                 className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition"
               >
                 ⬇ Minhas Transferências
               </Link>
               <Link
-                href="/dashboard/orders"
+                href="/downloads"
                 className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition"
               >
                 Minhas Encomendas
@@ -104,13 +104,13 @@ export default function DashboardPage() {
           <h2 className="text-lg font-bold text-gray-900 mb-4">⚙️ Configurações</h2>
           <div className="space-y-3">
             <Link
-              href="/dashboard/profile"
+              href="/profile"
               className="block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center transition"
             >
               Editar Perfil
             </Link>
             <Link
-              href="/dashboard/account"
+              href="/profile"
               className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition"
             >
               Conta

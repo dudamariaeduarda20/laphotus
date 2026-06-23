@@ -60,7 +60,7 @@ export default function Header() {
                 {/* Dropdown Menu */}
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
                   <Link
-                    href="/dashboard/profile"
+                    href="/profile"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
                   >
                     Perfil
@@ -68,7 +68,7 @@ export default function Header() {
 
                   {user?.role === "PHOTOGRAPHER" && (
                     <Link
-                      href="/dashboard/upload"
+                      href="/upload"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       Carregar Fotos
@@ -77,7 +77,7 @@ export default function Header() {
 
                   {user?.role === "ORGANIZER" && (
                     <Link
-                      href="/dashboard/events"
+                      href="/events"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
                       Meus Eventos

@@ -170,7 +170,7 @@ export default function OrganizerDashboard() {
         {events.length === 0 && (
           <div className="p-12 text-center text-gray-600">
             Nenhum evento criado ainda.{" "}
-            <Link href="/dashboard/events/new" className="text-blue-600 hover:text-blue-700">
+            <Link href="/events/new" className="text-blue-600 hover:text-blue-700">
               Criar agora
             </Link>
           </div>

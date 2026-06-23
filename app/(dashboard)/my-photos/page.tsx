@@ -107,7 +107,7 @@ export default function MyPhotosPage() {
             Carregue suas primeiras fotos para começar!
           </p>
           <Link
-            href="/dashboard/upload"
+            href="/upload"
             className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Carregar Fotos

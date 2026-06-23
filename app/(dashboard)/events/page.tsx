@@ -60,7 +60,7 @@ export default function EventsPage() {
           <p className="text-gray-600 mt-1">Gerencie seus eventos desportivos</p>
         </div>
         <Link
-          href="/dashboard/events/new"
+          href="/events/new"
           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
           + Criar Evento
@@ -87,7 +87,7 @@ export default function EventsPage() {
             Crie seu primeiro evento para começar a carregar fotos
           </p>
           <Link
-            href="/dashboard/events/new"
+            href="/events/new"
             className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Criar Evento
@@ -142,7 +142,7 @@ export default function EventsPage() {
                   <td className="px-6 py-4 text-sm">
                     <div className="flex gap-2">
                       <Link
-                        href={`/dashboard/events/${event.id}/edit`}
+                        href={`/events/${event.id}/edit`}
                         className="text-blue-600 hover:text-blue-700 font-semibold"
                       >
                         Editar

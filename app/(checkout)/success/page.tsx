@@ -144,7 +144,7 @@ export default function CheckoutSuccessPage() {
       {/* Action Buttons */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
-          href="/dashboard/downloads"
+          href="/downloads"
           className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 text-center"
         >
           ⬇ Minhas Transferências

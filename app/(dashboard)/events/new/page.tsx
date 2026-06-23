@@ -24,7 +24,7 @@ export default function NewEventPage() {
     }
 
     const event = await res.json();
-    router.push(`/dashboard/events`);
+    router.push(`/events`);
   };
 
   return (

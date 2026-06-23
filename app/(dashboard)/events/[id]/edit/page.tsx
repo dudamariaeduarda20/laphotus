@@ -47,7 +47,7 @@ export default function EditEventPage({
       throw new Error(error.error || "Failed to update event");
     }
 
-    router.push(`/dashboard/events`);
+    router.push(`/events`);
   };
 
   if (loading) {

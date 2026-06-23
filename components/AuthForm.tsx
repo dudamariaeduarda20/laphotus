@@ -43,7 +43,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           formData.name,
           formData.role as UserRole
         );
-        router.push("/dashboard/profile");
+        router.push("/profile");
       } else {
         await login(formData.email, formData.password);
         router.push("/dashboard");
