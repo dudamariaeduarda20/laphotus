@@ -94,6 +94,8 @@ export async function POST(request: NextRequest) {
     const fileName = formData.get("fileName") as string;
     const price = parseFloat((formData.get("price") as string) || "0");
     const isPremium = formData.get("isPremium") === "true";
+    // Descritor facial REAL (128-D) extraído no browser via face-api.js
+    const faceDescriptorRaw = formData.get("faceDescriptor") as string | null;
 
     if (!file || !eventId || !fileName) {
       return NextResponse.json(
@@ -163,17 +165,33 @@ export async function POST(request: NextRequest) {
       include: { photographer: true },
     });
 
-    // Run OCR + Face indexing in background (don't block)
+    // Run OCR in background (don't block)
     const { processPhotoOCR } = await import("@/lib/services/ocrService");
-    const { processFaceIndex } = await import("@/lib/services/faceService");
 
     processPhotoOCR(photo.id, eventId, fileName).catch((err) => {
       console.error("OCR error for", photo.id, err);
     });
 
-    processFaceIndex(photo.id, userId, fileName).catch((err) => {
-      console.error("Face index error for", photo.id, err);
-    });
+    // Face indexing: descritor REAL do browser (face-api.js) tem prioridade.
+    if (faceDescriptorRaw) {
+      try {
+        const descriptor = JSON.parse(faceDescriptorRaw);
+        if (Array.isArray(descriptor) && descriptor.length === 128) {
+          const { storeFaceDescriptor } = await import(
+            "@/lib/services/faceService"
+          );
+          await storeFaceDescriptor(photo.id, userId, descriptor);
+        }
+      } catch (err) {
+        console.error("Descritor facial inválido para", photo.id, err);
+      }
+    } else {
+      // Sem rosto detetado no browser -> fallback mock/AWS
+      const { processFaceIndex } = await import("@/lib/services/faceService");
+      processFaceIndex(photo.id, userId, fileName).catch((err) => {
+        console.error("Face index error for", photo.id, err);
+      });
+    }
 
     // Audit log
     await prisma.auditLog.create({

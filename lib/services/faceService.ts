@@ -291,6 +291,118 @@ export async function matchFaceInEvent(
 }
 
 /**
+ * Guarda um descritor facial REAL (128-D) extraído no browser via face-api.js.
+ * Usado no upload quando o fotógrafo carrega uma foto com rosto detetado.
+ */
+export async function storeFaceDescriptor(
+  photoId: string,
+  userId: string,
+  descriptor: number[]
+) {
+  return prisma.faceIndex.upsert({
+    where: { userId_photoId: { userId, photoId } },
+    update: {
+      faceVector: JSON.stringify({ descriptor, engine: "face-api.js" }),
+      confidence: 0.99,
+      faceData: { engine: "face-api.js", dims: descriptor.length },
+    },
+    create: {
+      userId,
+      photoId,
+      faceVector: JSON.stringify({ descriptor, engine: "face-api.js" }),
+      confidence: 0.99,
+      faceData: { engine: "face-api.js", dims: descriptor.length },
+    },
+  });
+}
+
+/**
+ * Distância euclidiana entre dois descritores faciais (face-api.js standard).
+ * 0 = idêntico. Limiar típico de "mesma pessoa": < 0.6.
+ */
+function euclideanDistance(a: number[], b: number[]): number {
+  if (a.length !== b.length) return Infinity;
+  let sum = 0;
+  for (let i = 0; i < a.length; i++) {
+    const d = a[i] - b[i];
+    sum += d * d;
+  }
+  return Math.sqrt(sum);
+}
+
+/**
+ * Reconhecimento facial REAL via descritor face-api.js (128-D).
+ *
+ * Recebe o descritor extraído no browser a partir da selfie e compara-o, por
+ * distância euclidiana, contra todos os descritores reais guardados em
+ * FaceIndex para as fotos do evento. Devolve apenas as fotos da MESMA pessoa.
+ *
+ * @param maxDistance limiar de distância (menor = mais estrito). 0.55 default.
+ */
+export async function matchFaceByDescriptor(
+  eventId: string,
+  descriptor: number[],
+  maxDistance: number = 0.55
+) {
+  const faceIndexes = await prisma.faceIndex.findMany({
+    where: {
+      photo: { eventId, status: "AVAILABLE" },
+    },
+    include: {
+      photo: {
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          isPremium: true,
+          photographerId: true,
+          photographer: { select: { user: { select: { name: true } } } },
+        },
+      },
+    },
+  });
+
+  const matches = faceIndexes
+    .map((idx) => {
+      // O descritor real fica guardado em faceVector como { descriptor: [...] }
+      let stored: number[] | null = null;
+      try {
+        const parsed = JSON.parse(idx.faceVector || "{}");
+        if (Array.isArray(parsed.descriptor)) stored = parsed.descriptor;
+      } catch {
+        stored = null;
+      }
+
+      if (!stored || stored.length !== descriptor.length) return null;
+
+      const distance = euclideanDistance(descriptor, stored);
+      // Converte distância -> percentagem legível (0 dist = 100%)
+      const matchPercent = Math.max(
+        0,
+        Math.round((1 - distance) * 100)
+      );
+
+      return {
+        photoId: idx.photo.id,
+        photoName: idx.photo.name,
+        distance,
+        matchPercent,
+        similarity: 1 - distance,
+        confidence: idx.confidence,
+        price: idx.photo.price,
+        isPremium: idx.photo.isPremium,
+        photographerName: idx.photo.photographer?.user.name || "Unknown",
+      };
+    })
+    .filter(
+      (m): m is NonNullable<typeof m> => m !== null && m.distance <= maxDistance
+    )
+    .sort((a, b) => a.distance - b.distance);
+
+  return matches;
+}
+
+/**
  * CompareFaces: compara duas faces específicas (future: validação manual)
  */
 export async function compareTwoFaces(

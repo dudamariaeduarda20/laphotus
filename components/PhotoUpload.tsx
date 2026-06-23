@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { getFaceDescriptor } from "@/lib/faceApi";
 
 interface PhotoUploadProps {
   eventId: string;
@@ -67,6 +68,14 @@ export default function PhotoUpload({
         fileProgress[file.name] = 0;
         setUploadProgress(fileProgress);
 
+        // Reconhecimento facial REAL: extrai descritor 128-D no browser
+        let faceDescriptor: number[] | null = null;
+        try {
+          faceDescriptor = await getFaceDescriptor(file);
+        } catch (e) {
+          console.warn("Falha ao extrair rosto de", file.name, e);
+        }
+
         // Real upload: send FormData with actual file
         const formData = new FormData();
         formData.append("file", file);
@@ -74,6 +83,9 @@ export default function PhotoUpload({
         formData.append("fileName", file.name);
         formData.append("price", String(prices[file.name] || 0));
         formData.append("isPremium", String(premiums[file.name] || false));
+        if (faceDescriptor) {
+          formData.append("faceDescriptor", JSON.stringify(faceDescriptor));
+        }
 
         const response = await fetch("/api/photos", {
           method: "POST",

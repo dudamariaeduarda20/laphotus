@@ -1,40 +1,49 @@
 import { NextRequest, NextResponse } from "next/server";
-import { matchFaceInEvent } from "@/lib/services/faceService";
-import { z } from "zod";
-
-const matchSchema = z.object({
-  eventId: z.string().min(1),
-  fileName: z.string().min(1),
-});
+import {
+  matchFaceByDescriptor,
+  matchFaceInEvent,
+} from "@/lib/services/faceService";
 
 /**
  * POST /api/photos/match-face
- * Recebe selfie, compara com fotos do evento
+ *
+ * Reconhecimento facial REAL. O browser (face-api.js) extrai o descritor 128-D
+ * da selfie e envia-o em JSON. O servidor compara por distância euclidiana
+ * contra os descritores reais guardados no evento.
+ *
+ * Fallback: se vier só o nome do ficheiro (sem descritor), usa o motor
+ * mock/AWS antigo.
  */
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
-    const file = formData.get("file") as File;
-    const eventId = formData.get("eventId") as string;
-    const fileName = formData.get("fileName") as string;
+    const body = await request.json();
+    const { eventId, descriptor, fileName } = body as {
+      eventId?: string;
+      descriptor?: number[];
+      fileName?: string;
+    };
 
-    // Validação básica
-    if (!file || !eventId || !fileName) {
+    if (!eventId) {
       return NextResponse.json(
-        { error: "Ficheiro, evento e nome obrigatórios" },
+        { error: "Evento obrigatório" },
         { status: 400 }
       );
     }
 
-    if (!file.type.startsWith("image/")) {
+    let matches;
+
+    if (Array.isArray(descriptor) && descriptor.length === 128) {
+      // Caminho REAL: comparação por descritor face-api.js
+      matches = await matchFaceByDescriptor(eventId, descriptor, 0.55);
+    } else if (fileName) {
+      // Fallback mock/AWS
+      matches = await matchFaceInEvent(eventId, fileName, 0.7);
+    } else {
       return NextResponse.json(
-        { error: "Apenas imagens permitidas" },
+        { error: "Nenhum rosto detetado na selfie. Tente outra foto." },
         { status: 400 }
       );
     }
-
-    // Processa selfie - gera vetor facial + busca matches
-    const matches = await matchFaceInEvent(eventId, fileName, 0.7);
 
     if (matches.length === 0) {
       return NextResponse.json(

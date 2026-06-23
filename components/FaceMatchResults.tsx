@@ -118,23 +118,19 @@ export default function FaceMatchResults({
 
       {/* Face Analysis Info */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <h4 className="font-semibold text-gray-900 mb-2">📊 Análise Facial</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <h4 className="font-semibold text-gray-900 mb-2">
+          📊 Análise Facial (face-api.js · 128-D)
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
           <div>
-            <span className="text-gray-600 block">Idade Estimada</span>
-            <span className="font-semibold text-gray-900">
-              {matches[0]?.faceData?.age || "N/A"}
-            </span>
-          </div>
-          <div>
-            <span className="text-gray-600 block">Género</span>
-            <span className="font-semibold text-gray-900">
-              {matches[0]?.faceData?.gender === "Male" ? "Masculino" : "Feminino"}
-            </span>
-          </div>
-          <div>
-            <span className="text-gray-600 block">Fotos Totais</span>
+            <span className="text-gray-600 block">Fotos Correspondentes</span>
             <span className="font-semibold text-gray-900">{matches.length}</span>
+          </div>
+          <div>
+            <span className="text-gray-600 block">Melhor Correspondência</span>
+            <span className="font-semibold text-gray-900">
+              {matches[0]?.matchPercent}%
+            </span>
           </div>
           <div>
             <span className="text-gray-600 block">Correspondência Média</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getFaceDescriptor } from "@/lib/faceApi";
 
 interface SelfieUploadProps {
   eventId: string;
@@ -43,14 +44,24 @@ export default function SelfieUpload({
     onLoading?.(true);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("eventId", eventId);
-      formData.append("fileName", file.name);
+      // Reconhecimento facial REAL: extrai descritor 128-D no browser
+      const descriptor = await getFaceDescriptor(file);
+
+      if (!descriptor) {
+        setError(
+          "Nenhum rosto detetado na selfie. Use uma foto nítida do seu rosto."
+        );
+        return;
+      }
 
       const res = await fetch("/api/photos/match-face", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          eventId,
+          descriptor,
+          fileName: file.name,
+        }),
       });
 
       if (!res.ok) {
