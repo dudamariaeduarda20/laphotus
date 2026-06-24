@@ -6,7 +6,6 @@ import PhotoGrid from "@/components/PhotoGrid";
 import BibNumberSearch from "@/components/BibNumberSearch";
 import SelfieUpload from "@/components/SelfieUpload";
 import FaceCameraSearch from "@/components/FaceCameraSearch";
-import FaceMatchResults from "@/components/FaceMatchResults";
 
 export default function EventGalleryPage({
   params,
@@ -24,7 +23,27 @@ export default function EventGalleryPage({
     "camera"
   );
   const [faceMatches, setFaceMatches] = useState<any[]>([]);
+  // Fotos completas correspondentes ao rosto (null = ainda não pesquisou)
+  const [facePhotos, setFacePhotos] = useState<any[] | null>(null);
   const [isLoadingFace, setIsLoadingFace] = useState(false);
+
+  // Converte matches (shape leve do search-face) em objetos foto completos
+  // da galeria, preservando a ordem por similaridade.
+  const handleFaceMatch = (matches: any[]) => {
+    setFaceMatches(matches);
+    if (!event?.photos) {
+      setFacePhotos([]);
+      return;
+    }
+    const byId = new Map(event.photos.map((p: any) => [p.id, p]));
+    const ordered = matches
+      .map((m) => {
+        const photo = byId.get(m.photoId);
+        return photo ? { ...photo, matchPercent: m.matchPercent } : null;
+      })
+      .filter(Boolean);
+    setFacePhotos(ordered);
+  };
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -274,6 +293,7 @@ export default function EventGalleryPage({
                 onClick={() => {
                   setFaceInputMode("camera");
                   setFaceMatches([]);
+                  setFacePhotos(null);
                 }}
                 className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
                   faceInputMode === "camera"
@@ -287,6 +307,7 @@ export default function EventGalleryPage({
                 onClick={() => {
                   setFaceInputMode("upload");
                   setFaceMatches([]);
+                  setFacePhotos(null);
                 }}
                 className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
                   faceInputMode === "upload"
@@ -301,26 +322,48 @@ export default function EventGalleryPage({
             {faceInputMode === "camera" ? (
               <FaceCameraSearch
                 eventId={event.id}
-                onMatch={setFaceMatches}
+                onMatch={handleFaceMatch}
                 onLoading={setIsLoadingFace}
               />
             ) : (
               <SelfieUpload
                 eventId={event.id}
-                onMatch={setFaceMatches}
+                onMatch={handleFaceMatch}
                 onLoading={setIsLoadingFace}
               />
             )}
 
-            {/* Face Match Results */}
-            {faceMatches.length > 0 && !isLoadingFace && (
-              <FaceMatchResults
-                matches={faceMatches}
-                onPhotoClick={(photoId) => {
-                  // Pode implementar visualização detalhada
-                  console.log("View photo:", photoId);
-                }}
-              />
+            {/* Resultados na MESMA grelha que a busca por dorsal */}
+            {!isLoadingFace && facePhotos !== null && (
+              <div className="mt-8">
+                {facePhotos.length > 0 ? (
+                  <>
+                    <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                      <p className="text-sm text-green-800">
+                        {facePhotos.length} foto
+                        {facePhotos.length !== 1 ? "s" : ""} encontrada
+                        {facePhotos.length !== 1 ? "s" : ""} para este rosto
+                        {faceMatches[0]?.matchPercent
+                          ? ` · melhor correspondência ${faceMatches[0].matchPercent}%`
+                          : ""}
+                      </p>
+                    </div>
+                    <PhotoGrid
+                      photos={facePhotos}
+                      eventId={event.id}
+                      event={event}
+                      isLoading={false}
+                    />
+                  </>
+                ) : (
+                  <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                    <div className="text-4xl mb-2">🔍</div>
+                    <p className="text-gray-700 font-medium">
+                      Nenhuma foto encontrada para este rosto neste evento.
+                    </p>
+                  </div>
+                )}
+              </div>
             )}
           </>
         )}
