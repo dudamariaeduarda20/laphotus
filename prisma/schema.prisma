@@ -213,7 +213,8 @@ model FaceIndex {
   photoId           String
   photo             Photo     @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
-  faceVector        String?   // JSON stored as string (Phase 2: embedding vector from Rekognition)
+  faceVector        String?   // JSON stored as string (face-api.js 128-D fallback)
+  embedding         Unsupported("vector(512)")? // InsightFace ArcFace 512-D (pgvector)
   confidence        Float     @default(0) // 0-1
   faceData          Json?     // {"age": 25, "gender": "M", "emotions": {...}}
 

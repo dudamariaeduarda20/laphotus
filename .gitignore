@@ -43,3 +43,8 @@ next-env.d.ts
 /app/generated/prisma
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+# Python face-service
+face-service/venv/
+face-service/__pycache__/
+.insightface/

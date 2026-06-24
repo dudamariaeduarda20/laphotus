@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getFaceDescriptor } from "@/lib/faceApi";
 
 interface SelfieUploadProps {
   eventId: string;
@@ -44,34 +43,23 @@ export default function SelfieUpload({
     onLoading?.(true);
 
     try {
-      // Reconhecimento facial REAL: extrai descritor 128-D no browser
-      const descriptor = await getFaceDescriptor(file);
+      // Reconhecimento facial via InsightFace + pgvector (processado no servidor)
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("eventId", eventId);
 
-      if (!descriptor) {
-        setError(
-          "Nenhum rosto detetado na selfie. Use uma foto nítida do seu rosto."
-        );
-        return;
-      }
-
-      const res = await fetch("/api/photos/match-face", {
+      const res = await fetch("/api/photos/search-face", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          eventId,
-          descriptor,
-          fileName: file.name,
-        }),
+        body: formData,
       });
 
+      const data = await res.json();
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Falha ao processar");
+        throw new Error(data.error || "Falha ao processar");
       }
 
-      const { matches } = await res.json();
       setFileName(file.name);
-      onMatch?.(matches);
+      onMatch?.(data.matches || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao carregar");
     } finally {

@@ -5,6 +5,7 @@ import Image from "next/image";
 import PhotoGrid from "@/components/PhotoGrid";
 import BibNumberSearch from "@/components/BibNumberSearch";
 import SelfieUpload from "@/components/SelfieUpload";
+import FaceCameraSearch from "@/components/FaceCameraSearch";
 import FaceMatchResults from "@/components/FaceMatchResults";
 
 export default function EventGalleryPage({
@@ -19,6 +20,9 @@ export default function EventGalleryPage({
   const [bibNumberFilter, setBibNumberFilter] = useState<string>("");
   const [filteredPhotos, setFilteredPhotos] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<"gallery" | "face">("gallery");
+  const [faceInputMode, setFaceInputMode] = useState<"camera" | "upload">(
+    "camera"
+  );
   const [faceMatches, setFaceMatches] = useState<any[]>([]);
   const [isLoadingFace, setIsLoadingFace] = useState(false);
 
@@ -256,19 +260,57 @@ export default function EventGalleryPage({
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Procura por Reconhecimento Facial
             </h2>
             <p className="text-gray-600 mb-6">
-              Carregue uma selfie para encontrar todas as suas fotos neste evento
+              Use a câmera ou carregue uma selfie para encontrar as suas fotos.
+              Motor: <span className="font-semibold">InsightFace + pgvector</span>.
             </p>
 
-            {/* Selfie Upload */}
-            <SelfieUpload
-              eventId={event.id}
-              onMatch={setFaceMatches}
-              onLoading={setIsLoadingFace}
-            />
+            {/* Toggle câmera / upload */}
+            <div className="inline-flex rounded-lg border border-gray-300 p-1 mb-6">
+              <button
+                onClick={() => {
+                  setFaceInputMode("camera");
+                  setFaceMatches([]);
+                }}
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
+                  faceInputMode === "camera"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                📷 Câmera ao vivo
+              </button>
+              <button
+                onClick={() => {
+                  setFaceInputMode("upload");
+                  setFaceMatches([]);
+                }}
+                className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
+                  faceInputMode === "upload"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                🖼️ Carregar selfie
+              </button>
+            </div>
+
+            {faceInputMode === "camera" ? (
+              <FaceCameraSearch
+                eventId={event.id}
+                onMatch={setFaceMatches}
+                onLoading={setIsLoadingFace}
+              />
+            ) : (
+              <SelfieUpload
+                eventId={event.id}
+                onMatch={setFaceMatches}
+                onLoading={setIsLoadingFace}
+              />
+            )}
 
             {/* Face Match Results */}
             {faceMatches.length > 0 && !isLoadingFace && (

@@ -181,9 +181,19 @@ export async function POST(request: NextRequest) {
       console.error("OCR error for", photo.id, err);
     });
 
-    // Face indexing: descritor REAL do browser (face-api.js) tem prioridade.
-    if (faceDescriptorRaw) {
-      try {
+    // Indexação facial PRINCIPAL: InsightFace (ArcFace 512-D) -> pgvector.
+    // Processamento pesado no servidor; se o serviço estiver offline, cai no
+    // descritor face-api.js do browser (128-D) como fallback.
+    try {
+      const { embedImage, storeEmbedding, faceServiceHealthy } = await import(
+        "@/lib/services/insightFaceService"
+      );
+      if (await faceServiceHealthy()) {
+        const emb = await embedImage(buffer, fileName, file.type);
+        if (emb.found && emb.embedding) {
+          await storeEmbedding(photo.id, userId, emb.embedding, emb.detScore);
+        }
+      } else if (faceDescriptorRaw) {
         const descriptor = JSON.parse(faceDescriptorRaw);
         if (Array.isArray(descriptor) && descriptor.length === 128) {
           const { storeFaceDescriptor } = await import(
@@ -191,15 +201,9 @@ export async function POST(request: NextRequest) {
           );
           await storeFaceDescriptor(photo.id, userId, descriptor);
         }
-      } catch (err) {
-        console.error("Descritor facial inválido para", photo.id, err);
       }
-    } else {
-      // Sem rosto detetado no browser -> fallback mock/AWS
-      const { processFaceIndex } = await import("@/lib/services/faceService");
-      processFaceIndex(photo.id, userId, fileName).catch((err) => {
-        console.error("Face index error for", photo.id, err);
-      });
+    } catch (err) {
+      console.error("Indexação facial falhou para", photo.id, err);
     }
 
     // Audit log

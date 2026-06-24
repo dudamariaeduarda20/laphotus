@@ -12,12 +12,15 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "node --require esbuild-register prisma/seed.ts",
     "db:reset": "prisma migrate reset",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "face-service": "cd face-service && ./venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000",
+    "reindex-faces": "tsx scripts/reindex-faces.ts"
   },
   "dependencies": {
     "@aws-sdk/client-rekognition": "^3.1075.0",
     "@aws-sdk/client-s3": "^3.1075.0",
     "@aws-sdk/s3-request-presigner": "^3.1075.0",
+    "@mediapipe/tasks-vision": "^0.10.35",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@supabase/supabase-js": "^2.108.2",
