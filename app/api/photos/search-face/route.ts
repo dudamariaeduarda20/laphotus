@@ -4,30 +4,21 @@ import {
   searchByEmbedding,
   faceServiceHealthy,
 } from "@/lib/services/insightFaceService";
+import { awsEnabled, searchFacesByBytes } from "@/lib/services/faceService";
 import prisma from "@/lib/db/prisma";
 
 /**
  * POST /api/photos/search-face
  *
  * Recebe um frame capturado pela câmera (multipart "file" + "eventId").
- * Fluxo (processamento pesado no servidor):
- *   1. InsightFace (Python) -> embedding ArcFace 512-D
- *   2. pgvector KNN por distância de cosseno -> fotos do mesmo rosto
- *   3. Enriquecimento com dados da foto -> devolve matches ordenados
+ *
+ * Motor (seleção automática):
+ *   - AWS Rekognition (se creds presentes): robusto a óculos/boné/luz,
+ *     FaceMatchThreshold 80%.
+ *   - InsightFace + pgvector (default): ArcFace 512-D, distância cosseno 0.50.
  */
 export async function POST(request: NextRequest) {
   try {
-    // Garante que o microserviço de embeddings está vivo
-    if (!(await faceServiceHealthy())) {
-      return NextResponse.json(
-        {
-          error:
-            "Serviço de reconhecimento facial indisponível. Inicie o face-service (porta 8000).",
-        },
-        { status: 503 }
-      );
-    }
-
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const eventId = formData.get("eventId") as string | null;
@@ -41,6 +32,35 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    // === Motor AWS Rekognition (tolerância comercial 80%) ===
+    if (awsEnabled()) {
+      const matches = await searchFacesByBytes(eventId, buffer, 80);
+      return NextResponse.json(
+        matches.length === 0
+          ? { matches: [], message: "Sem correspondências para este rosto neste evento" }
+          : {
+              matches,
+              summary: {
+                total: matches.length,
+                bestMatch: matches[0]?.matchPercent || 0,
+                engine: "AWS Rekognition",
+              },
+            },
+        { status: 200 }
+      );
+    }
+
+    // === Motor InsightFace + pgvector (default) ===
+    if (!(await faceServiceHealthy())) {
+      return NextResponse.json(
+        {
+          error:
+            "Serviço de reconhecimento facial indisponível. Inicie o face-service (porta 8000).",
+        },
+        { status: 503 }
+      );
+    }
+
     // 1. Embedding via InsightFace
     const result = await embedImage(buffer, "selfie.jpg", file.type);
     if (!result.found || !result.embedding) {
@@ -53,8 +73,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Busca vetorial KNN (pgvector, distância de cosseno)
-    const hits = await searchByEmbedding(eventId, result.embedding, 0.35, 50);
+    // 2. Busca vetorial KNN (pgvector, distância de cosseno, margem 0.50)
+    const hits = await searchByEmbedding(eventId, result.embedding, 0.5, 50);
 
     if (hits.length === 0) {
       return NextResponse.json(

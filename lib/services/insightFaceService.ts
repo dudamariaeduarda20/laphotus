@@ -103,12 +103,13 @@ export interface FaceSearchMatch {
  * Busca vetorial KNN: encontra as fotos de um evento cujo rosto mais se
  * aproxima do embedding fornecido (distância de cosseno via pgvector).
  *
- * @param maxDistance distância máxima de cosseno (0 = idêntico). 0.35 ~ mesma pessoa.
+ * @param maxDistance distância máxima de cosseno (0 = idêntico).
+ *   0.50 = tolerância comercial (mesma pessoa com óculos/boné/luz diferente).
  */
 export async function searchByEmbedding(
   eventId: string,
   embedding: number[],
-  maxDistance = 0.35,
+  maxDistance = 0.5,
   limit = 50
 ): Promise<FaceSearchMatch[]> {
   const vectorLiteral = toVectorLiteral(embedding);

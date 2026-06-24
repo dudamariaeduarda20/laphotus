@@ -17,13 +17,122 @@ const rekognitionClient = new RekognitionClient({
 });
 
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-faces-prod";
-const SIMILARITY_THRESHOLD = 90; // 90% minimum match
+const SIMILARITY_THRESHOLD = 80; // 80% = tolerância comercial (óculos/boné/luz)
 
 /**
  * Modo mock: verifica se AWS creds estão configuradas
  */
 function isMockMode(): boolean {
   return !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY;
+}
+
+/** AWS Rekognition ativo (creds presentes). */
+export function awsEnabled(): boolean {
+  return !isMockMode();
+}
+
+/**
+ * IndexFaces com bytes crus (sem S3) na coleção AWS. Usado no upload quando o
+ * Rekognition está ativo. Guarda o awsFaceId em faceVector para a busca mapear.
+ */
+export async function indexFaceByBytes(
+  photoId: string,
+  userId: string,
+  imageBytes: Buffer
+) {
+  const cmd = new IndexFacesCommand({
+    CollectionId: COLLECTION_ID,
+    Image: { Bytes: new Uint8Array(imageBytes) },
+    ExternalImageId: photoId,
+    MaxFaces: 1,
+    QualityFilter: "AUTO",
+    DetectionAttributes: [],
+  });
+
+  const resp = await rekognitionClient.send(cmd);
+  const rec = (resp.FaceRecords || [])[0];
+  const awsFaceId = rec?.Face?.FaceId;
+  if (!awsFaceId) return null;
+
+  return prisma.faceIndex.upsert({
+    where: { userId_photoId: { userId, photoId } },
+    update: {
+      faceVector: JSON.stringify({ awsFaceId }),
+      confidence: rec?.Face?.Confidence ? rec.Face.Confidence / 100 : 0.9,
+      faceData: { engine: "aws-rekognition" },
+    },
+    create: {
+      userId,
+      photoId,
+      faceVector: JSON.stringify({ awsFaceId }),
+      confidence: rec?.Face?.Confidence ? rec.Face.Confidence / 100 : 0.9,
+      faceData: { engine: "aws-rekognition" },
+    },
+  });
+}
+
+/**
+ * SearchFacesByImage com bytes crus (sem S3). Usado na busca por selfie quando
+ * o AWS Rekognition está ativo. Threshold comercial 80% (óculos/boné/luz).
+ * Mapeia FaceId -> Photo via awsFaceId guardado em faceVector.
+ */
+export async function searchFacesByBytes(
+  eventId: string,
+  imageBytes: Buffer,
+  threshold: number = SIMILARITY_THRESHOLD
+) {
+  const cmd = new SearchFacesByImageCommand({
+    CollectionId: COLLECTION_ID,
+    Image: { Bytes: new Uint8Array(imageBytes) },
+    MaxFaces: 50,
+    FaceMatchThreshold: threshold,
+  });
+
+  const resp = await rekognitionClient.send(cmd);
+  const faceMatches = resp.FaceMatches || [];
+  if (faceMatches.length === 0) return [];
+
+  const matches = await Promise.all(
+    faceMatches.map(async (m) => {
+      const awsFaceId = m.Face?.FaceId;
+      if (!awsFaceId) return null;
+      const similarity = (m.Similarity || 0) / 100;
+
+      const faceIndex = await prisma.faceIndex.findFirst({
+        where: {
+          faceVector: { contains: awsFaceId },
+          photo: { eventId, status: "AVAILABLE" },
+        },
+        include: {
+          photo: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              isPremium: true,
+              photographer: { select: { user: { select: { name: true } } } },
+            },
+          },
+        },
+      });
+      if (!faceIndex) return null;
+
+      return {
+        photoId: faceIndex.photo.id,
+        photoName: faceIndex.photo.name,
+        matchPercent: Math.round(similarity * 100),
+        similarity,
+        confidence: similarity,
+        price: faceIndex.photo.price,
+        isPremium: faceIndex.photo.isPremium,
+        photographerName: faceIndex.photo.photographer?.user.name || "Fotógrafo",
+      };
+    })
+  );
+
+  return matches
+    .filter((m): m is NonNullable<typeof m> => m !== null)
+    .sort((a, b) => b.matchPercent - a.matchPercent);
 }
 
 /**
