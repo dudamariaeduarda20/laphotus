@@ -104,12 +104,12 @@ export interface FaceSearchMatch {
  * aproxima do embedding fornecido (distância de cosseno via pgvector).
  *
  * @param maxDistance distância máxima de cosseno (0 = idêntico).
- *   0.50 = tolerância comercial (mesma pessoa com óculos/boné/luz diferente).
+ *   0.70 = máxima tolerância (reconhece mesmo fotos muito similares).
  */
 export async function searchByEmbedding(
   eventId: string,
   embedding: number[],
-  maxDistance = 0.5,
+  maxDistance = 0.7,
   limit = 50
 ): Promise<FaceSearchMatch[]> {
   const vectorLiteral = toVectorLiteral(embedding);

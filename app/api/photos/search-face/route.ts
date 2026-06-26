@@ -36,23 +36,10 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // === Motor 1: Google Cloud Vision (máxima qualidade) ===
-    if (googleVisionEnabled()) {
-      const matches = await googleSearch(eventId, buffer, 70);
-      return NextResponse.json(
-        matches.length === 0
-          ? { matches: [], message: "Sem correspondências para este rosto neste evento" }
-          : {
-              matches,
-              summary: {
-                total: matches.length,
-                bestMatch: matches[0]?.matchPercent || 0,
-                engine: "Google Cloud Vision",
-              },
-            },
-        { status: 200 }
-      );
-    }
+    // === Motor 1: Google Cloud Vision (DESATIVADO - erro JSON) ===
+    // if (googleVisionEnabled()) {
+    //   const matches = await googleSearch(eventId, buffer, 70);
+    // }
 
     // === Motor 2: AWS Rekognition (tolerância comercial 80%) ===
     if (awsEnabled()) {
@@ -95,8 +82,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Busca vetorial KNN (pgvector, distância de cosseno, margem 0.50)
-    const hits = await searchByEmbedding(eventId, result.embedding, 0.5, 50);
+    // 2. Busca vetorial KNN (pgvector, distância de cosseno, máxima tolerância 0.70)
+    const hits = await searchByEmbedding(eventId, result.embedding, 0.7, 50);
 
     if (hits.length === 0) {
       return NextResponse.json(
