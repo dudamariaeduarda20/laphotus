@@ -56,7 +56,9 @@ export async function listEvents(
   sport?: string,
   search?: string,
   limit: number = 20,
-  offset: number = 0
+  offset: number = 0,
+  from?: Date,
+  to?: Date
 ) {
   const where: any = {
     status: "active",
@@ -72,6 +74,13 @@ export async function listEvents(
       { description: { contains: search, mode: "insensitive" } },
       { location: { contains: search, mode: "insensitive" } },
     ];
+  }
+
+  // Filtro por intervalo de datas (busca avançada da home)
+  if (from || to) {
+    where.date = {};
+    if (from) where.date.gte = from;
+    if (to) where.date.lte = to;
   }
 
   const events = await prisma.event.findMany({

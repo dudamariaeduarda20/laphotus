@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { CartProvider } from "@/lib/contexts/CartContext";
 
 const geistSans = Geist({
@@ -15,12 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sports Photos SaaS - Professional Sports Photography E-commerce",
-  description: "Buy and sell professional sports event photos. AI-powered search, facial recognition, and athlete indexing.",
-  keywords: "sports photography, event photos, e-commerce, athletes",
+  title: "LAPHOTUS — As suas fotos de eventos desportivos",
+  description: "Encontre e compre as suas fotos de eventos desportivos com busca por reconhecimento facial e por número de dorsal.",
+  keywords: "fotografia desportiva, fotos de evento, reconhecimento facial, dorsal",
   openGraph: {
-    title: "Sports Photos SaaS",
-    description: "Professional sports photography marketplace",
+    title: "LAPHOTUS",
+    description: "Marketplace de fotografia de eventos desportivos",
     type: "website",
   },
 };
@@ -38,7 +39,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <CartProvider>
           <Header />
-          {children}
+          <main className="flex-1">{children}</main>
+          <Footer />
         </CartProvider>
       </body>
     </html>

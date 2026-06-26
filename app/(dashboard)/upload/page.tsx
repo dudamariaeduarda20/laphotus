@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PhotoUpload from "@/components/PhotoUpload";
 import { useAuth } from "@/lib/hooks/useAuth";
 
-export default function UploadPage() {
+function UploadContent() {
   const { isPhotographer, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -96,5 +96,13 @@ export default function UploadPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function UploadPage() {
+  return (
+    <Suspense fallback={<div className="py-20 text-center text-gray-400">A carregar…</div>}>
+      <UploadContent />
+    </Suspense>
   );
 }

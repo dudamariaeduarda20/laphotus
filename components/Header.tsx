@@ -20,19 +20,36 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-            SP
+            L
           </div>
-          <span className="font-bold text-lg hidden sm:inline">Fotos Desporto</span>
+          <span className="font-bold text-lg hidden sm:inline">LAPHOTUS</span>
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-5">
           <Link
             href="/photos"
             className="text-gray-600 hover:text-gray-900 transition"
           >
             Eventos
           </Link>
+
+          {!isAuthenticated && (
+            <>
+              <Link
+                href="/auth/register"
+                className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
+              >
+                Sou fotógrafo
+              </Link>
+              <Link
+                href="/auth/register"
+                className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
+              >
+                Sou organizador
+              </Link>
+            </>
+          )}
 
           {isAuthenticated ? (
             <>

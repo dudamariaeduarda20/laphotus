@@ -1,15 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import EventCard from "@/components/EventCard";
+import { EVENT_CATEGORIES } from "@/lib/categories";
 
-export default function PhotosPage() {
+function PhotosContent() {
+  const searchParams = useSearchParams();
+
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [search, setSearch] = useState("");
-  const [sport, setSport] = useState("");
+  // Estado inicial vem dos query params da URL (vindos da home / modal)
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [sport, setSport] = useState(searchParams.get("sport") || "");
+  const from = searchParams.get("from") || "";
+  const to = searchParams.get("to") || "";
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -18,6 +25,8 @@ export default function PhotosPage() {
         const params = new URLSearchParams();
         if (search) params.append("search", search);
         if (sport) params.append("sport", sport);
+        if (from) params.append("from", from);
+        if (to) params.append("to", to);
 
         const res = await fetch(`/api/events?${params}`);
         if (!res.ok) throw new Error("Failed to fetch events");
@@ -33,7 +42,7 @@ export default function PhotosPage() {
     };
 
     fetchEvents();
-  }, [search, sport]);
+  }, [search, sport, from, to]);
 
   return (
     <div>
@@ -69,23 +78,28 @@ export default function PhotosPage() {
             {/* Sport Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Desporto
+                Categoria
               </label>
               <select
                 value={sport}
                 onChange={(e) => setSport(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Todos os Desportos</option>
-                <option value="Futebol">Futebol</option>
-                <option value="Vôlei">Voleibol</option>
-                <option value="Basquete">Basquetebol</option>
-                <option value="Natação">Natação</option>
-                <option value="Atletismo">Atletismo</option>
-                <option value="Ciclismo">Ciclismo</option>
+                <option value="">Todas as Categorias</option>
+                {EVENT_CATEGORIES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
+
+          {(from || to) && (
+            <div className="mt-3 text-sm text-gray-500">
+              Filtrando por data: {from || "…"} → {to || "…"}
+            </div>
+          )}
         </div>
 
         {/* Error */}
@@ -118,7 +132,8 @@ export default function PhotosPage() {
             ) : (
               <>
                 <div className="mb-4 text-sm text-gray-600">
-                  Encontrados {events.length} evento{events.length !== 1 ? "s" : ""}
+                  Encontrados {events.length} evento
+                  {events.length !== 1 ? "s" : ""}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {events.map((event) => (
@@ -131,5 +146,13 @@ export default function PhotosPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function PhotosPage() {
+  return (
+    <Suspense fallback={<div className="py-20 text-center text-gray-400">A carregar…</div>}>
+      <PhotosContent />
+    </Suspense>
   );
 }

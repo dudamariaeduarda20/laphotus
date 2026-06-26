@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 
 const roleMessages: Record<string, { title: string; subtitle: string; emoji: string; color: string }> = {
@@ -30,7 +31,7 @@ const roleMessages: Record<string, { title: string; subtitle: string; emoji: str
   },
 };
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const type = searchParams.get("type") || "cliente";
   const roleInfo = roleMessages[type] || roleMessages.cliente;
@@ -48,5 +49,13 @@ export default function LoginPage() {
       </div>
       <AuthForm mode="login" />
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="py-20 text-center text-gray-400">A carregar…</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
