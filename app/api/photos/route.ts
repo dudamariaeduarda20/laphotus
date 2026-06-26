@@ -181,32 +181,43 @@ export async function POST(request: NextRequest) {
       console.error("OCR error for", photo.id, err);
     });
 
-    // Indexação facial. Motor automático:
-    //   AWS Rekognition (creds presentes) -> IndexFaces na coleção
-    //   InsightFace (default) -> ArcFace 512-D em pgvector
-    //   face-api.js (browser) -> fallback 128-D se Python offline
+    // Indexação facial. Motor automático (prioridade):
+    //   1. Google Cloud Vision (SOTA, creds presentes)
+    //   2. AWS Rekognition (creds presentes)
+    //   3. InsightFace (default)
+    //   4. face-api.js (browser fallback)
     try {
-      const { awsEnabled, indexFaceByBytes } = await import(
-        "@/lib/services/faceService"
+      const { googleVisionEnabled, detectFaces, storeFaceDetection } = await import(
+        "@/lib/services/googleVisionService"
       );
-      if (awsEnabled()) {
-        await indexFaceByBytes(photo.id, userId, buffer);
+      if (googleVisionEnabled()) {
+        const detection = await detectFaces(buffer);
+        if (detection.found) {
+          await storeFaceDetection(photo.id, userId, detection);
+        }
       } else {
-        const { embedImage, storeEmbedding, faceServiceHealthy } = await import(
-          "@/lib/services/insightFaceService"
+        const { awsEnabled, indexFaceByBytes } = await import(
+          "@/lib/services/faceService"
         );
-        if (await faceServiceHealthy()) {
-          const emb = await embedImage(buffer, fileName, file.type);
-          if (emb.found && emb.embedding) {
-            await storeEmbedding(photo.id, userId, emb.embedding, emb.detScore);
-          }
-        } else if (faceDescriptorRaw) {
-          const descriptor = JSON.parse(faceDescriptorRaw);
-          if (Array.isArray(descriptor) && descriptor.length === 128) {
-            const { storeFaceDescriptor } = await import(
-              "@/lib/services/faceService"
-            );
-            await storeFaceDescriptor(photo.id, userId, descriptor);
+        if (awsEnabled()) {
+          await indexFaceByBytes(photo.id, userId, buffer);
+        } else {
+          const { embedImage, storeEmbedding, faceServiceHealthy } = await import(
+            "@/lib/services/insightFaceService"
+          );
+          if (await faceServiceHealthy()) {
+            const emb = await embedImage(buffer, fileName, file.type);
+            if (emb.found && emb.embedding) {
+              await storeEmbedding(photo.id, userId, emb.embedding, emb.detScore);
+            }
+          } else if (faceDescriptorRaw) {
+            const descriptor = JSON.parse(faceDescriptorRaw);
+            if (Array.isArray(descriptor) && descriptor.length === 128) {
+              const { storeFaceDescriptor } = await import(
+                "@/lib/services/faceService"
+              );
+              await storeFaceDescriptor(photo.id, userId, descriptor);
+            }
           }
         }
       }

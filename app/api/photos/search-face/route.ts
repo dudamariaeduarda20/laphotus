@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  googleVisionEnabled,
+  searchFacesByImage as googleSearch,
+} from "@/lib/services/googleVisionService";
+import {
   embedImage,
   searchByEmbedding,
   faceServiceHealthy,
@@ -12,10 +16,10 @@ import prisma from "@/lib/db/prisma";
  *
  * Recebe um frame capturado pela câmera (multipart "file" + "eventId").
  *
- * Motor (seleção automática):
- *   - AWS Rekognition (se creds presentes): robusto a óculos/boné/luz,
- *     FaceMatchThreshold 80%.
- *   - InsightFace + pgvector (default): ArcFace 512-D, distância cosseno 0.50.
+ * Motor (seleção automática, ordem de prioridade):
+ *   1. Google Cloud Vision (SOTA, se creds presentes)
+ *   2. AWS Rekognition (se creds presentes)
+ *   3. InsightFace + pgvector (default)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -32,7 +36,25 @@ export async function POST(request: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // === Motor AWS Rekognition (tolerância comercial 80%) ===
+    // === Motor 1: Google Cloud Vision (máxima qualidade) ===
+    if (googleVisionEnabled()) {
+      const matches = await googleSearch(eventId, buffer, 70);
+      return NextResponse.json(
+        matches.length === 0
+          ? { matches: [], message: "Sem correspondências para este rosto neste evento" }
+          : {
+              matches,
+              summary: {
+                total: matches.length,
+                bestMatch: matches[0]?.matchPercent || 0,
+                engine: "Google Cloud Vision",
+              },
+            },
+        { status: 200 }
+      );
+    }
+
+    // === Motor 2: AWS Rekognition (tolerância comercial 80%) ===
     if (awsEnabled()) {
       const matches = await searchFacesByBytes(eventId, buffer, 80);
       return NextResponse.json(
@@ -50,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // === Motor InsightFace + pgvector (default) ===
+    // === Motor 3: InsightFace + pgvector (default) ===
     if (!(await faceServiceHealthy())) {
       return NextResponse.json(
         {
