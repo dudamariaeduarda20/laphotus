@@ -18,7 +18,6 @@ export default function EventGalleryPage({
   const [error, setError] = useState<string | null>(null);
   const [bibNumberFilter, setBibNumberFilter] = useState<string>("");
   const [filteredPhotos, setFilteredPhotos] = useState<any[]>([]);
-  const [viewMode, setViewMode] = useState<"gallery" | "face">("gallery");
   const [faceInputMode, setFaceInputMode] = useState<"camera" | "upload">(
     "camera"
   );
@@ -222,73 +221,20 @@ export default function EventGalleryPage({
 
       {/* Gallery */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* View Mode Tabs */}
-        <div className="mb-8 flex gap-4 border-b border-gray-200">
-          <button
-            onClick={() => {
-              setViewMode("gallery");
-              setBibNumberFilter("");
-            }}
-            className={`px-4 py-3 font-semibold border-b-2 transition ${
-              viewMode === "gallery"
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            📸 Galeria de Fotos
-          </button>
-          <button
-            onClick={() => setViewMode("face")}
-            className={`px-4 py-3 font-semibold border-b-2 transition ${
-              viewMode === "face"
-                ? "border-blue-600 text-blue-600"
-                : "border-transparent text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            🔍 Procura por Rosto
-          </button>
-        </div>
-
-        {viewMode === "gallery" ? (
-          <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              Fotos do Evento
+        {/* Busca dupla em destaque (rosto + dorsal lado a lado, sem abas) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+          {/* Por rosto */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+              🔍 Encontre-se por rosto
             </h2>
-
-            {/* Bib Number Search */}
-            <BibNumberSearch
-              eventId={event.id}
-              onSearch={(bibNumber) => setBibNumberFilter(bibNumber)}
-            />
-
-            {/* Results info */}
-            {bibNumberFilter && (
-              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800">
-                  Mostrando {filteredPhotos.length} foto{filteredPhotos.length !== 1 ? "s" : ""} para dorsal #{bibNumberFilter}
-                </p>
-              </div>
-            )}
-
-            <PhotoGrid
-              photos={filteredPhotos}
-              eventId={event.id}
-              event={event}
-              isLoading={loading}
-            />
-          </>
-        ) : (
-          <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Procura por Reconhecimento Facial
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Use a câmera ou carregue uma selfie para encontrar as suas fotos.
-              Motor: <span className="font-semibold">InsightFace + pgvector</span>.
+            <p className="text-sm text-gray-600 mb-4">
+              Use a câmera ou carregue uma selfie. Motor:{" "}
+              <span className="font-semibold">InsightFace + pgvector</span>.
             </p>
 
             {/* Toggle câmera / upload */}
-            <div className="inline-flex rounded-lg border border-gray-300 p-1 mb-6">
+            <div className="inline-flex rounded-lg border border-gray-300 p-1 mb-4">
               <button
                 onClick={() => {
                   setFaceInputMode("camera");
@@ -332,41 +278,85 @@ export default function EventGalleryPage({
                 onLoading={setIsLoadingFace}
               />
             )}
+          </div>
 
-            {/* Resultados na MESMA grelha que a busca por dorsal */}
-            {!isLoadingFace && facePhotos !== null && (
-              <div className="mt-8">
-                {facePhotos.length > 0 ? (
-                  <>
-                    <div className="mb-4 p-3 bg-green-50 rounded-lg">
-                      <p className="text-sm text-green-800">
-                        {facePhotos.length} foto
-                        {facePhotos.length !== 1 ? "s" : ""} encontrada
-                        {facePhotos.length !== 1 ? "s" : ""} para este rosto
-                        {faceMatches[0]?.matchPercent
-                          ? ` · melhor correspondência ${faceMatches[0].matchPercent}%`
-                          : ""}
-                      </p>
-                    </div>
-                    <PhotoGrid
-                      photos={facePhotos}
-                      eventId={event.id}
-                      event={event}
-                      isLoading={false}
-                    />
-                  </>
-                ) : (
-                  <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg text-center">
-                    <div className="text-4xl mb-2">🔍</div>
-                    <p className="text-gray-700 font-medium">
-                      Nenhuma foto encontrada para este rosto neste evento.
-                    </p>
-                  </div>
-                )}
+          {/* Por dorsal/peito */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
+              #️⃣ Encontre-se por dorsal
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Digite o número do peito/dorsal que usou no evento.
+            </p>
+            <BibNumberSearch
+              eventId={event.id}
+              onSearch={(bibNumber) => setBibNumberFilter(bibNumber)}
+            />
+          </div>
+        </div>
+
+        {/* Resultados da busca por rosto (destacados acima da galeria) */}
+        {!isLoadingFace && facePhotos !== null && (
+          <div className="mb-10">
+            {facePhotos.length > 0 ? (
+              <>
+                <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                  <p className="text-sm text-green-800">
+                    {facePhotos.length} foto
+                    {facePhotos.length !== 1 ? "s" : ""} encontrada
+                    {facePhotos.length !== 1 ? "s" : ""} para este rosto
+                    {faceMatches[0]?.matchPercent
+                      ? ` · melhor correspondência ${faceMatches[0].matchPercent}%`
+                      : ""}
+                  </p>
+                </div>
+                <PhotoGrid
+                  photos={facePhotos}
+                  eventId={event.id}
+                  event={event}
+                  isLoading={false}
+                />
+              </>
+            ) : (
+              <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg text-center">
+                <div className="text-4xl mb-2">🔍</div>
+                <p className="text-gray-700 font-medium">
+                  Nenhuma foto encontrada para este rosto neste evento.
+                </p>
               </div>
             )}
-          </>
+          </div>
         )}
+
+        {/* Galeria completa (sempre visível) */}
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          {bibNumberFilter
+            ? `Fotos do dorsal #${bibNumberFilter}`
+            : "Todas as fotos do evento"}
+        </h2>
+
+        {bibNumberFilter && (
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg flex items-center justify-between">
+            <p className="text-sm text-blue-800">
+              Mostrando {filteredPhotos.length} foto
+              {filteredPhotos.length !== 1 ? "s" : ""} para dorsal #
+              {bibNumberFilter}
+            </p>
+            <button
+              onClick={() => setBibNumberFilter("")}
+              className="text-sm text-blue-700 underline hover:text-blue-900"
+            >
+              Limpar
+            </button>
+          </div>
+        )}
+
+        <PhotoGrid
+          photos={filteredPhotos}
+          eventId={event.id}
+          event={event}
+          isLoading={loading}
+        />
       </div>
 
       {/* Back Link */}
