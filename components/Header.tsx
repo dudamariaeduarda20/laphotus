@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cart from "./Cart";
+import NotificationBell from "./NotificationBell";
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -62,6 +63,9 @@ export default function Header() {
 
               {/* Cart */}
               <Cart />
+
+              {/* Notification bell */}
+              <NotificationBell />
 
               {/* User Menu */}
               <div className="relative group">
