@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getEventById,
   updateEvent,
-  deleteEvent,
   getEventStats,
 } from "@/lib/services/eventService";
 import { getUserIdFromRequest, requireRole } from "@/lib/utils/auth";
@@ -72,7 +71,7 @@ export async function PUT(
 
     const event = await updateEvent((await params).id, userId, data);
 
-    return NextResponse.json(event);
+    return NextResponse.json({ event });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -104,14 +103,20 @@ export async function DELETE(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    await deleteEvent((await params).id, userId);
+    // Arquivar em vez de apagar hard (preserva fotos + encomendas)
+    const updated = await updateEvent((await params).id, userId, {
+      status: "archived",
+    });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ ok: true, event: updated });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Delete failed";
+    const message = error instanceof Error ? error.message : "Archive failed";
 
     if (message === "Not authorized") {
       return NextResponse.json({ error: message }, { status: 403 });
+    }
+    if (message === "Event not found") {
+      return NextResponse.json({ error: message }, { status: 404 });
     }
 
     return NextResponse.json({ error: message }, { status: 500 });

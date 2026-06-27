@@ -1,53 +1,62 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import EventForm from "@/components/EventForm";
 
 export default function EditEventPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
   const router = useRouter();
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [archiving, setArchiving] = useState(false);
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const res = await fetch(`/api/events/${params.id}`);
-        if (!res.ok) throw new Error("Event not found");
-
-        const { event } = await res.json();
-        setEvent(event);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load event");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvent();
-  }, [params.id]);
+    let active = true;
+    fetch(`/api/events/${id}`)
+      .then(async (r) => {
+        if (!r.ok) throw new Error("Evento não encontrado");
+        return r.json();
+      })
+      .then((d) => active && setEvent(d.event))
+      .catch((e) => active && setError(e.message))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
+  }, [id]);
 
   const handleSubmit = async (data: any) => {
-    const res = await fetch(`/api/events/${params.id}`, {
+    const res = await fetch(`/api/events/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...data,
-        date: new Date(data.date).toISOString(),
-      }),
+      body: JSON.stringify({ ...data, date: new Date(data.date).toISOString() }),
     });
-
     if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Failed to update event");
+      const err = await res.json();
+      throw new Error(err.error || "Falha ao atualizar evento");
     }
+    router.push("/events");
+  };
 
-    router.push(`/events`);
+  const handleArchive = async () => {
+    if (!confirm("Arquivar este evento? As fotos e encomendas são preservadas.")) return;
+    setArchiving(true);
+    try {
+      const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Falha ao arquivar");
+      }
+      router.push("/events");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Falha ao arquivar");
+    } finally {
+      setArchiving(false);
+    }
   };
 
   if (loading) {
@@ -68,7 +77,16 @@ export default function EditEventPage({
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Editar Evento</h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-3xl font-bold text-gray-900">Editar Evento</h1>
+        <button
+          onClick={handleArchive}
+          disabled={archiving || event?.status === "archived"}
+          className="px-4 py-2 bg-red-50 text-red-700 border border-red-200 rounded-lg hover:bg-red-100 text-sm font-medium disabled:opacity-50"
+        >
+          {archiving ? "A arquivar…" : "Arquivar"}
+        </button>
+      </div>
       <p className="text-gray-600 mb-8">Atualizar detalhes do evento</p>
 
       {event && <EventForm onSubmit={handleSubmit} initialData={event} />}
