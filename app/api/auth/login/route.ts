@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loginUser } from "@/lib/services/authService";
+import { signToken } from "@/lib/utils/auth";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     // Set session cookie
     response.cookies.set({
       name: "auth-token",
-      value: Buffer.from(JSON.stringify(user)).toString("base64"),
+      value: signToken(user),
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
