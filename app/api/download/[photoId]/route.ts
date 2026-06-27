@@ -9,9 +9,9 @@ import { getS3SignedUrl, isMockMode } from "@/lib/services/s3Service";
  * Gated download. Releases the full-resolution, watermark-free file ONLY if
  * the requesting user owns a COMPLETED (paid) order containing this photo.
  *
- * Real file storage (S3 signed URL) plugs in at the marked spot — see
- * DEPLOY.md. Until then we redirect to the stored key as a stand-in, but the
- * authorization gate below is fully real.
+ * Ficheiros locais (dev, key "uploads/...") são servidos diretamente em alta
+ * resolução. Em produção com S3, devolve um signed URL. O gate de autorização
+ * (pedido COMPLETED do próprio utilizador) é sempre real.
  */
 export async function GET(
   request: NextRequest,
@@ -53,12 +53,17 @@ export async function GET(
       data: { downloadedAt: new Date() },
     });
 
-    // Generate S3 signed URL (real file, 1-hour validity)
+    // Resolve o URL do ficheiro em alta resolução
+    const key = paidItem.photo.key;
     let fileUrl: string;
-    if (!isMockMode()) {
-      fileUrl = await getS3SignedUrl(paidItem.photo.key, 3600);
+    if (key.startsWith("uploads/")) {
+      // Ficheiro local (dev): servido a partir de /public
+      fileUrl = `/${key}`;
+    } else if (!isMockMode()) {
+      // Produção: S3 signed URL (validade 1h)
+      fileUrl = await getS3SignedUrl(key, 3600);
     } else {
-      // Fallback placeholder (no S3 creds)
+      // Sem ficheiro real nem S3 (fotos seed): placeholder
       fileUrl = `https://via.placeholder.com/4000x2667.jpg?text=${encodeURIComponent(
         paidItem.photo.name
       )}`;

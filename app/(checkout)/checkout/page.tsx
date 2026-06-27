@@ -155,8 +155,8 @@ export default function CheckoutPage() {
             </div>
 
             <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-              <p className="font-semibold mb-1">💳 Integração Stripe</p>
-              <p>Processamento de pagamento será ativado na Fase 4</p>
+              <p className="font-semibold mb-1">🧪 Modo demonstração</p>
+              <p>Sem cobrança real — o pedido é confirmado para testar o fluxo e o download. Stripe liga-se quando houver chaves.</p>
             </div>
           </div>
         </div>
@@ -208,8 +208,8 @@ export default function CheckoutPage() {
             </button>
 
             <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-800">
-              <p className="font-semibold mb-1">✓ Integração Stripe</p>
-              <p>Pagamento seguro com Stripe Checkout</p>
+              <p className="font-semibold mb-1">🧪 Checkout em modo demo</p>
+              <p>Confirma o pedido sem cobrança real</p>
             </div>
 
             <div className="mt-4 pt-4 border-t border-gray-200">
