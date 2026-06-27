@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PhotoGrid from "@/components/PhotoGrid";
 import BibNumberSearch from "@/components/BibNumberSearch";
 import SelfieUpload from "@/components/SelfieUpload";
 import FaceCameraSearch from "@/components/FaceCameraSearch";
+import { useCart } from "@/lib/contexts/CartContext";
 
 export default function EventGalleryPage({
   params,
@@ -25,6 +27,47 @@ export default function EventGalleryPage({
   // Fotos completas correspondentes ao rosto (null = ainda não pesquisou)
   const [facePhotos, setFacePhotos] = useState<any[] | null>(null);
   const [isLoadingFace, setIsLoadingFace] = useState(false);
+  const [buyingAll, setBuyingAll] = useState(false);
+
+  const router = useRouter();
+  const { addItems, applyCoupon } = useCart();
+
+  // Pacote: adiciona todas as fotos do evento ao carrinho + aplica PACOTE20.
+  const handleBuyAllEvent = async () => {
+    if (!event?.photos?.length) return;
+    setBuyingAll(true);
+    try {
+      const cartItems = event.photos.map((p: any) => ({
+        id: p.id,
+        photoId: p.id,
+        name: p.name,
+        price: p.price,
+        eventId: event.id,
+        eventTitle: event.title,
+        photographerId: p.photographer?.id || "",
+        photographerName: p.photographer?.user?.name || "Fotógrafo",
+      }));
+      addItems(cartItems); // bulk: um único setState (sem stale closure)
+
+      const subtotal = cartItems.reduce(
+        (sum: number, i: any) => sum + (i.price || 0),
+        0
+      );
+
+      // Auto-aplica o cupom de pacote
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: "PACOTE20", subtotal }),
+      });
+      const data = await res.json();
+      if (data.valid) applyCoupon(data.coupon);
+
+      router.push("/cart");
+    } finally {
+      setBuyingAll(false);
+    }
+  };
 
   // Converte matches (shape leve do search-face) em objetos foto completos
   // da galeria, preservando a ordem por similaridade.
@@ -325,6 +368,29 @@ export default function EventGalleryPage({
                 </p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Pacote: todas as fotos do evento com desconto */}
+        {!bibNumberFilter && event.photos?.length > 0 && (
+          <div className="mb-6 p-5 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+              <p className="font-bold text-lg">
+                🎁 Levar todas as fotos deste evento
+              </p>
+              <p className="text-sm text-white/90">
+                {event.photos.length} foto
+                {event.photos.length !== 1 ? "s" : ""} · 20% de desconto aplicado
+                automaticamente
+              </p>
+            </div>
+            <button
+              onClick={handleBuyAllEvent}
+              disabled={buyingAll}
+              className="px-6 py-3 bg-white text-purple-700 rounded-lg font-semibold hover:bg-gray-100 transition disabled:opacity-60 whitespace-nowrap"
+            >
+              {buyingAll ? "A adicionar…" : "Adicionar todas (−20%)"}
+            </button>
           </div>
         )}
 

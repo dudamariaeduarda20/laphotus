@@ -22,6 +22,7 @@ export interface AppliedCoupon {
 interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem) => void;
+  addItems: (items: CartItem[]) => void;
   removeItem: (photoId: string) => void;
   clearCart: () => void;
   getTotal: () => number;
@@ -85,6 +86,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([...items, item]);
   };
 
+  // Adiciona vários itens de uma vez (sem duplicar). Um único setState para
+  // evitar o bug de closure stale ao chamar addItem em loop.
+  const addItems = (newItems: CartItem[]) => {
+    setItems((prev) => {
+      const seen = new Set(prev.map((i) => i.photoId));
+      const toAdd = newItems.filter((i) => !seen.has(i.photoId));
+      return [...prev, ...toAdd];
+    });
+  };
+
   const removeItem = (photoId: string) => {
     setItems(items.filter((i) => i.photoId !== photoId));
   };
@@ -119,6 +130,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       value={{
         items,
         addItem,
+        addItems,
         removeItem,
         clearCart,
         getTotal,

@@ -216,6 +216,19 @@ async function main() {
     },
   });
 
+  // Cupom de pacote: "todas as fotos do evento" (-20%, sem mínimo)
+  await prisma.coupon.create({
+    data: {
+      code: "PACOTE20",
+      discountType: "percentage",
+      discountValue: 20,
+      validFrom: new Date(),
+      validUntil: new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000),
+      minOrderValue: 0,
+      isActive: true,
+    },
+  });
+
   // Sample order
   const event = events[0];
   const photos = await prisma.photo.findMany({
