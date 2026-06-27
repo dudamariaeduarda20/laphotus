@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/lib/hooks/useAuth";
 import Link from "next/link";
+import PhotographerSalesDashboard from "@/components/PhotographerSalesDashboard";
 
 export default function DashboardPage() {
   const { user, isPhotographer, isOrganizer, isClient } = useAuth();
@@ -10,6 +11,9 @@ export default function DashboardPage() {
     <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Painel</h1>
       <p className="text-gray-600 mb-8">Bem-vindo novamente, {user?.name}!</p>
+
+      {/* Painel de vendas (fotógrafo) */}
+      {isPhotographer && <PhotographerSalesDashboard />}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Photographer Card */}
