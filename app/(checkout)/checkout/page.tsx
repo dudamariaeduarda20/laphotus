@@ -1,12 +1,14 @@
 "use client";
 
 import { useCart } from "@/lib/contexts/CartContext";
+import { useAuth } from "@/lib/hooks/useAuth";
 import CartItem from "@/components/CartItem";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function CheckoutPage() {
   const { items, getTotal, coupon, getDiscount } = useCart();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [processingPayment, setProcessingPayment] = useState(false);
 
   const subtotal = getTotal();
@@ -34,7 +36,7 @@ export default function CheckoutPage() {
       }
 
       const { checkoutUrl } = await res.json();
-      window.location.href = checkoutUrl;
+      window.location.assign(checkoutUrl);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erro no pagamento");
     } finally {
@@ -198,14 +200,23 @@ export default function CheckoutPage() {
               <span className="text-green-600">€ {total.toFixed(2)}</span>
             </div>
 
-            {/* Payment Button */}
-            <button
-              onClick={handlePayment}
-              disabled={processingPayment}
-              className="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 mb-3"
-            >
-              {processingPayment ? "A processar..." : "💳 Finalizar Compra"}
-            </button>
+            {/* Payment Button (exige login) */}
+            {!authLoading && !isAuthenticated ? (
+              <Link
+                href="/auth/login"
+                className="w-full block text-center py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 mb-3"
+              >
+                Iniciar sessão para finalizar
+              </Link>
+            ) : (
+              <button
+                onClick={handlePayment}
+                disabled={processingPayment || authLoading}
+                className="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 mb-3"
+              >
+                {processingPayment ? "A processar..." : "💳 Finalizar Compra"}
+              </button>
+            )}
 
             <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-800">
               <p className="font-semibold mb-1">🧪 Checkout em modo demo</p>

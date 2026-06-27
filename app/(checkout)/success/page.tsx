@@ -1,12 +1,13 @@
 "use client";
 
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useCart } from "@/lib/contexts/CartContext";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const { clearCart } = useCart();
   const sessionId = searchParams.get("session");
   const orderId = searchParams.get("order");
   const [confirmed, setConfirmed] = useState(false);
@@ -35,8 +36,7 @@ function SuccessContent() {
 
         if (res.ok) {
           setConfirmed(true);
-          // Clear cart
-          localStorage.removeItem("sports-photos-cart");
+          clearCart(); // limpa estado + localStorage (carrinho e cupom)
         }
       } catch (err) {
         console.error("Falha ao confirmar pagamento:", err);
@@ -46,7 +46,7 @@ function SuccessContent() {
     };
 
     confirmPayment();
-  }, [orderId, sessionId]);
+  }, [orderId, sessionId, clearCart]);
 
   if (loading) {
     return (
@@ -132,7 +132,7 @@ function SuccessContent() {
           </li>
           <li className="flex items-start gap-3">
             <span className="text-lg">2️⃣</span>
-            <span>As fotos estão sem marca d'água e em alta resolução</span>
+            <span>As fotos estão sem marca d&apos;água e em alta resolução</span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-lg">3️⃣</span>

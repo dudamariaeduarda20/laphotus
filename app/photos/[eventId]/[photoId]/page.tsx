@@ -190,8 +190,8 @@ export default function PhotoDetailPage() {
               </span>
             )}
             <span className="block text-sm text-gray-500 mt-1">
-              IVA incluído (23%) · download em alta resolução sem marca d'água
-              após compra
+              IVA incluído (23%) · download em alta resolução sem marca
+              d&apos;água após compra
             </span>
           </div>
 

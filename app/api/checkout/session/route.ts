@@ -69,9 +69,8 @@ export async function POST(request: NextRequest) {
         sessionId: stripeSessionId,
         orderId: updatedOrder.id,
         total: updatedOrder.total,
-        // In production: would include full Stripe Session
-        // For MVP: simulate with checkout URL
-        checkoutUrl: `/checkout/success?session=${stripeSessionId}&order=${updatedOrder.id}`,
+        // Route group (checkout) não aparece no URL -> página está em /success
+        checkoutUrl: `/success?session=${stripeSessionId}&order=${updatedOrder.id}`,
       },
       { status: 201 }
     );

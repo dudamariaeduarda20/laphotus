@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 
 export interface CartItem {
   id: string;
@@ -100,10 +106,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems(items.filter((i) => i.photoId !== photoId));
   };
 
-  const clearCart = () => {
+  // Estável (só usa setters) — seguro como dependência de efeitos.
+  const clearCart = useCallback(() => {
     setItems([]);
     setCoupon(null);
-  };
+  }, []);
 
   const getTotal = () => {
     return items.reduce((sum, item) => sum + item.price, 0);

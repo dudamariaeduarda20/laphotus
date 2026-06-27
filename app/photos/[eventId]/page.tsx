@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import PhotoGrid from "@/components/PhotoGrid";
 import BibNumberSearch from "@/components/BibNumberSearch";
@@ -109,7 +110,7 @@ export default function EventGalleryPage({
     };
 
     fetchEvent();
-  }, []);
+  }, [params]);
 
   useEffect(() => {
     if (!event?.photos) return;
@@ -153,12 +154,12 @@ export default function EventGalleryPage({
             Evento não encontrado
           </h1>
           <p className="text-gray-600 mb-6">{error}</p>
-          <a
+          <Link
             href="/photos"
             className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Voltar aos Eventos
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -427,12 +428,12 @@ export default function EventGalleryPage({
 
       {/* Back Link */}
       <div className="max-w-7xl mx-auto px-4 py-6 border-t border-gray-200">
-        <a
+        <Link
           href="/photos"
           className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2"
         >
           ← Voltar aos Eventos
-        </a>
+        </Link>
       </div>
     </div>
   );
