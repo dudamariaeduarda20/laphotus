@@ -37,19 +37,16 @@ export default function AdminPhotographers() {
     }
   };
 
-  const handleApprove = async (userId: string) => {
+  const handleActivate = async (userId: string) => {
     setActionInProgress(userId);
     try {
       const res = await fetch(`/api/admin/photographers/${userId}/approve`, {
         method: "POST",
       });
-
-      if (!res.ok) throw new Error("Falha ao aprovar");
-
-      // Update local state
+      if (!res.ok) throw new Error("Falha ao ativar");
       setPhotographers(
         photographers.map((p) =>
-          p.user.id === userId ? { ...p, approved: true } : p
+          p.user.id === userId ? { ...p, active: true } : p
         )
       );
     } catch (err) {
@@ -65,13 +62,10 @@ export default function AdminPhotographers() {
       const res = await fetch(`/api/admin/photographers/${userId}/block`, {
         method: "POST",
       });
-
       if (!res.ok) throw new Error("Falha ao bloquear");
-
-      // Update local state
       setPhotographers(
         photographers.map((p) =>
-          p.user.id === userId ? { ...p, blocked: true } : p
+          p.user.id === userId ? { ...p, active: false } : p
         )
       );
     } catch (err) {
@@ -162,31 +156,27 @@ export default function AdminPhotographers() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    {photo.blocked ? (
-                      <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
-                        Bloqueado
-                      </span>
-                    ) : photo.approved ? (
+                    {photo.active ? (
                       <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                        Aprovado
+                        Ativo
                       </span>
                     ) : (
-                      <span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
-                        Pendente
+                      <span className="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+                        Bloqueado
                       </span>
                     )}
                   </td>
                   <td className="px-6 py-4 space-x-2">
-                    {!photo.blocked && !photo.approved && (
+                    {!photo.active && (
                       <button
-                        onClick={() => handleApprove(photo.user.id)}
+                        onClick={() => handleActivate(photo.user.id)}
                         disabled={actionInProgress === photo.user.id}
                         className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50"
                       >
-                        ✓ Aprovar
+                        ✓ Ativar
                       </button>
                     )}
-                    {!photo.blocked && (
+                    {photo.active && (
                       <button
                         onClick={() => handleBlock(photo.user.id)}
                         disabled={actionInProgress === photo.user.id}

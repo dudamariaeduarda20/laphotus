@@ -21,17 +21,25 @@ export async function POST(
       return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
 
-    // Log action
+    const { userId } = await params;
+
+    const photographer = await prisma.photographer.findUnique({ where: { userId } });
+    if (!photographer) {
+      return NextResponse.json({ error: "Fotógrafo não encontrado" }, { status: 404 });
+    }
+
+    await prisma.photographer.update({ where: { userId }, data: { active: true } });
+
     await prisma.auditLog.create({
       data: {
         userId: adminId,
         action: "photographer_approved",
         resource: "photographer",
-        resourceId: (await params).userId,
+        resourceId: userId,
       },
     });
 
-    return NextResponse.json({ success: true, message: "Fotógrafo aprovado" });
+    return NextResponse.json({ success: true, message: "Fotógrafo ativado" });
   } catch (error) {
     console.error("Approve error:", error);
     return NextResponse.json(

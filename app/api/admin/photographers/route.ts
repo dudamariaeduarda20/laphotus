@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserIdFromRequest, requireRole } from "@/lib/utils/auth";
+import { getUserIdFromRequest } from "@/lib/utils/auth";
 import prisma from "@/lib/db/prisma";
 import { UserRole } from "@/lib/types";
 
 /**
  * GET /api/admin/photographers
- * Lista todos fotógrafos com stats
+ * Lista todos fotógrafos com stats reais
  */
 export async function GET(request: NextRequest) {
   try {
@@ -14,31 +14,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (user?.role !== UserRole.ADMIN) {
       return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
     }
 
-    // Buscar fotógrafos
     const photographers = await prisma.photographer.findMany({
       include: {
         user: { select: { id: true, name: true, email: true } },
-        photos: true,
+        _count: { select: { photos: true } },
       },
       orderBy: { totalSales: "desc" },
     });
 
     const result = photographers.map((p) => ({
       user: p.user,
-      photoCount: p.photos.length,
+      photoCount: p._count.photos,
       rating: p.rating,
       totalSales: p.totalSales,
       totalRevenue: p.totalRevenue,
-      approved: true, // Mockado - em produção seria um flag
-      blocked: false,
+      active: p.active,
     }));
 
     return NextResponse.json({ photographers: result });
