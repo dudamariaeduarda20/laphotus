@@ -93,12 +93,20 @@ export default function Header() {
                   )}
 
                   {user?.role === "ORGANIZER" && (
-                    <Link
-                      href="/events"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                    >
-                      Meus Eventos
-                    </Link>
+                    <>
+                      <Link
+                        href="/events"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        Meus Eventos
+                      </Link>
+                      <Link
+                        href="/analytics"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        Analytics
+                      </Link>
+                    </>
                   )}
 
                   <button
