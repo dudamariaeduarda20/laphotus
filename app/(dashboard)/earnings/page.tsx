@@ -10,6 +10,36 @@ export default function EarningsPage() {
   const [earnings, setEarnings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawMsg, setWithdrawMsg] = useState<string | null>(null);
+
+  const handleWithdraw = async () => {
+    const available = earnings?.totalEarnings || 0;
+    if (available <= 0) {
+      setWithdrawMsg("Sem saldo disponível para saque.");
+      return;
+    }
+    setWithdrawing(true);
+    setWithdrawMsg(null);
+    try {
+      const res = await fetch("/api/photographer/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: available }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Falha ao solicitar saque");
+      setWithdrawMsg(
+        `✓ Pedido de saque de € ${available.toFixed(2)} registado. O admin vai processar.`
+      );
+    } catch (err) {
+      setWithdrawMsg(
+        err instanceof Error ? err.message : "Falha ao solicitar saque"
+      );
+    } finally {
+      setWithdrawing(false);
+    }
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -152,15 +182,46 @@ export default function EarningsPage() {
         )}
       </div>
 
-      {/* Bank Info */}
-      <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="font-bold text-blue-900 mb-2">💳 Informações Bancárias</h3>
-        <p className="text-sm text-blue-800 mb-3">
-          Configure sua conta bancária para receber transferências automáticas. Os pagamentos são processados mensalmente.
+      {/* Saque */}
+      <div className="mt-8 bg-green-50 border border-green-200 rounded-lg p-6">
+        <h3 className="font-bold text-green-900 mb-1">💰 Saque</h3>
+        <p className="text-sm text-green-800 mb-1">
+          Saldo disponível:{" "}
+          <span className="font-bold">
+            € {(earnings?.totalEarnings || 0).toFixed(2)}
+          </span>
         </p>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
-          Configurar Conta Bancária
+        <p className="text-xs text-green-700 mb-4">
+          O pedido é registado e processado manualmente pelo admin.
+        </p>
+        <button
+          onClick={handleWithdraw}
+          disabled={withdrawing || (earnings?.totalEarnings || 0) <= 0}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-semibold disabled:opacity-50"
+        >
+          {withdrawing ? "A solicitar…" : "Solicitar saque"}
         </button>
+        {withdrawMsg && (
+          <p
+            className={`mt-3 text-sm ${
+              withdrawMsg.startsWith("✓") ? "text-green-700" : "text-red-600"
+            }`}
+          >
+            {withdrawMsg}
+          </p>
+        )}
+      </div>
+
+      {/* Bank Info */}
+      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h3 className="font-bold text-blue-900 mb-2">💳 Informações Bancárias</h3>
+        <p className="text-sm text-blue-800">
+          Conta bancária:{" "}
+          <span className="font-medium">
+            {user?.name ? "configurada no perfil" : "—"}
+          </span>{" "}
+          · pagamentos processados manualmente.
+        </p>
       </div>
     </div>
   );
