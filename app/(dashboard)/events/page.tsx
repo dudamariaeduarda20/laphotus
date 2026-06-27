@@ -38,18 +38,20 @@ export default function EventsPage() {
   }, [isOrganizer, authLoading, router]);
 
   const handleDelete = async (eventId: string) => {
-    if (!confirm("Delete this event? This cannot be undone.")) return;
+    if (!confirm("Arquivar este evento? As fotos e encomendas são preservadas.")) return;
 
     try {
-      const res = await fetch(`/api/events/${eventId}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) throw new Error("Failed to delete event");
-
-      setEvents(events.filter((e) => e.id !== eventId));
+      const res = await fetch(`/api/events/${eventId}`, { method: "DELETE" });
+      if (!res.ok) {
+        const d = await res.json();
+        throw new Error(d.error || "Falha ao arquivar");
+      }
+      // Atualiza estado local: muda status para archived (não remove da lista)
+      setEvents((prev) =>
+        prev.map((e) => (e.id === eventId ? { ...e, status: "archived" } : e))
+      );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Delete failed");
+      setError(err instanceof Error ? err.message : "Falha ao arquivar");
     }
   };
 
@@ -141,18 +143,24 @@ export default function EventsPage() {
                     {event.photos?.length || 0} fotos
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Link
                         href={`/events/${event.id}/edit`}
-                        className="text-blue-600 hover:text-blue-700 font-semibold"
+                        className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
                       >
                         Editar
                       </Link>
+                      <Link
+                        href={`/events/${event.id}/bibs`}
+                        className="text-purple-600 hover:text-purple-700 font-semibold text-sm"
+                      >
+                        Dorsais
+                      </Link>
                       <button
                         onClick={() => handleDelete(event.id)}
-                        className="text-red-600 hover:text-red-700 font-semibold"
+                        className="text-red-600 hover:text-red-700 font-semibold text-sm"
                       >
-                        Eliminar
+                        Arquivar
                       </button>
                     </div>
                   </td>
