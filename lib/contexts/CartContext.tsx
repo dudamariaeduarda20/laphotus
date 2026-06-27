@@ -13,6 +13,12 @@ export interface CartItem {
   photographerName: string;
 }
 
+export interface AppliedCoupon {
+  code: string;
+  discountType: string; // "percentage" | "fixed"
+  discountValue: number;
+}
+
 interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem) => void;
@@ -20,12 +26,18 @@ interface CartContextType {
   clearCart: () => void;
   getTotal: () => number;
   getItemCount: () => number;
+  // Cupom (partilhado entre carrinho e checkout)
+  coupon: AppliedCoupon | null;
+  applyCoupon: (coupon: AppliedCoupon) => void;
+  clearCoupon: () => void;
+  getDiscount: () => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage
@@ -38,6 +50,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to load cart:", e);
       }
     }
+    const savedCoupon = localStorage.getItem("sports-photos-coupon");
+    if (savedCoupon) {
+      try {
+        setCoupon(JSON.parse(savedCoupon));
+      } catch (e) {
+        console.error("Failed to load coupon:", e);
+      }
+    }
     setIsLoaded(true);
   }, []);
 
@@ -47,6 +67,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("sports-photos-cart", JSON.stringify(items));
     }
   }, [items, isLoaded]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (coupon) {
+      localStorage.setItem("sports-photos-coupon", JSON.stringify(coupon));
+    } else {
+      localStorage.removeItem("sports-photos-coupon");
+    }
+  }, [coupon, isLoaded]);
 
   const addItem = (item: CartItem) => {
     // Check if already in cart
@@ -62,6 +91,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
+    setCoupon(null);
   };
 
   const getTotal = () => {
@@ -69,6 +99,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getItemCount = () => items.length;
+
+  const applyCoupon = (c: AppliedCoupon) => setCoupon(c);
+  const clearCoupon = () => setCoupon(null);
+
+  // Desconto calculado sobre o subtotal atual (limitado ao subtotal)
+  const getDiscount = () => {
+    if (!coupon) return 0;
+    const subtotal = getTotal();
+    const raw =
+      coupon.discountType === "percentage"
+        ? (subtotal * coupon.discountValue) / 100
+        : coupon.discountValue;
+    return Math.min(Math.round(raw * 100) / 100, subtotal);
+  };
 
   return (
     <CartContext.Provider
@@ -79,6 +123,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         getTotal,
         getItemCount,
+        coupon,
+        applyCoupon,
+        clearCoupon,
+        getDiscount,
       }}
     >
       {children}

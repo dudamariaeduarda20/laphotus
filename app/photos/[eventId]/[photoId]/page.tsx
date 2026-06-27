@@ -3,20 +3,25 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCart } from "@/lib/contexts/CartContext";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { getPhotoImageUrl } from "@/lib/photoUrl";
 
 export default function PhotoDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const eventId = params.eventId as string;
   const photoId = params.photoId as string;
 
   const { addItem } = useCart();
+  const { isAuthenticated } = useAuth();
   const [photo, setPhoto] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
+  const [favorited, setFavorited] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
 
   useEffect(() => {
     const fetchPhoto = async () => {
@@ -50,6 +55,33 @@ export default function PhotoDetailPage() {
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleFavorite = async () => {
+    // Favoritar exige login
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+      return;
+    }
+    if (!photo) return;
+    setFavLoading(true);
+    try {
+      if (favorited) {
+        await fetch(`/api/favorites?photoId=${photo.id}`, { method: "DELETE" });
+        setFavorited(false);
+      } else {
+        const res = await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ photoId: photo.id }),
+        });
+        if (res.ok) setFavorited(true);
+      }
+    } catch {
+      // silencioso — não bloqueia a compra
+    } finally {
+      setFavLoading(false);
+    }
   };
 
   if (loading) {
@@ -166,13 +198,26 @@ export default function PhotoDetailPage() {
           {/* Adicionar ao carrinho */}
           <button
             onClick={handleAddToCart}
-            className={`w-full py-3 rounded-lg font-semibold text-white transition mb-4 ${
+            className={`w-full py-3 rounded-lg font-semibold text-white transition mb-3 ${
               added
                 ? "bg-green-600"
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
             {added ? "✓ Adicionado ao carrinho" : "Adicionar ao carrinho"}
+          </button>
+
+          {/* Favoritar */}
+          <button
+            onClick={handleFavorite}
+            disabled={favLoading}
+            className={`w-full py-3 rounded-lg font-semibold border transition mb-4 disabled:opacity-50 ${
+              favorited
+                ? "border-red-300 bg-red-50 text-red-700"
+                : "border-gray-300 text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            {favorited ? "♥ Nos favoritos" : "♡ Adicionar aos favoritos"}
           </button>
 
           {/* Info adicional */}

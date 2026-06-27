@@ -1,16 +1,58 @@
 "use client";
 
+import { useState } from "react";
 import { useCart } from "@/lib/contexts/CartContext";
 import CartItem from "@/components/CartItem";
 import Link from "next/link";
 
 export default function CartPage() {
-  const { items, getTotal, getItemCount, clearCart } = useCart();
+  const {
+    items,
+    getTotal,
+    getItemCount,
+    clearCart,
+    coupon,
+    applyCoupon,
+    clearCoupon,
+    getDiscount,
+  } = useCart();
+
+  const [code, setCode] = useState("");
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [applying, setApplying] = useState(false);
 
   const itemCount = getItemCount();
   const subtotal = getTotal();
-  const tax = subtotal * 0.05;
-  const total = subtotal + tax;
+  const discount = getDiscount();
+  const tax = (subtotal - discount) * 0.23; // 23% IVA (Portugal)
+  const total = subtotal - discount + tax;
+
+  const handleApplyCoupon = async () => {
+    if (!code.trim()) {
+      setCouponError("Introduza um código");
+      return;
+    }
+    setApplying(true);
+    setCouponError(null);
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code.trim(), subtotal }),
+      });
+      const data = await res.json();
+      if (!data.valid) {
+        setCouponError(data.error || "Cupom inválido");
+        return;
+      }
+      applyCoupon(data.coupon);
+      setCode("");
+    } catch {
+      setCouponError("Falha ao validar cupom");
+    } finally {
+      setApplying(false);
+    }
+  };
 
   return (
     <div>
@@ -64,13 +106,72 @@ export default function CartPage() {
                 Resumo da Encomenda
               </h2>
 
-              <div className="space-y-4 pb-6 border-b border-gray-200">
+              {/* Cupom */}
+              <div className="pb-6 border-b border-gray-200">
+                {coupon ? (
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div className="text-sm">
+                      <span className="font-semibold text-green-800">
+                        {coupon.code}
+                      </span>
+                      <span className="text-green-700">
+                        {" "}
+                        ·{" "}
+                        {coupon.discountType === "percentage"
+                          ? `${coupon.discountValue}% off`
+                          : `€ ${coupon.discountValue.toFixed(2)} off`}
+                      </span>
+                    </div>
+                    <button
+                      onClick={clearCoupon}
+                      className="text-sm text-red-600 hover:text-red-700 underline"
+                    >
+                      Remover
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Cupom de desconto
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value.toUpperCase())}
+                        placeholder="Ex: BOAS_VINDAS20"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                      />
+                      <button
+                        onClick={handleApplyCoupon}
+                        disabled={applying}
+                        className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+                      >
+                        {applying ? "..." : "Aplicar"}
+                      </button>
+                    </div>
+                    {couponError && (
+                      <p className="mt-2 text-sm text-red-600">{couponError}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-4 py-6 border-b border-gray-200">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal:</span>
                   <span className="font-semibold">
                     € {subtotal.toFixed(2)}
                   </span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-700">Desconto:</span>
+                    <span className="font-semibold text-green-700">
+                      − € {discount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">IVA (23%):</span>
                   <span className="font-semibold">

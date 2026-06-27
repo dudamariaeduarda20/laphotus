@@ -3,20 +3,14 @@
 import { useCart } from "@/lib/contexts/CartContext";
 import CartItem from "@/components/CartItem";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CheckoutPage() {
-  const { items, getTotal, clearCart } = useCart();
-  const router = useRouter();
-  const [couponCode, setCouponCode] = useState("");
-  const [discount, setDiscount] = useState(0);
-  const [discountError, setDiscountError] = useState<string | null>(null);
-  const [processingDiscount, setProcessingDiscount] = useState(false);
+  const { items, getTotal, coupon, getDiscount } = useCart();
   const [processingPayment, setProcessingPayment] = useState(false);
 
   const subtotal = getTotal();
-  const discountAmount = (subtotal * discount) / 100;
+  const discountAmount = getDiscount(); // montante (€) vindo do carrinho
   const tax = (subtotal - discountAmount) * 0.23;
   const total = subtotal - discountAmount + tax;
 
@@ -28,9 +22,9 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: items.map((i) => ({ photoId: i.photoId, price: i.price })),
-          subtotal: getTotal(),
-          discount,
-          couponCode: couponCode || undefined,
+          subtotal,
+          discount: discountAmount, // createOrder espera o montante, não a %
+          couponCode: coupon?.code || undefined,
         }),
       });
 
@@ -39,40 +33,12 @@ export default function CheckoutPage() {
         throw new Error(error.error || "Falha ao processar pagamento");
       }
 
-      const { orderId, checkoutUrl } = await res.json();
-
-      // Simulate Stripe redirect
-      // In production: redirect to Stripe
+      const { checkoutUrl } = await res.json();
       window.location.href = checkoutUrl;
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erro no pagamento");
     } finally {
       setProcessingPayment(false);
-    }
-  };
-
-  const applyCoupon = async () => {
-    if (!couponCode.trim()) {
-      setDiscountError("Enter coupon code");
-      return;
-    }
-
-    setProcessingDiscount(true);
-    setDiscountError(null);
-
-    try {
-      // Mock coupon validation (Phase 4 will use real API)
-      if (couponCode === "WELCOME20") {
-        setDiscount(20);
-        setCouponCode("");
-      } else if (couponCode === "SAVE10") {
-        setDiscount(10);
-        setCouponCode("");
-      } else {
-        setDiscountError("Invalid coupon code");
-      }
-    } finally {
-      setProcessingDiscount(false);
     }
   };
 
@@ -118,44 +84,36 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Coupon Section */}
+          {/* Coupon Section (gerido no carrinho) */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               Código Promocional
             </h2>
 
-            <div className="flex gap-2 mb-3">
-              <input
-                type="text"
-                value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value)}
-                placeholder="Introduza código promocional"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={applyCoupon}
-                disabled={processingDiscount}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-              >
-                {processingDiscount ? "..." : "Aplicar"}
-              </button>
-            </div>
-
-            {discountError && (
-              <p className="text-red-600 text-sm">{discountError}</p>
-            )}
-
-            {discount > 0 && (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            {coupon ? (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
                 <p className="text-green-800 font-semibold">
-                  ✓ Desconto de {discount}% aplicado!
+                  ✓ {coupon.code} aplicado
+                  {coupon.discountType === "percentage"
+                    ? ` (${coupon.discountValue}%)`
+                    : ` (€ ${coupon.discountValue.toFixed(2)})`}
                 </p>
+                <Link
+                  href="/cart"
+                  className="text-sm text-blue-600 hover:text-blue-700 underline"
+                >
+                  Alterar
+                </Link>
               </div>
+            ) : (
+              <p className="text-sm text-gray-600">
+                Tem um cupom?{" "}
+                <Link href="/cart" className="text-blue-600 underline">
+                  Aplique no carrinho
+                </Link>{" "}
+                antes de finalizar.
+              </p>
             )}
-
-            <p className="text-xs text-gray-600 mt-3">
-              Tente: WELCOME20 ou SAVE10
-            </p>
           </div>
 
           {/* Payment Method (Placeholder for Phase 4) */}
@@ -218,24 +176,26 @@ export default function CheckoutPage() {
                 </span>
               </div>
 
-              {discount > 0 && (
+              {discountAmount > 0 && (
                 <div className="flex justify-between text-green-600">
-                  <span>Desconto ({discount}%):</span>
+                  <span>
+                    Desconto{coupon ? ` (${coupon.code})` : ""}:
+                  </span>
                   <span className="font-semibold">
-                    -€ {discountAmount.toFixed(2)}
+                    −€ {discountAmount.toFixed(2)}
                   </span>
                 </div>
               )}
 
               <div className="flex justify-between">
                 <span className="text-gray-600">IVA (23%):</span>
-                <span className="font-semibold">€ {(subtotal * 0.23).toFixed(2)}</span>
+                <span className="font-semibold">€ {tax.toFixed(2)}</span>
               </div>
             </div>
 
             <div className="flex justify-between text-xl font-bold mb-6 pt-4">
               <span>Total:</span>
-              <span className="text-green-600">€ {(subtotal + (subtotal * 0.23) - discountAmount).toFixed(2)}</span>
+              <span className="text-green-600">€ {total.toFixed(2)}</span>
             </div>
 
             {/* Payment Button */}
