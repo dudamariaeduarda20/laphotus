@@ -14,7 +14,8 @@
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
     "face-service": "cd face-service && ./venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000",
-    "reindex-faces": "tsx scripts/reindex-faces.ts"
+    "reindex-faces": "tsx scripts/reindex-faces.ts",
+    "setup-env": "bash scripts/setup-env.sh"
   },
   "dependencies": {
     "@aws-sdk/client-rekognition": "^3.1075.0",
