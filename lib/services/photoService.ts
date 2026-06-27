@@ -138,18 +138,16 @@ export async function updatePhoto(
 ) {
   const photo = await prisma.photo.findUnique({
     where: { id: photoId },
+    include: { photographer: { select: { userId: true } } },
   });
 
   if (!photo) {
     throw new Error("Photo not found");
   }
 
-  // Check authorization (photographer who uploaded or admin)
-  if (photo.photographerId !== userId) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
+  // Check authorization: photographer owns this photo (userId = User.id) or admin
+  if (photo.photographer.userId !== userId) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (user?.role !== UserRole.ADMIN) {
       throw new Error("Not authorized");
     }
@@ -170,18 +168,16 @@ export async function updatePhoto(
 export async function deletePhoto(photoId: string, userId: string) {
   const photo = await prisma.photo.findUnique({
     where: { id: photoId },
+    include: { photographer: { select: { userId: true } } },
   });
 
   if (!photo) {
     throw new Error("Photo not found");
   }
 
-  // Check authorization
-  if (photo.photographerId !== userId) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
+  // Check authorization: photographer owns this photo or admin
+  if (photo.photographer.userId !== userId) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (user?.role !== UserRole.ADMIN) {
       throw new Error("Not authorized");
     }

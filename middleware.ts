@@ -4,33 +4,46 @@ import { getUserFromRequest } from "@/lib/utils/auth";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Public routes (no auth required)
-  const publicRoutes = ["/", "/auth/login", "/auth/register", "/api/auth"];
+  // Public routes — no auth required
+  const publicRoutes = [
+    "/",
+    "/auth/login",
+    "/auth/register",
+    "/api/auth",
+    "/api/photos",
+    "/api/events",
+    "/photos",
+  ];
 
-  // Check if route is public
-  const isPublic = publicRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
+  const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
   if (isPublic) {
     return NextResponse.next();
   }
 
-  // Protected routes (require auth)
-  const protectedRoutes = ["/dashboard", "/photos"];
-  const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  // Protected UI routes — require auth, redirect to login if missing
+  const protectedPrefixes = [
+    "/dashboard",
+    "/analytics",
+    "/events",
+    "/upload",
+    "/earnings",
+    "/downloads",
+    "/cart",
+    "/checkout",
+    "/success",
+    "/my-photos",
+    "/profile",
+    "/admin",
+    "/organizer",
+  ];
 
+  const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
   if (!isProtected) {
     return NextResponse.next();
   }
 
-  // Check if user is authenticated
   const user = await getUserFromRequest(request);
-
   if (!user) {
-    // Redirect to login
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
