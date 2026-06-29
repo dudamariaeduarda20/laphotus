@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
+import { rateLimits } from "@/lib/middleware/rateLimit";
 import { z } from "zod";
 
 const schema = z.object({
@@ -20,6 +21,9 @@ const schema = z.object({
  * O incremento de currentUses acontece só na confirmação do pedido.
  */
 export async function POST(request: NextRequest) {
+  const limited = rateLimits.couponValidate(request);
+  if (limited) return limited;
+
   try {
     const body = await request.json();
     const { code, subtotal } = schema.parse(body);

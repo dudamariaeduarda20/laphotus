@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimits } from "@/lib/middleware/rateLimit";
 import {
   googleVisionEnabled,
   searchFacesByImage as googleSearch,
@@ -22,6 +23,9 @@ import prisma from "@/lib/db/prisma";
  *   3. InsightFace + pgvector (default)
  */
 export async function POST(request: NextRequest) {
+  const limited = rateLimits.searchFace(request);
+  if (limited) return limited;
+
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;

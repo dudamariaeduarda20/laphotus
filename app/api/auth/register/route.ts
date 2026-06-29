@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { registerUser } from "@/lib/services/authService";
 import { signToken } from "@/lib/utils/auth";
 import { UserRole } from "@/lib/types";
+import { rateLimits } from "@/lib/middleware/rateLimit";
 import { z } from "zod";
 
 const registerSchema = z.object({
@@ -17,6 +18,9 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const limited = rateLimits.register(request);
+  if (limited) return limited;
+
   try {
     const body = await request.json();
 

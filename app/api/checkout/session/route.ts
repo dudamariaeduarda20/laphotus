@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserIdFromRequest } from "@/lib/utils/auth";
 import { createOrder } from "@/lib/services/orderService";
 import prisma from "@/lib/db/prisma";
+import { rateLimits } from "@/lib/middleware/rateLimit";
 import { z } from "zod";
 
 const sessionSchema = z.object({
@@ -17,6 +18,9 @@ const sessionSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const limited = rateLimits.checkoutSession(request);
+  if (limited) return limited;
+
   try {
     const userId = getUserIdFromRequest(request);
     if (!userId) {
