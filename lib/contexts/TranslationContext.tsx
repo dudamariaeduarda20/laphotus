@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import ptDefault from "../../public/locales/pt.json";
 
 export const SUPPORTED_LOCALES = ["pt", "en", "es", "fr", "de"] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
@@ -29,7 +30,9 @@ const TranslationContext = createContext<TranslationContextType>({
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("pt");
-  const [translations, setTranslations] = useState<Translations>({});
+  // Seed with PT statically so SSR + first client render show real text (not raw keys).
+  // Other locales load via fetch in the effect below.
+  const [translations, setTranslations] = useState<Translations>(ptDefault as Translations);
 
   useEffect(() => {
     // Read stored locale — localStorage first, then cookie
