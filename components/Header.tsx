@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Cart from "./Cart";
 import NotificationBell from "./NotificationBell";
 import LanguageSelector from "./LanguageSelector";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -19,21 +20,21 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
             L
           </div>
-          <span className="font-bold text-lg hidden sm:inline">LAPHOTUS</span>
+          <span className="font-bold text-lg hidden sm:inline text-gray-900 dark:text-white">LAPHOTUS</span>
         </Link>
 
         {/* Navigation */}
         <nav className="flex items-center gap-5">
           <Link
             href="/photos"
-            className="text-gray-600 hover:text-gray-900 transition"
+            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
           >
             {t("nav.events")}
           </Link>
@@ -59,18 +60,19 @@ export default function Header() {
             <>
               <Link
                 href="/dashboard"
-                className="text-gray-600 hover:text-gray-900 transition"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
               >
                 {t("nav.dashboard")}
               </Link>
 
               <Cart />
               <NotificationBell />
+              <ThemeToggle />
               <LanguageSelector />
 
               {/* User Menu */}
               <div className="relative group">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-50">
+                <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
                   <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center text-sm font-bold text-blue-600">
                     {user?.name?.[0]?.toUpperCase()}
                   </div>
@@ -80,16 +82,16 @@ export default function Header() {
                 </button>
 
                 {/* Dropdown Menu */}
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
                   <Link
                     href="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-t-lg"
                   >
                     {t("nav.profile")}
                   </Link>
                   <Link
                     href="/settings"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     {t("settings.title")}
                   </Link>
@@ -97,7 +99,7 @@ export default function Header() {
                   {user?.role === "PHOTOGRAPHER" && (
                     <Link
                       href="/upload"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       {t("nav.uploadPhotos")}
                     </Link>
@@ -107,13 +109,13 @@ export default function Header() {
                     <>
                       <Link
                         href="/events"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         {t("nav.myEvents")}
                       </Link>
                       <Link
                         href="/analytics"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         {t("nav.analytics")}
                       </Link>
@@ -123,7 +125,7 @@ export default function Header() {
                   {user?.role === "ADMIN" && (
                     <Link
                       href="/admin/dashboard"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       {t("nav.adminPanel")}
                     </Link>
@@ -131,7 +133,7 @@ export default function Header() {
 
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg border-t"
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-b-lg border-t dark:border-gray-700"
                   >
                     {t("nav.logout")}
                   </button>
@@ -140,10 +142,11 @@ export default function Header() {
             </>
           ) : (
             <>
+              <ThemeToggle />
               <LanguageSelector />
               <Link
                 href="/auth/login"
-                className="text-gray-600 hover:text-gray-900 transition"
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
               >
                 {t("nav.login")}
               </Link>

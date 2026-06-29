@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/lib/contexts/CartContext";
 import { TranslationProvider } from "@/lib/contexts/TranslationContext";
+import { ThemeProvider } from "@/lib/contexts/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,15 @@ export const metadata: Metadata = {
   },
 };
 
+// Anti-flash: apply saved theme before first paint
+const themeScript = `
+try {
+  const t = localStorage.getItem('theme');
+  const dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  if (dark) document.documentElement.classList.add('dark');
+} catch(e) {}
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,12 +47,17 @@ export default function RootLayout({
       lang="pt-PT"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="min-h-full flex flex-col bg-white dark:bg-gray-950 transition-colors">
         <CartProvider>
           <TranslationProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <ThemeProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </ThemeProvider>
           </TranslationProvider>
         </CartProvider>
       </body>

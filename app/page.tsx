@@ -17,7 +17,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Hero */}
       <section className="bg-gradient-to-br from-blue-700 to-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 py-20 text-center">
@@ -33,7 +33,7 @@ export default function Home() {
 
       {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 py-10">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
           {t("home.categories.title")}
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -41,7 +41,7 @@ export default function Home() {
             <Link
               key={c.value}
               href={`/photos?sport=${encodeURIComponent(c.value)}`}
-              className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:border-blue-500 hover:text-blue-600 transition flex items-center gap-2"
+              className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-600 transition flex items-center gap-2"
             >
               <span>{c.icon}</span>
               {c.label}
@@ -54,19 +54,19 @@ export default function Home() {
       <RecentEvents />
 
       {/* Stats */}
-      <section className="bg-white border-y border-gray-200">
+      <section className="bg-white dark:bg-gray-900 border-y border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           <div>
             <div className="text-4xl font-bold text-blue-600">+5 mil</div>
-            <div className="text-gray-600 mt-1">{t("home.stats.photographers")}</div>
+            <div className="text-gray-600 dark:text-gray-400 mt-1">{t("home.stats.photographers")}</div>
           </div>
           <div>
             <div className="text-4xl font-bold text-blue-600">+12 mil</div>
-            <div className="text-gray-600 mt-1">{t("home.stats.events")}</div>
+            <div className="text-gray-600 dark:text-gray-400 mt-1">{t("home.stats.events")}</div>
           </div>
           <div>
             <div className="text-4xl font-bold text-blue-600">+8 milhões</div>
-            <div className="text-gray-600 mt-1">{t("home.stats.photos")}</div>
+            <div className="text-gray-600 dark:text-gray-400 mt-1">{t("home.stats.photos")}</div>
           </div>
         </div>
       </section>
@@ -74,20 +74,20 @@ export default function Home() {
       {/* Sell section */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             {t("home.sell.title")}
           </h2>
-          <p className="text-gray-600">{t("home.sell.subtitle")}</p>
+          <p className="text-gray-600 dark:text-gray-400">{t("home.sell.subtitle")}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {sellFeatures.map((f) => (
             <div
               key={f.titleKey}
-              className="bg-white rounded-xl border border-gray-200 p-6 text-center"
+              className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-center"
             >
               <div className="text-3xl mb-3">{f.icon}</div>
-              <h3 className="font-bold text-gray-900 mb-1">{t(f.titleKey)}</h3>
-              <p className="text-sm text-gray-600">{t(f.descKey)}</p>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-1">{t(f.titleKey)}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{t(f.descKey)}</p>
             </div>
           ))}
         </div>
