@@ -1,13 +1,16 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cart from "./Cart";
 import NotificationBell from "./NotificationBell";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
+  const { t } = useTranslation();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -32,7 +35,7 @@ export default function Header() {
             href="/photos"
             className="text-gray-600 hover:text-gray-900 transition"
           >
-            Eventos
+            {t("nav.events")}
           </Link>
 
           {!isAuthenticated && (
@@ -41,13 +44,13 @@ export default function Header() {
                 href="/auth/register"
                 className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
               >
-                Sou fotógrafo
+                {t("nav.photographer")}
               </Link>
               <Link
                 href="/auth/register"
                 className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
               >
-                Sou organizador
+                {t("nav.organizer")}
               </Link>
             </>
           )}
@@ -58,14 +61,12 @@ export default function Header() {
                 href="/dashboard"
                 className="text-gray-600 hover:text-gray-900 transition"
               >
-                Painel
+                {t("nav.dashboard")}
               </Link>
 
-              {/* Cart */}
               <Cart />
-
-              {/* Notification bell */}
               <NotificationBell />
+              <LanguageSelector />
 
               {/* User Menu */}
               <div className="relative group">
@@ -84,7 +85,13 @@ export default function Header() {
                     href="/profile"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
                   >
-                    Perfil
+                    {t("nav.profile")}
+                  </Link>
+                  <Link
+                    href="/settings"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    {t("settings.title")}
                   </Link>
 
                   {user?.role === "PHOTOGRAPHER" && (
@@ -92,7 +99,7 @@ export default function Header() {
                       href="/upload"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
-                      Carregar Fotos
+                      {t("nav.uploadPhotos")}
                     </Link>
                   )}
 
@@ -102,13 +109,13 @@ export default function Header() {
                         href="/events"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        Meus Eventos
+                        {t("nav.myEvents")}
                       </Link>
                       <Link
                         href="/analytics"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        Analytics
+                        {t("nav.analytics")}
                       </Link>
                     </>
                   )}
@@ -118,7 +125,7 @@ export default function Header() {
                       href="/admin/dashboard"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                     >
-                      Painel Admin
+                      {t("nav.adminPanel")}
                     </Link>
                   )}
 
@@ -126,24 +133,25 @@ export default function Header() {
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg border-t"
                   >
-                    Terminar Sessão
+                    {t("nav.logout")}
                   </button>
                 </div>
               </div>
             </>
           ) : (
             <>
+              <LanguageSelector />
               <Link
                 href="/auth/login"
                 className="text-gray-600 hover:text-gray-900 transition"
               >
-                Entrar
+                {t("nav.login")}
               </Link>
               <Link
                 href="/auth/register"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
-                Registar
+                {t("nav.register")}
               </Link>
             </>
           )}

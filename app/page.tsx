@@ -1,29 +1,40 @@
+"use client";
+
 import Link from "next/link";
 import SearchEventBar from "@/components/SearchEventBar";
 import RecentEvents from "@/components/RecentEvents";
 import { EVENT_CATEGORIES } from "@/lib/categories";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function Home() {
+  const { t } = useTranslation();
+
+  const sellFeatures = [
+    { icon: "🚫", titleKey: "home.sell.noFee.title", descKey: "home.sell.noFee.desc" },
+    { icon: "🎯", titleKey: "home.sell.control.title", descKey: "home.sell.control.desc" },
+    { icon: "🌐", titleKey: "home.sell.site.title", descKey: "home.sell.site.desc" },
+    { icon: "⚡", titleKey: "home.sell.speed.title", descKey: "home.sell.speed.desc" },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero de busca */}
+      {/* Hero */}
       <section className="bg-gradient-to-br from-blue-700 to-blue-900 text-white">
         <div className="max-w-7xl mx-auto px-4 py-20 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            Encontre as suas fotos do evento
+            {t("home.hero.title")}
           </h1>
           <p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
-            Procure por nome do evento ou pelo seu rosto e leve as suas
-            melhores fotos desportivas.
+            {t("home.hero.subtitle")}
           </p>
           <SearchEventBar />
         </div>
       </section>
 
-      {/* Faixa de categorias */}
+      {/* Categories */}
       <section className="max-w-7xl mx-auto px-4 py-10">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Explore por categoria
+          {t("home.categories.title")}
         </h2>
         <div className="flex flex-wrap gap-2">
           {EVENT_CATEGORIES.map((c) => (
@@ -39,51 +50,44 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Eventos recentes (fetch real) */}
+      {/* Recent events */}
       <RecentEvents />
 
-      {/* Bloco institucional / prova social */}
+      {/* Stats */}
       <section className="bg-white border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           <div>
             <div className="text-4xl font-bold text-blue-600">+5 mil</div>
-            <div className="text-gray-600 mt-1">fotógrafos parceiros</div>
+            <div className="text-gray-600 mt-1">{t("home.stats.photographers")}</div>
           </div>
           <div>
             <div className="text-4xl font-bold text-blue-600">+12 mil</div>
-            <div className="text-gray-600 mt-1">eventos cobertos</div>
+            <div className="text-gray-600 mt-1">{t("home.stats.events")}</div>
           </div>
           <div>
             <div className="text-4xl font-bold text-blue-600">+8 milhões</div>
-            <div className="text-gray-600 mt-1">fotos entregues</div>
+            <div className="text-gray-600 mt-1">{t("home.stats.photos")}</div>
           </div>
         </div>
       </section>
 
-      {/* Bloco "venda suas fotos" */}
+      {/* Sell section */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Venda as suas fotos na LAPHOTUS
+            {t("home.sell.title")}
           </h2>
-          <p className="text-gray-600">
-            Tudo o que precisa para transformar a sua fotografia num negócio.
-          </p>
+          <p className="text-gray-600">{t("home.sell.subtitle")}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {[
-            { icon: "🚫", title: "Sem mensalidade", desc: "Pague só quando vende." },
-            { icon: "🎯", title: "Controle total", desc: "Os seus preços, as suas regras." },
-            { icon: "🌐", title: "Site de vendas próprio", desc: "Galeria pronta por evento." },
-            { icon: "⚡", title: "Agilidade", desc: "Upload em lote e indexação automática." },
-          ].map((v) => (
+          {sellFeatures.map((f) => (
             <div
-              key={v.title}
+              key={f.titleKey}
               className="bg-white rounded-xl border border-gray-200 p-6 text-center"
             >
-              <div className="text-3xl mb-3">{v.icon}</div>
-              <h3 className="font-bold text-gray-900 mb-1">{v.title}</h3>
-              <p className="text-sm text-gray-600">{v.desc}</p>
+              <div className="text-3xl mb-3">{f.icon}</div>
+              <h3 className="font-bold text-gray-900 mb-1">{t(f.titleKey)}</h3>
+              <p className="text-sm text-gray-600">{t(f.descKey)}</p>
             </div>
           ))}
         </div>
@@ -92,7 +96,7 @@ export default function Home() {
             href="/auth/register"
             className="inline-block px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition"
           >
-            Começar agora
+            {t("home.sell.cta")}
           </Link>
         </div>
       </section>

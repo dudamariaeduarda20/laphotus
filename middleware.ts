@@ -33,6 +33,7 @@ export async function middleware(request: NextRequest) {
     "/success",
     "/my-photos",
     "/profile",
+    "/settings",
     "/admin",
     "/organizer",
   ];
