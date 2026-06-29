@@ -32,6 +32,13 @@
   "home.sell.site.desc": "Galerie prête par événement.",
   "home.sell.speed.title": "Rapidité",
   "home.sell.speed.desc": "Téléchargement en lot et indexation automatique.",
+  "home.search.placeholder": "Commencez à taper le nom de l'événement…",
+  "home.search.button": "Rechercher",
+  "home.search.unknown": "Vous ne connaissez pas le nom de l'événement ?",
+  "home.recent.title": "Événements récents",
+  "home.recent.filter": "Toutes les catégories",
+  "home.recent.empty": "Aucun événement dans cette catégorie pour le moment.",
+  "home.recent.viewall": "Voir tous les événements",
 
   "auth.login.title": "Se connecter",
   "auth.register.title": "Créer un compte",

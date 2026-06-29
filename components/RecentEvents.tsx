@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import EventCard from "./EventCard";
 import { EVENT_CATEGORIES } from "@/lib/categories";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 /**
  * Seção "Eventos recentes" da home: filtro por categoria + grid de cards,
  * com fetch real de /api/events.
  */
 export default function RecentEvents() {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sport, setSport] = useState("");
@@ -34,13 +36,13 @@ export default function RecentEvents() {
   return (
     <section className="max-w-7xl mx-auto px-4 py-12">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Eventos recentes</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t("home.recent.title")}</h2>
         <select
           value={sport}
           onChange={(e) => setSport(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg text-sm"
         >
-          <option value="">Todas as categorias</option>
+          <option value="">{t("home.recent.filter")}</option>
           {EVENT_CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
               {c.label}
@@ -56,7 +58,7 @@ export default function RecentEvents() {
       ) : events.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
           <div className="text-5xl mb-3">📭</div>
-          <p>Nenhum evento nesta categoria por agora.</p>
+          <p>{t("home.recent.empty")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -71,7 +73,7 @@ export default function RecentEvents() {
           href="/photos"
           className="inline-block px-6 py-3 border border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
         >
-          Ver todos os eventos
+          {t("home.recent.viewall")}
         </Link>
       </div>
     </section>

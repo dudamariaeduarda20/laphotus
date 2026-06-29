@@ -32,6 +32,13 @@
   "home.sell.site.desc": "Galería lista por evento.",
   "home.sell.speed.title": "Agilidad",
   "home.sell.speed.desc": "Carga masiva e indexación automática.",
+  "home.search.placeholder": "Empiece a escribir el nombre del evento…",
+  "home.search.button": "Buscar",
+  "home.search.unknown": "¿No sabe el nombre del evento?",
+  "home.recent.title": "Eventos recientes",
+  "home.recent.filter": "Todas las categorías",
+  "home.recent.empty": "No hay eventos en esta categoría por ahora.",
+  "home.recent.viewall": "Ver todos los eventos",
 
   "auth.login.title": "Iniciar sesión",
   "auth.register.title": "Crear cuenta",

@@ -32,6 +32,13 @@
   "home.sell.site.desc": "Galerie fertig pro Event.",
   "home.sell.speed.title": "Schnelligkeit",
   "home.sell.speed.desc": "Massenupload und automatische Indexierung.",
+  "home.search.placeholder": "Geben Sie den Namen der Veranstaltung ein…",
+  "home.search.button": "Suchen",
+  "home.search.unknown": "Kennen Sie den Namen der Veranstaltung nicht?",
+  "home.recent.title": "Aktuelle Veranstaltungen",
+  "home.recent.filter": "Alle Kategorien",
+  "home.recent.empty": "Noch keine Veranstaltungen in dieser Kategorie.",
+  "home.recent.viewall": "Alle Veranstaltungen anzeigen",
 
   "auth.login.title": "Anmelden",
   "auth.register.title": "Konto erstellen",

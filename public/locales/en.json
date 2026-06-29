@@ -32,6 +32,13 @@
   "home.sell.site.desc": "Gallery ready per event.",
   "home.sell.speed.title": "Speed",
   "home.sell.speed.desc": "Batch upload and automatic indexing.",
+  "home.search.placeholder": "Start typing the event name…",
+  "home.search.button": "Search",
+  "home.search.unknown": "Don't know the event name?",
+  "home.recent.title": "Recent events",
+  "home.recent.filter": "All categories",
+  "home.recent.empty": "No events in this category yet.",
+  "home.recent.viewall": "View all events",
 
   "auth.login.title": "Login",
   "auth.register.title": "Create account",
