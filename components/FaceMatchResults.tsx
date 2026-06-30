@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslation } from "@/lib/hooks/useTranslation";
+
 interface Match {
   photoId: string;
   photoName: string;
@@ -21,15 +23,16 @@ export default function FaceMatchResults({
   matches,
   onPhotoClick,
 }: FaceMatchResultsProps) {
+  const { t } = useTranslation();
   if (matches.length === 0) {
     return (
       <div className="bg-blue-50 rounded-lg p-8 text-center border border-blue-200">
         <div className="text-5xl mb-3">🔍</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Sem correspondências encontradas
+          {t("facematch.noMatch.title")}
         </h3>
         <p className="text-gray-600">
-          Nenhuma foto do evento corresponde a esta selfie (limite: 70% semelhança)
+          {t("facematch.noMatch.desc")}
         </p>
       </div>
     );
@@ -39,11 +42,11 @@ export default function FaceMatchResults({
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-bold text-gray-900">
-          {matches.length} foto{matches.length !== 1 ? "s" : ""} encontrada
-          {matches.length !== 1 ? "s" : ""}
+          {matches.length}{" "}
+          {matches.length !== 1 ? t("facematch.photos") : t("facematch.photo")}
         </h3>
         <span className="text-sm text-gray-600">
-          Melhor correspondência: {matches[0]?.matchPercent}%
+          {t("facematch.best")} {matches[0]?.matchPercent}%
         </span>
       </div>
 
@@ -65,7 +68,7 @@ export default function FaceMatchResults({
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-semibold text-gray-700">
-                    Correspondência
+                    {t("facematch.match")}
                   </span>
                   <span className="text-lg font-bold text-green-600">
                     {match.matchPercent}%
@@ -85,13 +88,13 @@ export default function FaceMatchResults({
                   {match.photoName}
                 </h4>
                 <p className="text-sm text-gray-600 mb-2">
-                  por {match.photographerName}
+                  {t("facematch.by")} {match.photographerName}
                 </p>
 
                 {/* Confidence Badge */}
                 <div className="flex items-center gap-2 mb-3">
                   <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
-                    Confiança: {Math.round(match.confidence * 100)}%
+                    {t("facematch.confidence")} {Math.round(match.confidence * 100)}%
                   </span>
                   {match.isPremium && (
                     <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded">
@@ -102,14 +105,14 @@ export default function FaceMatchResults({
 
                 {/* Price */}
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Preço:</span>
+                  <span className="text-gray-600">{t("facematch.price")}</span>
                   <span className="font-bold text-blue-600">€ {match.price.toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Action */}
               <button className="w-full mt-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold transition">
-                Ver Detalhes
+                {t("photo.viewDetails")}
               </button>
             </div>
           </div>
@@ -119,21 +122,21 @@ export default function FaceMatchResults({
       {/* Face Analysis Info */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
         <h4 className="font-semibold text-gray-900 mb-2">
-          📊 Análise Facial (face-api.js · 128-D)
+          📊 {t("facematch.analysis")} (face-api.js · 128-D)
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
           <div>
-            <span className="text-gray-600 block">Fotos Correspondentes</span>
+            <span className="text-gray-600 block">{t("facematch.stat.matched")}</span>
             <span className="font-semibold text-gray-900">{matches.length}</span>
           </div>
           <div>
-            <span className="text-gray-600 block">Melhor Correspondência</span>
+            <span className="text-gray-600 block">{t("facematch.stat.best")}</span>
             <span className="font-semibold text-gray-900">
               {matches[0]?.matchPercent}%
             </span>
           </div>
           <div>
-            <span className="text-gray-600 block">Correspondência Média</span>
+            <span className="text-gray-600 block">{t("facematch.stat.avg")}</span>
             <span className="font-semibold text-gray-900">
               {Math.round(
                 (matches.reduce((sum, m) => sum + m.matchPercent, 0) /

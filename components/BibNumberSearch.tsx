@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface BibNumberSearchProps {
   eventId: string;
@@ -11,6 +12,7 @@ export default function BibNumberSearch({
   eventId,
   onSearch,
 }: BibNumberSearchProps) {
+  const { t } = useTranslation();
   const [bibNumber, setBibNumber] = useState("");
   const [searching, setSearching] = useState(false);
 
@@ -33,7 +35,7 @@ export default function BibNumberSearch({
   return (
     <div className="bg-white rounded-lg shadow p-4 mb-6">
       <label className="block text-sm font-medium text-gray-700 mb-2">
-        🏃 Procure pela dorsal
+        🏃 {t("bib.label")}
       </label>
       <div className="flex gap-2">
         <input
@@ -41,7 +43,7 @@ export default function BibNumberSearch({
           value={bibNumber}
           onChange={(e) => setBibNumber(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Digite o número da dorsal (ex: 145)..."
+          placeholder={t("bib.placeholder")}
           className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           maxLength={3}
         />
@@ -50,7 +52,7 @@ export default function BibNumberSearch({
           disabled={searching || !bibNumber.trim()}
           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-semibold"
         >
-          {searching ? "A procurar..." : "Procurar"}
+          {searching ? t("bib.searching") : t("common.search")}
         </button>
         {bibNumber && (
           <button
@@ -60,12 +62,12 @@ export default function BibNumberSearch({
             }}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
           >
-            ✕ Limpar
+            ✕ {t("bib.clear")}
           </button>
         )}
       </div>
       <p className="mt-2 text-xs text-gray-600">
-        Encontre fotos do seu número de dorsal automaticamente detetado pelo sistema
+        {t("bib.hint")}
       </p>
     </div>
   );
