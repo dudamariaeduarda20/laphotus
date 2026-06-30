@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
     // Debug: log engine availability
     console.log("[search-face] Engine status:", {
       googleEnabled: googleVisionEnabled(),
+      googleCredsBase64: !!process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64,
       googleCreds: !!process.env.GOOGLE_APPLICATION_CREDENTIALS,
       googleProject: !!process.env.GOOGLE_CLOUD_PROJECT_ID,
       awsEnabled: awsEnabled(),

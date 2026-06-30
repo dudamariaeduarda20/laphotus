@@ -7,19 +7,38 @@
 import { ImageAnnotatorClient } from "@google-cloud/vision";
 import prisma from "@/lib/db/prisma";
 
-// Parseia as credenciais do `.env` (JSON inline)
+// Lê o JSON de credenciais. Suporta duas formas:
+//   1. GOOGLE_APPLICATION_CREDENTIALS_BASE64 (recomendado em Vercel — sem
+//      problemas de quebra de linha na private_key)
+//   2. GOOGLE_APPLICATION_CREDENTIALS (JSON inline — fallback local)
+const getCredentialsJson = (): string | null => {
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64) {
+    return Buffer.from(
+      process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64,
+      "base64"
+    ).toString("utf-8");
+  }
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    return process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  }
+  return null;
+};
+
+// Parseia as credenciais e cria o cliente Vision
 const getGoogleClient = () => {
-  if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    throw new Error("GOOGLE_APPLICATION_CREDENTIALS não configurado");
+  const raw = getCredentialsJson();
+  if (!raw) {
+    throw new Error("Credenciais Google Vision não configuradas");
   }
   try {
-    const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+    const credentials = JSON.parse(raw);
     return new ImageAnnotatorClient({
       credentials,
-      projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+      projectId:
+        process.env.GOOGLE_CLOUD_PROJECT_ID || credentials.project_id,
     });
   } catch (err) {
-    throw new Error(`Falha ao parsear GOOGLE_APPLICATION_CREDENTIALS: ${err}`);
+    throw new Error(`Falha ao parsear credenciais Google Vision: ${err}`);
   }
 };
 
@@ -197,5 +216,8 @@ export async function storeFaceDetection(
  * Verifica se Google Cloud Vision está disponível (creds presentes).
  */
 export function googleVisionEnabled(): boolean {
-  return !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  return (
+    !!process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64 ||
+    !!process.env.GOOGLE_APPLICATION_CREDENTIALS
+  );
 }
