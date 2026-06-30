@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import { UserRole } from "@/lib/types";
 
 interface AuthFormProps {
@@ -12,6 +13,7 @@ interface AuthFormProps {
 export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const { login, register } = useAuth();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -50,7 +52,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Falha na operação"
+        err instanceof Error ? err.message : t("auth.err.fail")
       );
     } finally {
       setLoading(false);
@@ -68,7 +70,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       {mode === "register" && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Nome Completo
+            {t("auth.fullName")}
           </label>
           <input
             type="text"
@@ -77,14 +79,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
             onChange={handleChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="João Silva"
+            placeholder={t("auth.namePlaceholder")}
           />
         </div>
       )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Email
+          {t("auth.email")}
         </label>
         <input
           type="email"
@@ -99,7 +101,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Palavra-passe
+          {t("auth.password")}
         </label>
         <input
           type="password"
@@ -116,7 +118,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       {mode === "register" && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tipo de Conta
+            {t("dashboard.accountType")}
           </label>
           <select
             name="role"
@@ -124,12 +126,12 @@ export default function AuthForm({ mode }: AuthFormProps) {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value={UserRole.CLIENT}>Cliente (Comprar Fotos)</option>
-            <option value={UserRole.PHOTOGRAPHER}>Fotógrafo (Vender)</option>
-            <option value={UserRole.ORGANIZER}>Organizador (Eventos)</option>
+            <option value={UserRole.CLIENT}>{t("auth.role.client")}</option>
+            <option value={UserRole.PHOTOGRAPHER}>{t("auth.role.photographer")}</option>
+            <option value={UserRole.ORGANIZER}>{t("auth.role.organizer")}</option>
           </select>
           <p className="mt-2 text-xs text-gray-500">
-            Pode alterar isto mais tarde nas configurações
+            {t("auth.roleHint")}
           </p>
         </div>
       )}
@@ -139,22 +141,22 @@ export default function AuthForm({ mode }: AuthFormProps) {
         disabled={loading}
         className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
       >
-        {loading ? "A carregar..." : mode === "register" ? "Criar Conta" : "Entrar"}
+        {loading ? t("common.loading") : mode === "register" ? t("auth.createAccount") : t("auth.submit.login")}
       </button>
 
       <div className="text-center text-sm text-gray-600">
         {mode === "register" ? (
           <>
-            Já tem conta?{" "}
+            {t("auth.haveAccount")}{" "}
             <a href="/auth/login" className="text-blue-600 hover:underline">
-              Entrar
+              {t("auth.submit.login")}
             </a>
           </>
         ) : (
           <>
-            Não tem conta?{" "}
+            {t("auth.noAccount")}{" "}
             <a href="/auth/register" className="text-blue-600 hover:underline">
-              Criar uma
+              {t("auth.createOne")}
             </a>
           </>
         )}

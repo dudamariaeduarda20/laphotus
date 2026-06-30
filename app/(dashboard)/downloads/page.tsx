@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function DownloadsPage() {
   const { isClient, loading: authLoading } = useAuth();
+  const { t } = useTranslation();
   const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,13 +25,13 @@ export default function DownloadsPage() {
       setLoading(true);
       try {
         const res = await fetch("/api/orders");
-        if (!res.ok) throw new Error("Falha ao carregar encomendas");
+        if (!res.ok) throw new Error(t("downloads.err.load"));
 
         const { orders } = await res.json();
         setOrders(orders.filter((o: any) => o.status === "COMPLETED"));
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Falha ao carregar");
+        setError(err instanceof Error ? err.message : t("downloads.err.generic"));
       } finally {
         setLoading(false);
       }
@@ -48,8 +50,8 @@ export default function DownloadsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Minhas Transferências</h1>
-      <p className="text-gray-600 mb-8">Descarregue as fotos que comprou</p>
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("dashboard.myDownloads")}</h1>
+      <p className="text-gray-600 mb-8">{t("downloads.subtitle")}</p>
 
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 mb-6">
@@ -61,16 +63,16 @@ export default function DownloadsPage() {
         <div className="bg-white rounded-lg shadow p-12 text-center">
           <div className="text-6xl mb-4">📦</div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Nenhuma compra ainda
+            {t("downloads.empty.title")}
           </h2>
           <p className="text-gray-600 mb-6">
-            Você ainda não comprou nenhuma foto. Explore nossa galeria!
+            {t("downloads.empty.desc")}
           </p>
           <Link
             href="/photos"
             className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Procurar Fotos
+            {t("dashboard.searchPhotos")}
           </Link>
         </div>
       ) : (
@@ -80,7 +82,7 @@ export default function DownloadsPage() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">
-                    Encomenda #{order.id.substring(0, 8)}
+                    {t("downloads.order")} #{order.id.substring(0, 8)}
                   </h3>
                   <p className="text-sm text-gray-600">
                     {new Date(order.paidAt).toLocaleDateString("pt-PT")}
@@ -91,13 +93,13 @@ export default function DownloadsPage() {
                     € {order.total.toFixed(2)}
                   </div>
                   <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
-                    Paga
+                    {t("success.order.paid")}
                   </span>
                 </div>
               </div>
 
               <div className="border-t border-gray-200 pt-4">
-                <h4 className="font-semibold text-gray-900 mb-3">Fotos</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">{t("downloads.photos")}</h4>
                 <div className="space-y-2">
                   {order.items.map((item: any) => (
                     <div
@@ -119,7 +121,7 @@ export default function DownloadsPage() {
                             const res = await fetch(`/api/download/${item.photo.id}`);
                             const data = await res.json();
                             if (!res.ok) {
-                              alert(data.error || "Sem permissão para descarregar");
+                              alert(data.error || t("downloads.err.noPerm"));
                               return;
                             }
                             const link = document.createElement("a");
@@ -128,12 +130,12 @@ export default function DownloadsPage() {
                             link.target = "_blank";
                             link.click();
                           } catch {
-                            alert("Falha ao descarregar");
+                            alert(t("downloads.err.download"));
                           }
                         }}
                         className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
                       >
-                        ⬇ Descarregar
+                        ⬇ {t("downloads.download")}
                       </button>
                     </div>
                   ))}
@@ -142,21 +144,21 @@ export default function DownloadsPage() {
 
               <div className="border-t border-gray-200 mt-4 pt-4 text-sm text-gray-600">
                 <div className="flex justify-between">
-                  <span>Subtotal:</span>
+                  <span>{t("cart.subtotal")}</span>
                   <span>€ {order.subtotal.toFixed(2)}</span>
                 </div>
                 {order.discount > 0 && (
                   <div className="flex justify-between text-green-600">
-                    <span>Desconto:</span>
+                    <span>{t("checkout.discount")}:</span>
                     <span>-€ {order.discount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>IVA (23%):</span>
+                  <span>{t("cart.vat")}</span>
                   <span>€ {order.tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-gray-900 mt-2 pt-2 border-t border-gray-200">
-                  <span>Total:</span>
+                  <span>{t("cart.total")}</span>
                   <span>€ {order.total.toFixed(2)}</span>
                 </div>
               </div>

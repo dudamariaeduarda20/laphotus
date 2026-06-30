@@ -1,10 +1,12 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useState } from "react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -25,7 +27,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Configurações do Perfil</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">{t("profile.title")}</h1>
 
       <div className="bg-white rounded-lg shadow p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -43,7 +45,7 @@ export default function ProfilePage() {
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nome Completo
+              {t("auth.fullName")}
             </label>
             <input
               type="text"
@@ -57,7 +59,7 @@ export default function ProfilePage() {
           {/* Email (read-only) */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
+              {t("auth.email")}
             </label>
             <input
               type="email"
@@ -66,14 +68,14 @@ export default function ProfilePage() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
             />
             <p className="mt-1 text-xs text-gray-500">
-              Email não pode ser alterado
+              {t("profile.emailLocked")}
             </p>
           </div>
 
           {/* Role */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tipo de Conta
+              {t("dashboard.accountType")}
             </label>
             <input
               type="text"
@@ -82,14 +84,14 @@ export default function ProfilePage() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
             />
             <p className="mt-1 text-xs text-gray-500">
-              Contacte suporte para alterar tipo de conta
+              {t("profile.roleLocked")}
             </p>
           </div>
 
           {/* Member Since */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Membro Desde
+              {t("profile.memberSince")}
             </label>
             <input
               type="text"
@@ -109,19 +111,19 @@ export default function ProfilePage() {
               type="submit"
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
-              Guardar Alterações
+              {t("profile.save")}
             </button>
             <button
               type="button"
               className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
             >
-              Cancelar
+              {t("common.cancel")}
             </button>
           </div>
 
           {saved && (
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-              ✓ Perfil atualizado com sucesso
+              ✓ {t("profile.saved")}
             </div>
           )}
         </form>
@@ -129,9 +131,9 @@ export default function ProfilePage() {
 
       {/* Danger Zone */}
       <div className="mt-12 pt-8 border-t border-gray-200">
-        <h2 className="text-lg font-bold text-red-600 mb-4">Zona Perigosa</h2>
+        <h2 className="text-lg font-bold text-red-600 mb-4">{t("profile.danger")}</h2>
         <button className="px-6 py-2 bg-red-50 border border-red-200 text-red-600 rounded-lg hover:bg-red-100 transition">
-          Eliminar Conta
+          {t("profile.deleteAccount")}
         </button>
       </div>
     </div>
