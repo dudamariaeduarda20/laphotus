@@ -148,8 +148,13 @@ export async function searchByEmbedding(
 
 /**
  * Verifica se o microserviço Python está disponível.
+ * Desativado em produção (serviço muito pesado para serverless).
  */
 export async function faceServiceHealthy(): Promise<boolean> {
+  // Face recognition indisponível em produção
+  const isDev = process.env.NODE_ENV === "development";
+  if (!isDev) return false;
+
   try {
     const res = await fetch(`${FACE_SERVICE_URL}/health`, {
       signal: AbortSignal.timeout(2000),

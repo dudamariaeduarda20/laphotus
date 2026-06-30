@@ -60,6 +60,12 @@ export default function SelfieUpload({
         throw new Error(data.error || t("selfie.err.process"));
       }
 
+      // Verifica se face-service indisponível
+      if (data.unavailable) {
+        setError(data.message);
+        return;
+      }
+
       setFileName(file.name);
       onMatch?.(data.matches || []);
     } catch (err) {

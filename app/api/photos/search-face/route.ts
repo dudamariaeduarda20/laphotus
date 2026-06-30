@@ -67,10 +67,12 @@ export async function POST(request: NextRequest) {
     if (!(await faceServiceHealthy())) {
       return NextResponse.json(
         {
-          error:
-            "Serviço de reconhecimento facial indisponível. Inicie o face-service (porta 8000).",
+          matches: [],
+          message:
+            "Reconhecimento facial indisponível em produção. Use a busca por número de bibs ou por nome do fotógrafo.",
+          unavailable: true,
         },
-        { status: 503 }
+        { status: 200 }
       );
     }
 

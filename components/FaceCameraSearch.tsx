@@ -163,6 +163,13 @@ export default function FaceCameraSearch({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t("face.error.searchFail"));
 
+      // Verifica se face-service indisponível
+      if (data.unavailable) {
+        setError(data.message);
+        setStatus("ready");
+        return;
+      }
+
       onMatch?.(data.matches || []);
       setStatus("ready");
     } catch (err) {
