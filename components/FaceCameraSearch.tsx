@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface FaceCameraSearchProps {
   eventId: string;
@@ -21,6 +22,7 @@ export default function FaceCameraSearch({
   onMatch,
   onLoading,
 }: FaceCameraSearchProps) {
+  const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const detectorRef = useRef<any>(null);
@@ -71,12 +73,12 @@ export default function FaceCameraSearch({
       console.error(err);
       setError(
         err instanceof Error && err.name === "NotAllowedError"
-          ? "Permissão da câmera negada. Autorize o acesso para continuar."
-          : "Não foi possível aceder à câmera."
+          ? t("face.error.denied")
+          : t("face.error.noCamera")
       );
       setStatus("error");
     }
-  }, []);
+  }, [t]);
 
   // Loop de deteção em tempo real -> desenha retângulo
   const detectLoop = useCallback(() => {
@@ -138,13 +140,13 @@ export default function FaceCameraSearch({
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Canvas indisponível");
+      if (!ctx) throw new Error(t("face.error.canvas"));
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       // Converte para Blob JPEG otimizado
       const blob: Blob = await new Promise((resolve, reject) =>
         canvas.toBlob(
-          (b) => (b ? resolve(b) : reject(new Error("Falha ao capturar"))),
+          (b) => (b ? resolve(b) : reject(new Error(t("face.error.capture")))),
           "image/jpeg",
           0.9
         )
@@ -159,17 +161,17 @@ export default function FaceCameraSearch({
         body: formData,
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Falha na busca");
+      if (!res.ok) throw new Error(data.error || t("face.error.searchFail"));
 
       onMatch?.(data.matches || []);
       setStatus("ready");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro na busca");
+      setError(err instanceof Error ? err.message : t("face.error.generic"));
       setStatus("ready");
     } finally {
       onLoading?.(false);
     }
-  }, [eventId, onMatch, onLoading]);
+  }, [eventId, onMatch, onLoading, t]);
 
   // Limpeza: pára câmera + loop ao desmontar
   useEffect(() => {
@@ -201,7 +203,7 @@ export default function FaceCameraSearch({
             {status === "loading" ? (
               <>
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white mb-3"></div>
-                <p className="text-sm">A iniciar câmera e modelo…</p>
+                <p className="text-sm">{t("face.loading")}</p>
               </>
             ) : status === "error" ? (
               <>
@@ -211,9 +213,9 @@ export default function FaceCameraSearch({
             ) : (
               <>
                 <div className="text-5xl mb-3">📸</div>
-                <p className="font-semibold mb-1">Procurar pelo seu rosto</p>
+                <p className="font-semibold mb-1">{t("face.title")}</p>
                 <p className="text-sm text-gray-300">
-                  Use a câmera para encontrar as suas fotos
+                  {t("face.subtitle")}
                 </p>
               </>
             )}
@@ -230,7 +232,7 @@ export default function FaceCameraSearch({
                   : "bg-yellow-500/90 text-white"
               }`}
             >
-              {faceFramed ? "✓ Rosto enquadrado" : "Posicione o rosto"}
+              {faceFramed ? `✓ ${t("face.framed")}` : t("face.position")}
             </span>
           </div>
         )}
@@ -244,7 +246,7 @@ export default function FaceCameraSearch({
             disabled={status === "loading"}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
           >
-            {status === "loading" ? "A iniciar…" : "Ativar Câmera"}
+            {status === "loading" ? t("face.starting") : t("face.activate")}
           </button>
         ) : (
           <button
@@ -252,7 +254,7 @@ export default function FaceCameraSearch({
             disabled={status === "searching" || !faceFramed}
             className="px-8 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50"
           >
-            {status === "searching" ? "A procurar…" : "🔍 Buscar"}
+            {status === "searching" ? t("face.searching") : `🔍 ${t("home.search.button")}`}
           </button>
         )}
       </div>

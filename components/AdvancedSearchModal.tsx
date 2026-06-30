@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { EVENT_CATEGORIES } from "@/lib/categories";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface AdvancedSearchModalProps {
   open: boolean;
@@ -37,12 +38,12 @@ function presetRange(preset: string): { from?: string; to?: string } {
 }
 
 const DATE_PRESETS = [
-  { value: "hoje", label: "Hoje" },
-  { value: "ontem", label: "Ontem" },
-  { value: "3", label: "Últimos 3 dias" },
-  { value: "7", label: "Últimos 7 dias" },
-  { value: "14", label: "Últimos 14 dias" },
-  { value: "30", label: "Últimos 30 dias" },
+  { value: "hoje", labelKey: "search.preset.today" },
+  { value: "ontem", labelKey: "search.preset.yesterday" },
+  { value: "3", labelKey: "search.preset.3d" },
+  { value: "7", labelKey: "search.preset.7d" },
+  { value: "14", labelKey: "search.preset.14d" },
+  { value: "30", labelKey: "search.preset.30d" },
 ];
 
 export default function AdvancedSearchModal({
@@ -50,6 +51,7 @@ export default function AdvancedSearchModal({
   onClose,
 }: AdvancedSearchModalProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"data" | "categoria">("data");
   const [month, setMonth] = useState("");
 
@@ -81,11 +83,11 @@ export default function AdvancedSearchModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h3 className="font-bold text-lg text-gray-900">Busca avançada</h3>
+          <h3 className="font-bold text-lg text-gray-900">{t("search.advanced.title")}</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-700 text-xl leading-none"
-            aria-label="Fechar"
+            aria-label={t("common.close")}
           >
             ✕
           </button>
@@ -101,7 +103,7 @@ export default function AdvancedSearchModal({
                 : "text-gray-500 hover:text-gray-800"
             }`}
           >
-            Por data
+            {t("search.tab.date")}
           </button>
           <button
             onClick={() => setTab("categoria")}
@@ -111,7 +113,7 @@ export default function AdvancedSearchModal({
                 : "text-gray-500 hover:text-gray-800"
             }`}
           >
-            Por categoria
+            {t("search.tab.category")}
           </button>
         </div>
 
@@ -126,14 +128,14 @@ export default function AdvancedSearchModal({
                     onClick={() => go(presetRange(p.value) as Record<string, string>)}
                     className="px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:border-blue-500 hover:text-blue-600 transition"
                   >
-                    {p.label}
+                    {t(p.labelKey)}
                   </button>
                 ))}
               </div>
 
               <div className="pt-2 border-t">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Ou escolha mês e ano
+                  {t("search.month.label")}
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -147,7 +149,7 @@ export default function AdvancedSearchModal({
                     disabled={!month}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold disabled:opacity-50"
                   >
-                    Buscar
+                    {t("home.search.button")}
                   </button>
                 </div>
               </div>
