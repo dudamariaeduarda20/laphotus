@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimits } from "@/lib/middleware/rateLimit";
 import {
-  googleVisionEnabled,
-  searchFacesByImage as googleSearch,
-} from "@/lib/services/googleVisionService";
-import {
   embedImage,
   searchByEmbedding,
   faceServiceHealthy,
@@ -17,10 +13,12 @@ import prisma from "@/lib/db/prisma";
  *
  * Recebe um frame capturado pela câmera (multipart "file" + "eventId").
  *
- * Motor (seleção automática, ordem de prioridade):
- *   1. Google Cloud Vision (SOTA, se creds presentes)
- *   2. AWS Rekognition (se creds presentes)
- *   3. InsightFace + pgvector (default)
+ * Motor de identity matching (ordem de prioridade):
+ *   1. AWS Rekognition — SearchFacesByImage real (se creds presentes)
+ *   2. InsightFace + pgvector — embeddings reais (se face-service ativo)
+ *
+ * NOTA: Google Cloud Vision NÃO faz identity matching (só deteta rostos),
+ * por isso foi removido. Ver lib/services/googleVisionService.
  */
 export async function POST(request: NextRequest) {
   const limited = rateLimits.searchFace(request);
@@ -45,39 +43,12 @@ export async function POST(request: NextRequest) {
 
     // Debug: log engine availability
     console.log("[search-face] Engine status:", {
-      googleEnabled: googleVisionEnabled(),
-      googleCredsBase64: !!process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64,
-      googleCreds: !!process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      googleProject: !!process.env.GOOGLE_CLOUD_PROJECT_ID,
       awsEnabled: awsEnabled(),
+      faceServiceUrl: !!process.env.FACE_SERVICE_URL,
       env: process.env.NODE_ENV,
     });
 
-    // === Motor 1: Google Cloud Vision (SOTA, se creds presentes) ===
-    if (googleVisionEnabled()) {
-      try {
-        matches = await googleSearch(eventId, buffer, 70);
-        if (matches.length > 0) {
-          engine = "Google Cloud Vision";
-          return NextResponse.json(
-            {
-              matches,
-              summary: {
-                total: matches.length,
-                bestMatch: matches[0]?.matchPercent || 0,
-                engine,
-              },
-            },
-            { status: 200 }
-          );
-        }
-      } catch (err) {
-        console.error("Google Vision error:", err);
-        // fallback para próximo motor
-      }
-    }
-
-    // === Motor 2: AWS Rekognition (se creds presentes) ===
+    // === Motor 1: AWS Rekognition (identity matching real, se creds presentes) ===
     if (awsEnabled()) {
       try {
         matches = await searchFacesByBytes(eventId, buffer, 80);
@@ -101,7 +72,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // === Motor 3: InsightFace + pgvector (default) ===
+    // === Motor 2: InsightFace + pgvector (face-service ativo) ===
     if (await faceServiceHealthy()) {
       try {
         // 1. Embedding via InsightFace

@@ -190,43 +190,35 @@ export async function POST(request: NextRequest) {
       console.error("OCR error for", photo.id, err);
     });
 
-    // Indexação facial. Motor automático (prioridade):
-    //   1. Google Cloud Vision (SOTA, creds presentes)
-    //   2. AWS Rekognition (creds presentes)
-    //   3. InsightFace (default)
-    //   4. face-api.js (browser fallback)
+    // Indexação facial. Motor de identity matching (prioridade):
+    //   1. AWS Rekognition — IndexFaces real (creds presentes)
+    //   2. InsightFace + pgvector — embeddings reais (face-service ativo)
+    //   3. face-api.js — descritor 128-D extraído no browser
+    //
+    // NOTA: Google Cloud Vision NÃO faz identity matching (só deteta rostos),
+    // por isso não é usado para indexação. Ver lib/services/googleVisionService.
     try {
-      const { googleVisionEnabled, detectFaces, storeFaceDetection } = await import(
-        "@/lib/services/googleVisionService"
+      const { awsEnabled, indexFaceByBytes } = await import(
+        "@/lib/services/faceService"
       );
-      if (googleVisionEnabled()) {
-        const detection = await detectFaces(buffer);
-        if (detection.found) {
-          await storeFaceDetection(photo.id, userId, detection);
-        }
+      if (awsEnabled()) {
+        await indexFaceByBytes(photo.id, userId, buffer);
       } else {
-        const { awsEnabled, indexFaceByBytes } = await import(
-          "@/lib/services/faceService"
+        const { embedImage, storeEmbedding, faceServiceHealthy } = await import(
+          "@/lib/services/insightFaceService"
         );
-        if (awsEnabled()) {
-          await indexFaceByBytes(photo.id, userId, buffer);
-        } else {
-          const { embedImage, storeEmbedding, faceServiceHealthy } = await import(
-            "@/lib/services/insightFaceService"
-          );
-          if (await faceServiceHealthy()) {
-            const emb = await embedImage(buffer, fileName, file.type);
-            if (emb.found && emb.embedding) {
-              await storeEmbedding(photo.id, userId, emb.embedding, emb.detScore);
-            }
-          } else if (faceDescriptorRaw) {
-            const descriptor = JSON.parse(faceDescriptorRaw);
-            if (Array.isArray(descriptor) && descriptor.length === 128) {
-              const { storeFaceDescriptor } = await import(
-                "@/lib/services/faceService"
-              );
-              await storeFaceDescriptor(photo.id, userId, descriptor);
-            }
+        if (await faceServiceHealthy()) {
+          const emb = await embedImage(buffer, fileName, file.type);
+          if (emb.found && emb.embedding) {
+            await storeEmbedding(photo.id, userId, emb.embedding, emb.detScore);
+          }
+        } else if (faceDescriptorRaw) {
+          const descriptor = JSON.parse(faceDescriptorRaw);
+          if (Array.isArray(descriptor) && descriptor.length === 128) {
+            const { storeFaceDescriptor } = await import(
+              "@/lib/services/faceService"
+            );
+            await storeFaceDescriptor(photo.id, userId, descriptor);
           }
         }
       }
