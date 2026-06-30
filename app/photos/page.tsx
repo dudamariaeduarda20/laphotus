@@ -4,9 +4,11 @@ import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import EventCard from "@/components/EventCard";
 import { EVENT_CATEGORIES } from "@/lib/categories";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 function PhotosContent() {
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
 
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,9 +51,9 @@ function PhotosContent() {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-2">Eventos Desportivos</h1>
+          <h1 className="text-4xl font-bold mb-2">{t("events.title")}</h1>
           <p className="text-blue-100">
-            Procure eventos e compre fotos profissionais de desporto
+            {t("events.subtitle")}
           </p>
         </div>
       </div>
@@ -64,13 +66,13 @@ function PhotosContent() {
             {/* Search */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Procurar Eventos
+                {t("dashboard.searchEvents")}
               </label>
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Nome do evento, localização..."
+                placeholder={t("events.searchPlaceholder")}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -78,14 +80,14 @@ function PhotosContent() {
             {/* Sport Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Categoria
+                {t("events.category")}
               </label>
               <select
                 value={sport}
                 onChange={(e) => setSport(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Todas as Categorias</option>
+                <option value="">{t("events.allCategories")}</option>
                 {EVENT_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
                     {c.label}
@@ -97,7 +99,7 @@ function PhotosContent() {
 
           {(from || to) && (
             <div className="mt-3 text-sm text-gray-500">
-              Filtrando por data: {from || "…"} → {to || "…"}
+              {t("events.filterDate")} {from || "…"} → {to || "…"}
             </div>
           )}
         </div>
@@ -123,17 +125,17 @@ function PhotosContent() {
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">🎯</div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Nenhum evento encontrado
+                  {t("events.empty.title")}
                 </h2>
                 <p className="text-gray-600">
-                  Tente ajustar os filtros de pesquisa
+                  {t("events.empty.desc")}
                 </p>
               </div>
             ) : (
               <>
                 <div className="mb-4 text-sm text-gray-600">
-                  Encontrados {events.length} evento
-                  {events.length !== 1 ? "s" : ""}
+                  {t("events.foundPrefix")} {events.length}{" "}
+                  {events.length !== 1 ? t("events.events") : t("events.event")}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {events.map((event) => (
@@ -149,9 +151,14 @@ function PhotosContent() {
   );
 }
 
+function LoadingFallback() {
+  const { t } = useTranslation();
+  return <div className="py-20 text-center text-gray-400">{t("common.loading")}</div>;
+}
+
 export default function PhotosPage() {
   return (
-    <Suspense fallback={<div className="py-20 text-center text-gray-400">A carregar…</div>}>
+    <Suspense fallback={<LoadingFallback />}>
       <PhotosContent />
     </Suspense>
   );

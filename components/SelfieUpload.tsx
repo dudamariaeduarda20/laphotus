@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface SelfieUploadProps {
   eventId: string;
@@ -13,6 +14,7 @@ export default function SelfieUpload({
   onMatch,
   onLoading,
 }: SelfieUploadProps) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,12 +31,12 @@ export default function SelfieUpload({
 
   const processFile = async (file: File) => {
     if (!file.type.startsWith("image/")) {
-      setError("Apenas imagens permitidas");
+      setError(t("selfie.err.imageOnly"));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError("Máximo 5MB");
+      setError(t("selfie.err.maxSize"));
       return;
     }
 
@@ -55,13 +57,13 @@ export default function SelfieUpload({
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Falha ao processar");
+        throw new Error(data.error || t("selfie.err.process"));
       }
 
       setFileName(file.name);
       onMatch?.(data.matches || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar");
+      setError(err instanceof Error ? err.message : t("selfie.err.load"));
     } finally {
       setIsProcessing(false);
       onLoading?.(false);
@@ -95,15 +97,15 @@ export default function SelfieUpload({
         {isProcessing ? (
           <div className="space-y-3">
             <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-            <p className="text-gray-700 font-semibold">A processar selfie...</p>
+            <p className="text-gray-700 font-semibold">{t("selfie.processing")}</p>
             <p className="text-sm text-gray-500">
-              Extraindo vetor facial e comparando com o evento
+              {t("selfie.processingDesc")}
             </p>
           </div>
         ) : fileName ? (
           <div className="space-y-2">
             <div className="text-4xl">✅</div>
-            <p className="text-gray-900 font-semibold">Processado com sucesso!</p>
+            <p className="text-gray-900 font-semibold">{t("selfie.success")}</p>
             <p className="text-sm text-gray-600">{fileName}</p>
             <button
               onClick={() => {
@@ -112,7 +114,7 @@ export default function SelfieUpload({
               }}
               className="mt-3 text-blue-600 hover:text-blue-700 font-semibold text-sm"
             >
-              Carregar outra selfie
+              {t("selfie.another")}
             </button>
           </div>
         ) : (
@@ -120,10 +122,10 @@ export default function SelfieUpload({
             <div className="text-5xl">📸</div>
             <div>
               <p className="text-gray-900 font-semibold">
-                Carregue uma selfie para encontrar suas fotos
+                {t("selfie.title")}
               </p>
               <p className="text-sm text-gray-600 mt-1">
-                Ou clique para selecionar um ficheiro (máx. 5MB)
+                {t("selfie.subtitle")}
               </p>
             </div>
             <input
@@ -137,7 +139,7 @@ export default function SelfieUpload({
               htmlFor="selfie-input"
               className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer font-semibold"
             >
-              Selecionar Ficheiro
+              {t("selfie.select")}
             </label>
           </div>
         )}

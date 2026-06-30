@@ -9,6 +9,7 @@ import BibNumberSearch from "@/components/BibNumberSearch";
 import SelfieUpload from "@/components/SelfieUpload";
 import FaceCameraSearch from "@/components/FaceCameraSearch";
 import { useCart } from "@/lib/contexts/CartContext";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function EventGalleryPage({
   params,
@@ -32,6 +33,7 @@ export default function EventGalleryPage({
 
   const router = useRouter();
   const { addItems, applyCoupon } = useCart();
+  const { t } = useTranslation();
 
   // Pacote: adiciona todas as fotos do evento ao carrinho + aplica PACOTE20.
   const handleBuyAllEvent = async () => {
@@ -151,14 +153,14 @@ export default function EventGalleryPage({
         <div className="text-center">
           <div className="text-6xl mb-4">❌</div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Evento não encontrado
+            {t("event.notFound.title")}
           </h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <Link
             href="/photos"
             className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Voltar aos Eventos
+            {t("event.back")}
           </Link>
         </div>
       </div>
@@ -234,20 +236,20 @@ export default function EventGalleryPage({
               <div className="font-bold text-lg text-gray-900">
                 {stats?.photoCount || 0}
               </div>
-              <div className="text-gray-600">Fotos</div>
+              <div className="text-gray-600">{t("downloads.photos")}</div>
             </div>
             <div>
               <div className="font-bold text-lg text-gray-900">
                 {stats?.photographerCount || 0}
               </div>
-              <div className="text-gray-600">Fotógrafos</div>
+              <div className="text-gray-600">{t("event.photographers")}</div>
             </div>
             {event.location && (
               <div>
                 <div className="font-bold text-lg text-gray-900">
                   {event.location.split(",")[0]}
                 </div>
-                <div className="text-gray-600">Localização</div>
+                <div className="text-gray-600">{t("event.location")}</div>
               </div>
             )}
           </div>
@@ -270,10 +272,10 @@ export default function EventGalleryPage({
           {/* Por rosto */}
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-              🔍 Encontre-se por rosto
+              🔍 {t("event.face.title")}
             </h2>
             <p className="text-sm text-gray-600 mb-4">
-              Use a câmera ou carregue uma selfie. Motor:{" "}
+              {t("event.face.desc")}{" "}
               <span className="font-semibold">InsightFace + pgvector</span>.
             </p>
 
@@ -291,7 +293,7 @@ export default function EventGalleryPage({
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
-                📷 Câmera ao vivo
+                📷 {t("event.face.live")}
               </button>
               <button
                 onClick={() => {
@@ -305,7 +307,7 @@ export default function EventGalleryPage({
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
-                🖼️ Carregar selfie
+                🖼️ {t("event.face.upload")}
               </button>
             </div>
 
@@ -327,10 +329,10 @@ export default function EventGalleryPage({
           {/* Por dorsal/peito */}
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-              #️⃣ Encontre-se por dorsal
+              #️⃣ {t("event.bib.title")}
             </h2>
             <p className="text-sm text-gray-600 mb-4">
-              Digite o número do peito/dorsal que usou no evento.
+              {t("event.bib.desc")}
             </p>
             <BibNumberSearch
               eventId={event.id}
@@ -346,11 +348,11 @@ export default function EventGalleryPage({
               <>
                 <div className="mb-4 p-3 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-800">
-                    {facePhotos.length} foto
-                    {facePhotos.length !== 1 ? "s" : ""} encontrada
-                    {facePhotos.length !== 1 ? "s" : ""} para este rosto
+                    {facePhotos.length}{" "}
+                    {facePhotos.length !== 1 ? t("facematch.photos") : t("facematch.photo")}{" "}
+                    {t("event.face.forThisFace")}
                     {faceMatches[0]?.matchPercent
-                      ? ` · melhor correspondência ${faceMatches[0].matchPercent}%`
+                      ? ` · ${t("event.face.bestMatch")} ${faceMatches[0].matchPercent}%`
                       : ""}
                   </p>
                 </div>
@@ -365,7 +367,7 @@ export default function EventGalleryPage({
               <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg text-center">
                 <div className="text-4xl mb-2">🔍</div>
                 <p className="text-gray-700 font-medium">
-                  Nenhuma foto encontrada para este rosto neste evento.
+                  {t("event.face.noResult")}
                 </p>
               </div>
             )}
@@ -377,12 +379,10 @@ export default function EventGalleryPage({
           <div className="mb-6 p-5 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <p className="font-bold text-lg">
-                🎁 Levar todas as fotos deste evento
+                🎁 {t("event.bundle.title")}
               </p>
               <p className="text-sm text-white/90">
-                {event.photos.length} foto
-                {event.photos.length !== 1 ? "s" : ""} · 20% de desconto aplicado
-                automaticamente
+                {event.photos.length} {t("grid.photos")} · {t("event.bundle.discount")}
               </p>
             </div>
             <button
@@ -390,7 +390,7 @@ export default function EventGalleryPage({
               disabled={buyingAll}
               className="px-6 py-3 bg-white text-purple-700 rounded-lg font-semibold hover:bg-gray-100 transition disabled:opacity-60 whitespace-nowrap"
             >
-              {buyingAll ? "A adicionar…" : "Adicionar todas (−20%)"}
+              {buyingAll ? t("event.bundle.adding") : t("event.bundle.add")}
             </button>
           </div>
         )}
@@ -398,22 +398,21 @@ export default function EventGalleryPage({
         {/* Galeria completa (sempre visível) */}
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           {bibNumberFilter
-            ? `Fotos do dorsal #${bibNumberFilter}`
-            : "Todas as fotos do evento"}
+            ? `${t("event.gallery.bibTitle")} #${bibNumberFilter}`
+            : t("event.gallery.allTitle")}
         </h2>
 
         {bibNumberFilter && (
           <div className="mb-4 p-3 bg-blue-50 rounded-lg flex items-center justify-between">
             <p className="text-sm text-blue-800">
-              Mostrando {filteredPhotos.length} foto
-              {filteredPhotos.length !== 1 ? "s" : ""} para dorsal #
-              {bibNumberFilter}
+              {t("grid.showing")} {filteredPhotos.length} {t("grid.photos")}{" "}
+              {t("event.gallery.forBib")} #{bibNumberFilter}
             </p>
             <button
               onClick={() => setBibNumberFilter("")}
               className="text-sm text-blue-700 underline hover:text-blue-900"
             >
-              Limpar
+              {t("bib.clear")}
             </button>
           </div>
         )}
@@ -432,7 +431,7 @@ export default function EventGalleryPage({
           href="/photos"
           className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2"
         >
-          ← Voltar aos Eventos
+          ← {t("event.back")}
         </Link>
       </div>
     </div>

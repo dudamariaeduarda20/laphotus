@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useCart } from "@/lib/contexts/CartContext";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import CartItem from "@/components/CartItem";
 import Link from "next/link";
 
 export default function CartPage() {
+  const { t } = useTranslation();
   const {
     items,
     getTotal,
@@ -29,7 +31,7 @@ export default function CartPage() {
 
   const handleApplyCoupon = async () => {
     if (!code.trim()) {
-      setCouponError("Introduza um código");
+      setCouponError(t("cartpage.err.empty"));
       return;
     }
     setApplying(true);
@@ -42,13 +44,13 @@ export default function CartPage() {
       });
       const data = await res.json();
       if (!data.valid) {
-        setCouponError(data.error || "Cupom inválido");
+        setCouponError(data.error || t("cartpage.err.invalid"));
         return;
       }
       applyCoupon(data.coupon);
       setCode("");
     } catch {
-      setCouponError("Falha ao validar cupom");
+      setCouponError(t("cartpage.err.validate"));
     } finally {
       setApplying(false);
     }
@@ -56,7 +58,7 @@ export default function CartPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Carrinho de Compras</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">{t("cart.title")}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Items */}
@@ -66,23 +68,23 @@ export default function CartPage() {
               <div className="p-12 text-center">
                 <div className="text-6xl mb-4">🛒</div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  Seu carrinho está vazio
+                  {t("cart.empty")}
                 </h2>
                 <p className="text-gray-600 mb-6">
-                  Comece a comprar para adicionar fotos ao seu carrinho
+                  {t("cartpage.emptyDesc")}
                 </p>
                 <Link
                   href="/photos"
                   className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Procurar Eventos
+                  {t("dashboard.searchEvents")}
                 </Link>
               </div>
             ) : (
               <>
                 <div className="p-6 border-b border-gray-200">
                   <h2 className="text-lg font-bold text-gray-900">
-                    {itemCount} item{itemCount !== 1 ? "ns" : ""} no seu carrinho
+                    {itemCount} {itemCount !== 1 ? t("cartpage.items") : t("cartpage.item")} {t("cartpage.inCart")}
                   </h2>
                 </div>
 
@@ -103,7 +105,7 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow p-6 sticky top-4">
               <h2 className="text-lg font-bold text-gray-900 mb-6">
-                Resumo da Encomenda
+                {t("cartpage.summary")}
               </h2>
 
               {/* Cupom */}
@@ -126,20 +128,20 @@ export default function CartPage() {
                       onClick={clearCoupon}
                       className="text-sm text-red-600 hover:text-red-700 underline"
                     >
-                      Remover
+                      {t("cartpage.remove")}
                     </button>
                   </div>
                 ) : (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Cupom de desconto
+                      {t("cartpage.couponLabel")}
                     </label>
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={code}
                         onChange={(e) => setCode(e.target.value.toUpperCase())}
-                        placeholder="Ex: BOAS_VINDAS20"
+                        placeholder={t("cartpage.couponPlaceholder")}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
                       />
                       <button
@@ -147,7 +149,7 @@ export default function CartPage() {
                         disabled={applying}
                         className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
                       >
-                        {applying ? "..." : "Aplicar"}
+                        {applying ? "..." : t("cartpage.apply")}
                       </button>
                     </div>
                     {couponError && (
@@ -159,21 +161,21 @@ export default function CartPage() {
 
               <div className="space-y-4 py-6 border-b border-gray-200">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal:</span>
+                  <span className="text-gray-600">{t("cart.subtotal")}</span>
                   <span className="font-semibold">
                     € {subtotal.toFixed(2)}
                   </span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-green-700">Desconto:</span>
+                    <span className="text-green-700">{t("checkout.discount")}:</span>
                     <span className="font-semibold text-green-700">
                       − € {discount.toFixed(2)}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">IVA (23%):</span>
+                  <span className="text-gray-600">{t("cart.vat")}</span>
                   <span className="font-semibold">
                     € {tax.toFixed(2)}
                   </span>
@@ -181,7 +183,7 @@ export default function CartPage() {
               </div>
 
               <div className="flex justify-between text-lg font-bold mb-6 pt-4">
-                <span>Total:</span>
+                <span>{t("cart.total")}</span>
                 <span className="text-green-600">€ {total.toFixed(2)}</span>
               </div>
 
@@ -189,21 +191,21 @@ export default function CartPage() {
                 href="/checkout"
                 className="w-full block text-center py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 mb-3"
               >
-                Finalizar Compra
+                {t("cart.checkout")}
               </Link>
 
               <button
                 onClick={clearCart}
                 className="w-full py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
-                Limpar Carrinho
+                {t("cart.clear")}
               </button>
 
               <Link
                 href="/photos"
                 className="block text-center text-blue-600 hover:text-blue-700 text-sm font-semibold mt-4"
               >
-                Continuar Compras
+                {t("cartpage.continue")}
               </Link>
             </div>
           </div>

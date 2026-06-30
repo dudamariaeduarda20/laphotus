@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface PhotoBibNumbersProps {
   photoId: string;
@@ -15,6 +16,7 @@ export default function PhotoBibNumbers({
   onUpdate,
   editable = false,
 }: PhotoBibNumbersProps) {
+  const { t } = useTranslation();
   const [numbers, setNumbers] = useState<string[]>(detectedNumbers);
   const [newNumber, setNewNumber] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -48,9 +50,9 @@ export default function PhotoBibNumbers({
   if (!editable) {
     return (
       <div className="space-y-2">
-        <p className="text-sm font-semibold text-gray-700">Dorsais Detectadas:</p>
+        <p className="text-sm font-semibold text-gray-700">{t("bib.detected.label")}:</p>
         {numbers.length === 0 ? (
-          <p className="text-sm text-gray-600 italic">Nenhuma dorsal detectada</p>
+          <p className="text-sm text-gray-600 italic">{t("bib.detected.none")}</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {numbers.map((num) => (
@@ -70,13 +72,13 @@ export default function PhotoBibNumbers({
   return (
     <div className="bg-gray-50 rounded-lg p-4 space-y-4">
       <div className="flex items-center justify-between">
-        <p className="font-semibold text-gray-700">Dorsais Detectadas</p>
+        <p className="font-semibold text-gray-700">{t("bib.detected.label")}</p>
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
             className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
           >
-            ✎ Editar
+            ✎ {t("bib.detected.edit")}
           </button>
         )}
       </div>
@@ -112,7 +114,7 @@ export default function PhotoBibNumbers({
               onKeyPress={(e) => {
                 if (e.key === "Enter") handleAddNumber();
               }}
-              placeholder="Adicionar dorsal..."
+              placeholder={t("bib.detected.addPlaceholder")}
               maxLength={3}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
             />
@@ -131,7 +133,7 @@ export default function PhotoBibNumbers({
               disabled={saving}
               className="flex-1 px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
             >
-              {saving ? "A guardar..." : "Guardar"}
+              {saving ? t("bib.detected.saving") : t("common.save")}
             </button>
             <button
               onClick={() => {
@@ -141,7 +143,7 @@ export default function PhotoBibNumbers({
               }}
               className="flex-1 px-3 py-2 border border-gray-300 text-gray-700 text-sm rounded-lg hover:bg-gray-100"
             >
-              Cancelar
+              {t("common.cancel")}
             </button>
           </div>
         </div>
@@ -149,7 +151,7 @@ export default function PhotoBibNumbers({
         // View mode
         <div className="flex flex-wrap gap-2">
           {numbers.length === 0 ? (
-            <p className="text-sm text-gray-600 italic">Nenhuma dorsal detectada</p>
+            <p className="text-sm text-gray-600 italic">{t("bib.detected.none")}</p>
           ) : (
             numbers.map((num) => (
               <span

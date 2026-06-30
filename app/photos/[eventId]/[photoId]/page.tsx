@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCart } from "@/lib/contexts/CartContext";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import { getPhotoImageUrl } from "@/lib/photoUrl";
 
 export default function PhotoDetailPage() {
@@ -16,6 +17,7 @@ export default function PhotoDetailPage() {
 
   const { addItem } = useCart();
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const [photo, setPhoto] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,12 +30,12 @@ export default function PhotoDetailPage() {
       setLoading(true);
       try {
         const res = await fetch(`/api/photos/${photoId}`);
-        if (!res.ok) throw new Error("Foto não encontrada");
+        if (!res.ok) throw new Error(t("photodetail.notFound"));
         const { photo } = await res.json();
         setPhoto(photo);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Falha ao carregar foto");
+        setError(err instanceof Error ? err.message : t("photodetail.err.load"));
       } finally {
         setLoading(false);
       }
@@ -97,14 +99,14 @@ export default function PhotoDetailPage() {
       <div className="max-w-4xl mx-auto px-4 py-12 text-center">
         <div className="text-6xl mb-4">❌</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Foto não encontrada
+          {t("photodetail.notFound")}
         </h1>
         <p className="text-gray-600 mb-6">{error}</p>
         <Link
           href={`/photos/${eventId}`}
           className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         >
-          Voltar à galeria
+          {t("photodetail.backGallery")}
         </Link>
       </div>
     );
@@ -128,7 +130,7 @@ export default function PhotoDetailPage() {
       {/* Breadcrumb */}
       <div className="mb-6 text-sm text-gray-500 flex items-center gap-2">
         <Link href="/photos" className="hover:text-blue-600">
-          Eventos
+          {t("nav.events")}
         </Link>
         <span>/</span>
         <Link href={`/photos/${eventId}`} className="hover:text-blue-600">
@@ -169,7 +171,7 @@ export default function PhotoDetailPage() {
             {photo.name}
           </h1>
           <p className="text-gray-600 mb-6">
-            Evento:{" "}
+            {t("photodetail.eventLabel")}{" "}
             <Link
               href={`/photos/${eventId}`}
               className="text-blue-600 hover:underline"
@@ -186,12 +188,11 @@ export default function PhotoDetailPage() {
               </span>
             ) : (
               <span className="text-2xl font-semibold text-gray-500">
-                Grátis
+                {t("photo.free")}
               </span>
             )}
             <span className="block text-sm text-gray-500 mt-1">
-              IVA incluído (23%) · download em alta resolução sem marca
-              d&apos;água após compra
+              {t("photodetail.taxInfo")}
             </span>
           </div>
 
@@ -204,7 +205,7 @@ export default function PhotoDetailPage() {
                 : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
-            {added ? "✓ Adicionado ao carrinho" : "Adicionar ao carrinho"}
+            {added ? `✓ ${t("photodetail.added")}` : t("photodetail.addToCart")}
           </button>
 
           {/* Favoritar */}
@@ -217,28 +218,28 @@ export default function PhotoDetailPage() {
                 : "border-gray-300 text-gray-700 hover:bg-gray-50"
             }`}
           >
-            {favorited ? "♥ Nos favoritos" : "♡ Adicionar aos favoritos"}
+            {favorited ? `♥ ${t("photodetail.faved")}` : `♡ ${t("photodetail.addFav")}`}
           </button>
 
           {/* Info adicional */}
           <div className="bg-gray-50 rounded-lg p-4 space-y-3 text-sm">
             {photo.width && photo.height && (
               <div className="flex justify-between">
-                <span className="text-gray-600">Resolução</span>
+                <span className="text-gray-600">{t("photodetail.resolution")}</span>
                 <span className="font-medium text-gray-900">
                   {photo.width} × {photo.height}
                 </span>
               </div>
             )}
             <div className="flex justify-between">
-              <span className="text-gray-600">Formato</span>
+              <span className="text-gray-600">{t("photodetail.format")}</span>
               <span className="font-medium text-gray-900">
                 {photo.mimeType || "image/jpeg"}
               </span>
             </div>
             {bibNumbers.length > 0 && (
               <div className="flex justify-between">
-                <span className="text-gray-600">Dorsais detetadas</span>
+                <span className="text-gray-600">{t("photodetail.bibsDetected")}</span>
                 <span className="font-medium text-gray-900">
                   {bibNumbers.join(", ")}
                 </span>
@@ -254,7 +255,7 @@ export default function PhotoDetailPage() {
           href={`/photos/${eventId}`}
           className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2"
         >
-          ← Voltar à galeria do evento
+          ← {t("photodetail.backEventGallery")}
         </Link>
       </div>
     </div>

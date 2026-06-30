@@ -1,4 +1,5 @@
 import AuthForm from "@/components/AuthForm";
+import RegisterHeader from "@/components/RegisterHeader";
 
 export const metadata = {
   title: "Registar - Fotos Desporto",
@@ -8,10 +9,7 @@ export const metadata = {
 export default function RegisterPage() {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Criar Conta</h2>
-      <p className="text-gray-600 mb-8">
-        Junte-se à nossa comunidade de fotógrafos e entusiastas de fotografia
-      </p>
+      <RegisterHeader />
       <AuthForm mode="register" />
     </div>
   );

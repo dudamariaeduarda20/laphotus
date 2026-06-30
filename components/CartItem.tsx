@@ -1,4 +1,5 @@
 import { CartItem as CartItemType, useCart } from "@/lib/contexts/CartContext";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface CartItemProps {
   item: CartItemType;
@@ -6,6 +7,7 @@ interface CartItemProps {
 
 export default function CartItem({ item }: CartItemProps) {
   const { removeItem } = useCart();
+  const { t } = useTranslation();
 
   return (
     <div className="flex gap-4 py-4 border-b border-gray-200">
@@ -20,7 +22,7 @@ export default function CartItem({ item }: CartItemProps) {
           {item.name}
         </h3>
         <p className="text-sm text-gray-600">
-          {item.eventTitle} • de {item.photographerName}
+          {item.eventTitle} • {t("cartitem.by")} {item.photographerName}
         </p>
       </div>
 
@@ -33,7 +35,7 @@ export default function CartItem({ item }: CartItemProps) {
           onClick={() => removeItem(item.photoId)}
           className="text-red-600 hover:text-red-700 text-sm font-semibold"
         >
-          Remover
+          {t("cartpage.remove")}
         </button>
       </div>
     </div>
