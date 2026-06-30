@@ -6,7 +6,7 @@ import Link from "next/link";
 import PhotographerSalesDashboard from "@/components/PhotographerSalesDashboard";
 
 export default function DashboardPage() {
-  const { user, isPhotographer, isOrganizer, isClient } = useAuth();
+  const { user, isPhotographer, isOrganizer, isClient, isAdmin } = useAuth();
   const { t } = useTranslation();
 
   return (
@@ -69,6 +69,25 @@ export default function DashboardPage() {
               </Link>
               <Link href="/downloads" className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition">
                 {t("dashboard.myOrders")}
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {isAdmin && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+              🛡️ {t("dashboard.admin.title")}
+            </h2>
+            <div className="space-y-3">
+              <Link href="/admin/dashboard" className="block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center transition">
+                {t("dashboard.admin.panel")}
+              </Link>
+              <Link href="/admin/photographers" className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition">
+                {t("dashboard.admin.photographers")}
+              </Link>
+              <Link href="/admin/settings" className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition">
+                {t("dashboard.admin.settings")}
               </Link>
             </div>
           </div>

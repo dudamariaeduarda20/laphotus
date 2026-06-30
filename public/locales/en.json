@@ -14,7 +14,6 @@
   "nav.createEvent": "Create Event",
   "nav.adminPanel": "Admin Panel",
   "nav.analytics": "Analytics",
-
   "home.hero.title": "Find your event photos",
   "home.hero.subtitle": "Search by event name or your face and take home your best sports photos.",
   "home.categories.title": "Browse by category",
@@ -39,7 +38,6 @@
   "home.recent.filter": "All categories",
   "home.recent.empty": "No events in this category yet.",
   "home.recent.viewall": "View all events",
-
   "search.advanced.title": "Advanced search",
   "search.tab.date": "By date",
   "search.tab.category": "By category",
@@ -50,7 +48,6 @@
   "search.preset.14d": "Last 14 days",
   "search.preset.30d": "Last 30 days",
   "search.month.label": "Or choose month and year",
-
   "face.error.denied": "Camera permission denied. Allow access to continue.",
   "face.error.noCamera": "Could not access the camera.",
   "face.error.canvas": "Canvas unavailable",
@@ -65,7 +62,6 @@
   "face.starting": "Starting…",
   "face.activate": "Enable Camera",
   "face.searching": "Searching…",
-
   "cart.title": "Shopping Cart",
   "cart.empty": "Your cart is empty",
   "cart.empty.hint": "Add photos to get started",
@@ -74,10 +70,8 @@
   "cart.total": "Total:",
   "cart.checkout": "Checkout",
   "cart.clear": "Clear Cart",
-
   "photo.viewDetails": "View Details",
   "photo.free": "Free",
-
   "grid.loading": "Loading photos...",
   "grid.empty.title": "No photos yet",
   "grid.empty.desc": "Photos from this event will appear here once photographers upload them.",
@@ -89,7 +83,6 @@
   "grid.showing": "Showing",
   "grid.of": "of",
   "grid.photos": "photos",
-
   "checkout.empty.desc": "Add photos before checking out",
   "checkout.empty.browse": "Browse Events",
   "checkout.items": "Order Items",
@@ -115,7 +108,6 @@
   "checkout.backCart": "Back to Cart",
   "checkout.err.process": "Failed to process payment",
   "checkout.err.payment": "Payment error",
-
   "success.processing": "Processing your payment...",
   "success.fail.title": "Confirmation Failed",
   "success.fail.desc": "There was a problem processing your payment.",
@@ -133,7 +125,6 @@
   "success.steps.3": "You have permanent access to your purchases",
   "success.downloads": "My Downloads",
   "success.more": "Search More Photos",
-
   "facematch.noMatch.title": "No matches found",
   "facematch.noMatch.desc": "No event photo matches this selfie (threshold: 70% similarity)",
   "facematch.photo": "photo found",
@@ -147,13 +138,11 @@
   "facematch.stat.matched": "Matched Photos",
   "facematch.stat.best": "Best Match",
   "facematch.stat.avg": "Average Match",
-
   "bib.label": "Search by bib number",
   "bib.placeholder": "Enter the bib number (e.g. 145)...",
   "bib.searching": "Searching...",
   "bib.clear": "Clear",
   "bib.hint": "Find photos of your bib number automatically detected by the system",
-
   "auth.err.fail": "Operation failed",
   "auth.fullName": "Full Name",
   "auth.namePlaceholder": "John Smith",
@@ -165,7 +154,6 @@
   "auth.haveAccount": "Already have an account?",
   "auth.noAccount": "Don't have an account?",
   "auth.createOne": "Create one",
-
   "profile.title": "Profile Settings",
   "profile.emailLocked": "Email cannot be changed",
   "profile.roleLocked": "Contact support to change account type",
@@ -174,7 +162,6 @@
   "profile.saved": "Profile updated successfully",
   "profile.danger": "Danger Zone",
   "profile.deleteAccount": "Delete Account",
-
   "downloads.err.load": "Failed to load orders",
   "downloads.err.generic": "Failed to load",
   "downloads.subtitle": "Download the photos you purchased",
@@ -185,7 +172,6 @@
   "downloads.err.noPerm": "No permission to download",
   "downloads.err.download": "Failed to download",
   "downloads.download": "Download",
-
   "event.notFound.title": "Event not found",
   "event.back": "Back to Events",
   "event.photographers": "Photographers",
@@ -206,7 +192,6 @@
   "event.gallery.bibTitle": "Bib photos",
   "event.gallery.allTitle": "All event photos",
   "event.gallery.forBib": "for bib",
-
   "events.title": "Sports Events",
   "events.subtitle": "Browse events and buy professional sports photos",
   "events.searchPlaceholder": "Event name, location...",
@@ -218,7 +203,6 @@
   "events.foundPrefix": "Found",
   "events.event": "event",
   "events.events": "events",
-
   "cartpage.emptyDesc": "Start shopping to add photos to your cart",
   "cartpage.item": "item",
   "cartpage.items": "items",
@@ -232,7 +216,6 @@
   "cartpage.err.invalid": "Invalid coupon",
   "cartpage.err.validate": "Failed to validate coupon",
   "cartpage.continue": "Continue Shopping",
-
   "photodetail.notFound": "Photo not found",
   "photodetail.err.load": "Failed to load photo",
   "photodetail.backGallery": "Back to gallery",
@@ -246,10 +229,8 @@
   "photodetail.format": "Format",
   "photodetail.bibsDetected": "Detected bibs",
   "photodetail.backEventGallery": "Back to event gallery",
-
   "authbrand.title": "Sports Photos",
   "authbrand.subtitle": "Professional Photography Marketplace",
-
   "login.cliente.title": "Welcome, Client",
   "login.cliente.subtitle": "Sign in to buy sports photos",
   "login.fotografo.title": "Welcome, Photographer",
@@ -258,17 +239,13 @@
   "login.organizador.subtitle": "Sign in to manage your events",
   "login.admin.title": "Welcome, Administrator",
   "login.admin.subtitle": "Sign in to manage the platform",
-
   "register.subtitle": "Join our community of photographers and photography enthusiasts",
-
   "bib.detected.label": "Detected Bibs",
   "bib.detected.none": "No bib detected",
   "bib.detected.edit": "Edit",
   "bib.detected.addPlaceholder": "Add bib...",
   "bib.detected.saving": "Saving...",
-
   "cartitem.by": "by",
-
   "selfie.err.imageOnly": "Images only",
   "selfie.err.maxSize": "Max 5MB",
   "selfie.err.process": "Failed to process",
@@ -280,7 +257,6 @@
   "selfie.title": "Upload a selfie to find your photos",
   "selfie.subtitle": "Or click to select a file (max 5MB)",
   "selfie.select": "Select File",
-
   "auth.login.title": "Login",
   "auth.register.title": "Create account",
   "auth.email": "Email",
@@ -288,7 +264,6 @@
   "auth.name": "Name",
   "auth.submit.login": "Login",
   "auth.submit.register": "Register",
-
   "dashboard.title": "Dashboard",
   "dashboard.welcome": "Welcome back",
   "dashboard.photographer.title": "Photographer Tools",
@@ -307,7 +282,6 @@
   "dashboard.searchPhotos": "Search Photos",
   "dashboard.myDownloads": "My Downloads",
   "dashboard.myOrders": "My Orders",
-
   "footer.institutional": "Company",
   "footer.about": "About",
   "footer.blog": "Blog",
@@ -328,14 +302,12 @@
   "footer.removePhotos": "Remove my photos",
   "footer.privacy": "Privacy · Terms",
   "footer.tagline": "Sports event photography marketplace",
-
   "settings.title": "Settings",
   "settings.language": "Language",
   "settings.language.desc": "Choose your preferred interface language.",
   "settings.language.saved": "Language saved!",
   "settings.profile.title": "Profile",
   "settings.account.title": "Account",
-
   "common.loading": "Loading...",
   "common.error": "An error occurred",
   "common.save": "Save",
@@ -347,5 +319,9 @@
   "common.confirm": "Confirm",
   "common.close": "Close",
   "common.yes": "Yes",
-  "common.no": "No"
+  "common.no": "No",
+  "dashboard.admin.title": "Administration",
+  "dashboard.admin.panel": "Control Panel",
+  "dashboard.admin.photographers": "Manage Photographers",
+  "dashboard.admin.settings": "Global Settings"
 }

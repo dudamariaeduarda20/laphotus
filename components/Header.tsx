@@ -59,7 +59,7 @@ export default function Header() {
           {isAuthenticated ? (
             <>
               <Link
-                href="/dashboard"
+                href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"}
                 className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
               >
                 {t("nav.dashboard")}

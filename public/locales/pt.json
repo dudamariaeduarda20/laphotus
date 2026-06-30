@@ -14,7 +14,6 @@
   "nav.createEvent": "Criar Evento",
   "nav.adminPanel": "Painel Admin",
   "nav.analytics": "Analytics",
-
   "home.hero.title": "Encontre as suas fotos do evento",
   "home.hero.subtitle": "Procure por nome do evento ou pelo seu rosto e leve as suas melhores fotos desportivas.",
   "home.categories.title": "Explore por categoria",
@@ -39,7 +38,6 @@
   "home.recent.filter": "Todas as categorias",
   "home.recent.empty": "Nenhum evento nesta categoria por agora.",
   "home.recent.viewall": "Ver todos os eventos",
-
   "search.advanced.title": "Busca avançada",
   "search.tab.date": "Por data",
   "search.tab.category": "Por categoria",
@@ -50,7 +48,6 @@
   "search.preset.14d": "Últimos 14 dias",
   "search.preset.30d": "Últimos 30 dias",
   "search.month.label": "Ou escolha mês e ano",
-
   "face.error.denied": "Permissão da câmera negada. Autorize o acesso para continuar.",
   "face.error.noCamera": "Não foi possível aceder à câmera.",
   "face.error.canvas": "Canvas indisponível",
@@ -65,7 +62,6 @@
   "face.starting": "A iniciar…",
   "face.activate": "Ativar Câmera",
   "face.searching": "A procurar…",
-
   "cart.title": "Carrinho de Compras",
   "cart.empty": "Seu carrinho está vazio",
   "cart.empty.hint": "Adicione fotos para começar",
@@ -74,10 +70,8 @@
   "cart.total": "Total:",
   "cart.checkout": "Finalizar Compra",
   "cart.clear": "Limpar Carrinho",
-
   "photo.viewDetails": "Ver Detalhes",
   "photo.free": "Grátis",
-
   "grid.loading": "A carregar fotos...",
   "grid.empty.title": "Nenhuma foto ainda",
   "grid.empty.desc": "Fotos deste evento aparecerão aqui quando fotógrafos as carregarem.",
@@ -89,7 +83,6 @@
   "grid.showing": "Exibindo",
   "grid.of": "de",
   "grid.photos": "fotos",
-
   "checkout.empty.desc": "Adicione fotos antes de finalizar a compra",
   "checkout.empty.browse": "Procurar Eventos",
   "checkout.items": "Artigos da Encomenda",
@@ -115,7 +108,6 @@
   "checkout.backCart": "Voltar ao Carrinho",
   "checkout.err.process": "Falha ao processar pagamento",
   "checkout.err.payment": "Erro no pagamento",
-
   "success.processing": "A processar seu pagamento...",
   "success.fail.title": "Falha na Confirmação",
   "success.fail.desc": "Houve um problema ao processar seu pagamento.",
@@ -133,7 +125,6 @@
   "success.steps.3": "Você tem acesso permanente às suas compras",
   "success.downloads": "Minhas Transferências",
   "success.more": "Procurar Mais Fotos",
-
   "facematch.noMatch.title": "Sem correspondências encontradas",
   "facematch.noMatch.desc": "Nenhuma foto do evento corresponde a esta selfie (limite: 70% semelhança)",
   "facematch.photo": "foto encontrada",
@@ -147,13 +138,11 @@
   "facematch.stat.matched": "Fotos Correspondentes",
   "facematch.stat.best": "Melhor Correspondência",
   "facematch.stat.avg": "Correspondência Média",
-
   "bib.label": "Procure pela dorsal",
   "bib.placeholder": "Digite o número da dorsal (ex: 145)...",
   "bib.searching": "A procurar...",
   "bib.clear": "Limpar",
   "bib.hint": "Encontre fotos do seu número de dorsal automaticamente detetado pelo sistema",
-
   "auth.err.fail": "Falha na operação",
   "auth.fullName": "Nome Completo",
   "auth.namePlaceholder": "João Silva",
@@ -165,7 +154,6 @@
   "auth.haveAccount": "Já tem conta?",
   "auth.noAccount": "Não tem conta?",
   "auth.createOne": "Criar uma",
-
   "profile.title": "Configurações do Perfil",
   "profile.emailLocked": "Email não pode ser alterado",
   "profile.roleLocked": "Contacte suporte para alterar tipo de conta",
@@ -174,7 +162,6 @@
   "profile.saved": "Perfil atualizado com sucesso",
   "profile.danger": "Zona Perigosa",
   "profile.deleteAccount": "Eliminar Conta",
-
   "downloads.err.load": "Falha ao carregar encomendas",
   "downloads.err.generic": "Falha ao carregar",
   "downloads.subtitle": "Descarregue as fotos que comprou",
@@ -185,7 +172,6 @@
   "downloads.err.noPerm": "Sem permissão para descarregar",
   "downloads.err.download": "Falha ao descarregar",
   "downloads.download": "Descarregar",
-
   "event.notFound.title": "Evento não encontrado",
   "event.back": "Voltar aos Eventos",
   "event.photographers": "Fotógrafos",
@@ -206,7 +192,6 @@
   "event.gallery.bibTitle": "Fotos do dorsal",
   "event.gallery.allTitle": "Todas as fotos do evento",
   "event.gallery.forBib": "para dorsal",
-
   "events.title": "Eventos Desportivos",
   "events.subtitle": "Procure eventos e compre fotos profissionais de desporto",
   "events.searchPlaceholder": "Nome do evento, localização...",
@@ -218,7 +203,6 @@
   "events.foundPrefix": "Encontrados",
   "events.event": "evento",
   "events.events": "eventos",
-
   "cartpage.emptyDesc": "Comece a comprar para adicionar fotos ao seu carrinho",
   "cartpage.item": "item",
   "cartpage.items": "itens",
@@ -232,7 +216,6 @@
   "cartpage.err.invalid": "Cupom inválido",
   "cartpage.err.validate": "Falha ao validar cupom",
   "cartpage.continue": "Continuar Compras",
-
   "photodetail.notFound": "Foto não encontrada",
   "photodetail.err.load": "Falha ao carregar foto",
   "photodetail.backGallery": "Voltar à galeria",
@@ -246,10 +229,8 @@
   "photodetail.format": "Formato",
   "photodetail.bibsDetected": "Dorsais detetadas",
   "photodetail.backEventGallery": "Voltar à galeria do evento",
-
   "authbrand.title": "Fotos Desporto",
   "authbrand.subtitle": "Marketplace de Fotografia Profissional",
-
   "login.cliente.title": "Bem-vindo, Cliente",
   "login.cliente.subtitle": "Inicie sessão para comprar fotos de desporto",
   "login.fotografo.title": "Bem-vindo, Fotógrafo",
@@ -258,17 +239,13 @@
   "login.organizador.subtitle": "Inicie sessão para gerir os seus eventos",
   "login.admin.title": "Bem-vindo, Administrador",
   "login.admin.subtitle": "Inicie sessão para gerir a plataforma",
-
   "register.subtitle": "Junte-se à nossa comunidade de fotógrafos e entusiastas de fotografia",
-
   "bib.detected.label": "Dorsais Detectadas",
   "bib.detected.none": "Nenhuma dorsal detectada",
   "bib.detected.edit": "Editar",
   "bib.detected.addPlaceholder": "Adicionar dorsal...",
   "bib.detected.saving": "A guardar...",
-
   "cartitem.by": "de",
-
   "selfie.err.imageOnly": "Apenas imagens permitidas",
   "selfie.err.maxSize": "Máximo 5MB",
   "selfie.err.process": "Falha ao processar",
@@ -280,7 +257,6 @@
   "selfie.title": "Carregue uma selfie para encontrar suas fotos",
   "selfie.subtitle": "Ou clique para selecionar um ficheiro (máx. 5MB)",
   "selfie.select": "Selecionar Ficheiro",
-
   "auth.login.title": "Entrar",
   "auth.register.title": "Criar conta",
   "auth.email": "Email",
@@ -288,7 +264,6 @@
   "auth.name": "Nome",
   "auth.submit.login": "Entrar",
   "auth.submit.register": "Registar",
-
   "dashboard.title": "Painel",
   "dashboard.welcome": "Bem-vindo novamente",
   "dashboard.photographer.title": "Ferramentas do Fotógrafo",
@@ -307,7 +282,6 @@
   "dashboard.searchPhotos": "Procurar Fotos",
   "dashboard.myDownloads": "Minhas Transferências",
   "dashboard.myOrders": "Minhas Encomendas",
-
   "footer.institutional": "Institucional",
   "footer.about": "Sobre",
   "footer.blog": "Blog",
@@ -328,14 +302,12 @@
   "footer.removePhotos": "Remover minhas fotos",
   "footer.privacy": "Privacidade · Termos",
   "footer.tagline": "Marketplace de fotografia de eventos",
-
   "settings.title": "Definições",
   "settings.language": "Idioma",
   "settings.language.desc": "Escolha o idioma preferido para a interface.",
   "settings.language.saved": "Idioma guardado!",
   "settings.profile.title": "Perfil",
   "settings.account.title": "Conta",
-
   "common.loading": "A carregar...",
   "common.error": "Ocorreu um erro",
   "common.save": "Guardar",
@@ -347,5 +319,9 @@
   "common.confirm": "Confirmar",
   "common.close": "Fechar",
   "common.yes": "Sim",
-  "common.no": "Não"
+  "common.no": "Não",
+  "dashboard.admin.title": "Administração",
+  "dashboard.admin.panel": "Painel de Controlo",
+  "dashboard.admin.photographers": "Gerir Fotógrafos",
+  "dashboard.admin.settings": "Configurações Globais"
 }
