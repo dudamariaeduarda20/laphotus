@@ -43,6 +43,15 @@ export async function POST(request: NextRequest) {
     let matches: any[] = [];
     let engine = "";
 
+    // Debug: log engine availability
+    console.log("[search-face] Engine status:", {
+      googleEnabled: googleVisionEnabled(),
+      googleCreds: !!process.env.GOOGLE_APPLICATION_CREDENTIALS,
+      googleProject: !!process.env.GOOGLE_CLOUD_PROJECT_ID,
+      awsEnabled: awsEnabled(),
+      env: process.env.NODE_ENV,
+    });
+
     // === Motor 1: Google Cloud Vision (SOTA, se creds presentes) ===
     if (googleVisionEnabled()) {
       try {
