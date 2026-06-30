@@ -56,7 +56,10 @@ export async function GET(
     // Resolve o URL do ficheiro em alta resolução
     const key = paidItem.photo.key;
     let fileUrl: string;
-    if (key.startsWith("uploads/")) {
+    if (key.startsWith("http://") || key.startsWith("https://")) {
+      // Supabase Storage (bucket público): URL já é servível diretamente
+      fileUrl = key;
+    } else if (key.startsWith("uploads/")) {
       // Ficheiro local (dev): servido a partir de /public
       fileUrl = `/${key}`;
     } else if (!isMockMode()) {

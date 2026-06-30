@@ -6,6 +6,7 @@ import { UserRole } from "@/lib/types";
 import { z } from "zod";
 import prisma from "@/lib/db/prisma";
 import { uploadToS3, isMockMode } from "@/lib/services/s3Service";
+import { storageEnabled, uploadToStorage } from "@/lib/services/supabaseStorage";
 
 const uploadSchema = z.object({
   eventId: z.string().min(1),
@@ -129,9 +130,18 @@ export async function POST(request: NextRequest) {
     // Convert File to Buffer
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // Upload to S3 (or mock if no AWS creds)
+    // Armazenamento (prioridade): Supabase Storage → S3 → local (dev).
+    const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
     let s3Result = { key: "", fileSize: 0 };
-    if (!isMockMode()) {
+    if (storageEnabled()) {
+      // Produção: Supabase Storage (bucket "fotos"). `key` = URL pública.
+      const r = await uploadToStorage(
+        `event-${eventId}/${Date.now()}-${safeName}`,
+        buffer,
+        file.type
+      );
+      s3Result = { key: r.key, fileSize: r.fileSize };
+    } else if (!isMockMode()) {
       s3Result = await uploadToS3(
         `photos/event-${eventId}/${Date.now()}-${fileName}`,
         buffer,
@@ -142,7 +152,6 @@ export async function POST(request: NextRequest) {
       // para que a imagem apareça mesmo sem S3.
       const { writeFile, mkdir } = await import("fs/promises");
       const path = await import("path");
-      const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
       const storedName = `${Date.now()}-${safeName}`;
       const uploadsDir = path.join(process.cwd(), "public", "uploads");
       await mkdir(uploadsDir, { recursive: true });
