@@ -1,339 +1,225 @@
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient, UserRole, OrderStatus, PhotoStatus } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcryptjs from "bcryptjs";
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
-// Test credentials (password: Test1234!) — real bcrypt hash
-const TEST_PASSWORD_HASH = bcryptjs.hashSync("Test1234!", 10);
-
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // Clear existing data
-  await prisma.auditLog.deleteMany();
-  await prisma.notification.deleteMany();
-  await prisma.transaction.deleteMany();
-  await prisma.orderItem.deleteMany();
-  await prisma.order.deleteMany();
-  await prisma.coupon.deleteMany();
-  await prisma.favorite.deleteMany();
-  await prisma.faceIndex.deleteMany();
-  await prisma.photoBib.deleteMany();
-  await prisma.bibNumber.deleteMany();
-  await prisma.photo.deleteMany();
-  await prisma.setting.deleteMany();
-  await prisma.event.deleteMany();
-  await prisma.photographer.deleteMany();
-  await prisma.organizer.deleteMany();
-  await prisma.user.deleteMany();
-
-  // Admin user
-  const admin = await prisma.user.create({
-    data: {
-      email: "admin@sportsphotos.pt",
-      name: "Administrador",
+  // ── Users (upsert — idempotent) ───────────────────────────────────────
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@laphotus.pt" },
+    update: {},
+    create: {
+      email: "admin@laphotus.pt",
+      name: "Admin Laphotus",
       role: UserRole.ADMIN,
-      passwordHash: TEST_PASSWORD_HASH,
+      passwordHash: bcryptjs.hashSync("admin123", 10),
       emailVerified: new Date(),
     },
   });
 
-  // Organizer user
-  const organizerUser = await prisma.user.create({
-    data: {
-      email: "organizador@sportsphotos.pt",
-      name: "João Silva",
+  const orgUser = await prisma.user.upsert({
+    where: { email: "org@laphotus.pt" },
+    update: {},
+    create: {
+      email: "org@laphotus.pt",
+      name: "Organização Desporto",
       role: UserRole.ORGANIZER,
-      passwordHash: TEST_PASSWORD_HASH,
+      passwordHash: bcryptjs.hashSync("org123", 10),
       emailVerified: new Date(),
     },
   });
 
-  const organizer = await prisma.organizer.create({
-    data: {
-      userId: organizerUser.id,
-      organizationName: "Copa Regional 2026",
+  const photoUser = await prisma.user.upsert({
+    where: { email: "photo@laphotus.pt" },
+    update: {},
+    create: {
+      email: "photo@laphotus.pt",
+      name: "João Fotógrafo",
+      role: UserRole.PHOTOGRAPHER,
+      passwordHash: bcryptjs.hashSync("photo123", 10),
+      emailVerified: new Date(),
+    },
+  });
+
+  console.log(`✓ Users: ${adminUser.email}, ${orgUser.email}, ${photoUser.email}`);
+
+  // ── Organizer record ──────────────────────────────────────────────────
+  const organizer = await prisma.organizer.upsert({
+    where: { userId: orgUser.id },
+    update: {},
+    create: {
+      userId: orgUser.id,
+      organizationName: "Desporto Portugal Lda.",
+      website: "https://desportoportugal.pt",
+      phone: "+351 912 345 678",
       commissionRate: 0.2,
-      website: "https://copaeregional.pt",
-      phone: "+351 21 1234567",
     },
   });
 
-  // Photographer users
-  const photographers = [];
-  for (let i = 1; i <= 3; i++) {
-    const user = await prisma.user.create({
-      data: {
-        email: `fotografo${i}@sportsphotos.pt`,
-        name: `Fotógrafo ${i}`,
-        role: UserRole.PHOTOGRAPHER,
-        passwordHash: TEST_PASSWORD_HASH,
-        emailVerified: new Date(),
-      },
-    });
+  console.log(`✓ Organizer: ${organizer.organizationName}`);
 
-    const photographer = await prisma.photographer.create({
-      data: {
-        userId: user.id,
-        bio: `Fotógrafo profissional de desporto com 5+ anos de experiência`,
-        portfolio: `https://portfolio${i}.pt`,
-        rating: 4.5 + Math.random(),
-        totalSales: Math.floor(Math.random() * 100),
-        totalRevenue: Math.floor(Math.random() * 10000),
-      },
-    });
+  // ── Photographer record ───────────────────────────────────────────────
+  const photographer = await prisma.photographer.upsert({
+    where: { userId: photoUser.id },
+    update: {},
+    create: {
+      userId: photoUser.id,
+      bio: "Fotógrafo desportivo com 10 anos de experiência.",
+      rating: 4.8,
+      totalSales: 0,
+      totalRevenue: 0,
+    },
+  });
 
-    photographers.push(photographer);
+  console.log(`✓ Photographer: ${photoUser.name}`);
+
+  // ── Events ────────────────────────────────────────────────────────────
+  const eventSpecs = [
+    {
+      title: "Maratona de Lisboa 2024",
+      description: "A maior maratona de Portugal com mais de 10 000 participantes.",
+      location: "Lisboa, Portugal",
+      date: new Date("2024-10-20T09:00:00Z"),
+      sport: "Atletismo",
+    },
+    {
+      title: "Torneio Regional de Futebol",
+      description: "Torneio regional com 16 equipas de toda a região.",
+      location: "Porto, Portugal",
+      date: new Date("2024-11-05T14:00:00Z"),
+      sport: "Futebol",
+    },
+    {
+      title: "Volta a Portugal em Bicicleta",
+      description: "Etapa final da Volta a Portugal com sprint final em Cascais.",
+      location: "Cascais, Portugal",
+      date: new Date("2024-08-17T11:00:00Z"),
+      sport: "Ciclismo",
+    },
+  ];
+
+  const createdEvents = [];
+  for (const spec of eventSpecs) {
+    const existing = await prisma.event.findFirst({
+      where: { title: spec.title, organizerId: organizer.id },
+    });
+    if (existing) {
+      createdEvents.push(existing);
+    } else {
+      const ev = await prisma.event.create({
+        data: { ...spec, organizerId: organizer.id, status: "active" },
+      });
+      createdEvents.push(ev);
+    }
+    console.log(`  + Event: ${spec.title}`);
   }
 
-  // Client user
-  const clientUser = await prisma.user.create({
-    data: {
-      email: "cliente@sportsphotos.pt",
-      name: "Cliente Teste",
+  // ── Photos (2 per event) ──────────────────────────────────────────────
+  const createdPhotos = [];
+  for (const event of createdEvents) {
+    for (let i = 1; i <= 2; i++) {
+      const key = `seed/events/${event.id}/photo-${i}.jpg`;
+      const existing = await prisma.photo.findUnique({ where: { key } });
+      if (existing) {
+        createdPhotos.push(existing);
+      } else {
+        const photo = await prisma.photo.create({
+          data: {
+            eventId: event.id,
+            photographerId: photographer.id,
+            key,
+            thumbnailKey: `seed/events/${event.id}/thumb-${i}.jpg`,
+            name: `${event.title} — Foto ${i}`,
+            status: PhotoStatus.AVAILABLE,
+            price: 5.0,
+            isPremium: false,
+            isWatermarked: true,
+            mimeType: "image/jpeg",
+          },
+        });
+        createdPhotos.push(photo);
+      }
+      console.log(`  + Photo ${i}: ${event.title}`);
+    }
+  }
+
+  console.log(`✓ Photos: ${createdPhotos.length}`);
+
+  // ── Client user for orders ────────────────────────────────────────────
+  const clientUser = await prisma.user.upsert({
+    where: { email: "cliente@laphotus.pt" },
+    update: {},
+    create: {
+      email: "cliente@laphotus.pt",
+      name: "Maria Cliente",
       role: UserRole.CLIENT,
-      passwordHash: TEST_PASSWORD_HASH,
+      passwordHash: bcryptjs.hashSync("cliente123", 10),
       emailVerified: new Date(),
     },
   });
 
-  // Events (PT-PT)
-  const now = new Date();
-  const events = [];
-  const eventTitles = [
-    "Campeonato Regional de Futebol",
-    "Torneio de Ténis 2026",
-    "Maratona Porto",
-  ];
-  const locations = [
-    "Estádio Municipal de Lisboa",
-    "Clube de Ténis do Porto",
-    "Parque da Cidade, Porto",
-  ];
-
-  for (let i = 0; i < 3; i++) {
-    const event = await prisma.event.create({
-      data: {
-        organizerId: organizer.id,
-        title: eventTitles[i],
-        description: `Evento desportivo com participação de vários atletas e equipas. ${i + 1}ª edição do evento anual.`,
-        location: locations[i],
-        date: new Date(now.getTime() + (i + 1) * 7 * 24 * 60 * 60 * 1000),
-        sport: ["Futebol", "Ténis", "Atletismo"][i],
-        status: "active",
-        banner: `https://via.placeholder.com/1200x400?text=${eventTitles[i]}`,
-      },
-    });
-    events.push(event);
-  }
-
-  // Photos for each event (collect per event for bib linking)
-  const eventPhotos: Record<string, { id: string }[]> = {};
-  for (const event of events) {
-    const photographer = photographers[Math.floor(Math.random() * photographers.length)];
-    eventPhotos[event.id] = [];
-
-    for (let i = 1; i <= 10; i++) {
-      const photo = await prisma.photo.create({
-        data: {
-          eventId: event.id,
-          photographerId: photographer.id,
-          key: `photos/event-${event.id}/photo-${i}.jpg`,
-          thumbnailKey: `photos/event-${event.id}/thumb-${i}.jpg`,
-          name: `Foto ${i} - ${event.title}`,
-          status: "AVAILABLE",
-          price: 15 + Math.random() * 35,
-          isPremium: Math.random() > 0.7,
-          isWatermarked: true,
-          width: 4000,
-          height: 2667,
-          fileSize: Math.floor(Math.random() * 5000000),
-          mimeType: "image/jpeg",
-        },
-      });
-      eventPhotos[event.id].push(photo);
-    }
-  }
-
-  // BibNumbers + real PhotoBib links for first event
-  if (events.length > 0) {
-    const event = events[0];
-    const photos = eventPhotos[event.id];
-
-    for (let i = 1; i <= 20; i++) {
-      const number = String(i).padStart(3, "0");
-      const bib = await prisma.bibNumber.create({
-        data: {
-          eventId: event.id,
-          number,
-          athleteName: `Atleta ${i}`,
-          athleteEmail: `atleta${i}@example.pt`,
-          metadata: {
-            team: ["Equipa A", "Equipa B"][Math.floor(Math.random() * 2)],
-            category: "Senior",
-            position: ["Goleiro", "Defesa", "Médio", "Avançado"][
-              Math.floor(Math.random() * 4)
-            ],
-          },
-        },
-      });
-
-      // Link first 10 bibs to the 10 event photos so search returns results
-      const photo = photos[i - 1];
-      if (photo) {
-        await prisma.photoBib.create({
-          data: {
-            photoId: photo.id,
-            bibNumberId: bib.id,
-            number,
-            confidence: 1,
-          },
-        });
-        await prisma.photo.update({
-          where: { id: photo.id },
-          data: {
-            detectedBibNumbers: JSON.stringify([{ number, confidence: 1 }]),
-            bibMetadata: { extracted_numbers: [number], method: "seed" },
-          },
-        });
-      }
-    }
-  }
-
-  // Coupons (PT-PT)
-  const coupon = await prisma.coupon.create({
-    data: {
-      code: "BOAS_VINDAS20",
-      discountType: "percentage",
-      discountValue: 20,
-      validFrom: new Date(),
-      validUntil: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
-      maxUses: 100,
-      isActive: true,
-    },
-  });
-
-  // Cupom de pacote: "todas as fotos do evento" (-20%, sem mínimo)
-  await prisma.coupon.create({
-    data: {
-      code: "PACOTE20",
-      discountType: "percentage",
-      discountValue: 20,
-      validFrom: new Date(),
-      validUntil: new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000),
-      minOrderValue: 0,
-      isActive: true,
-    },
-  });
-
-  // Sample order
-  const event = events[0];
-  const photos = await prisma.photo.findMany({
-    where: { eventId: event.id },
-    take: 3,
-  });
-
-  const subtotal = photos.reduce((sum, p) => sum + p.price, 0);
-  const tax = subtotal * 0.23; // 23% IVA
-  const total = subtotal + tax;
-
-  const order = await prisma.order.create({
-    data: {
-      userId: clientUser.id,
-      status: "COMPLETED",
-      subtotal: subtotal,
-      tax: tax,
-      total: total,
-      paidAt: new Date(),
-      items: {
-        create: photos.map((photo) => ({
-          photoId: photo.id,
-          price: photo.price,
-          quantity: 1,
-        })),
-      },
-    },
-  });
-
-  // Transaction for photographer
-  if (photographers.length > 0) {
-    await prisma.transaction.create({
-      data: {
-        orderId: order.id,
-        photographerId: photographers[0].id,
-        amount: total,
-        commission: total * 0.2,
-        photographerPayout: total * 0.8,
-        status: "completed",
-      },
-    });
-  }
-
-  // Favorites
-  for (let i = 0; i < Math.min(5, photos.length); i++) {
-    await prisma.favorite.create({
-      data: {
+  // ── Orders (2 COMPLETED) ──────────────────────────────────────────────
+  for (let i = 0; i < 2; i++) {
+    const photo = createdPhotos[i];
+    const existingOrder = await prisma.order.findFirst({
+      where: {
         userId: clientUser.id,
-        photoId: photos[i].id,
+        items: { some: { photoId: photo.id } },
       },
     });
+
+    if (!existingOrder) {
+      const subtotal = photo.price;
+      const tax = subtotal * 0.23;
+
+      const order = await prisma.order.create({
+        data: {
+          userId: clientUser.id,
+          status: OrderStatus.COMPLETED,
+          subtotal,
+          tax,
+          total: subtotal + tax,
+          discount: 0,
+          paidAt: new Date(),
+          items: {
+            create: { photoId: photo.id, price: photo.price, quantity: 1 },
+          },
+          transactions: {
+            create: {
+              photographerId: photographer.id,
+              amount: subtotal,
+              commission: subtotal * 0.2,
+              photographerPayout: subtotal * 0.8,
+              status: "completed",
+              completedAt: new Date(),
+            },
+          },
+        },
+      });
+      console.log(`  + Order ${i + 1}: ${order.id} (€${order.total.toFixed(2)})`);
+    } else {
+      console.log(`  ~ Order ${i + 1}: already exists`);
+    }
   }
 
-  // Notifications
-  await prisma.notification.create({
-    data: {
-      userId: clientUser.id,
-      type: "ORDER_CONFIRMED",
-      title: "Pedido Confirmado",
-      message: `Seu pedido de ${photos.length} fotos foi confirmado com sucesso!`,
-      data: { orderId: order.id },
-      read: false,
-    },
-  });
-
-  console.log("\n✅ Base de dados seed concluída!");
-  console.log(`
-📊 Dados criados:
-- 1 Utilizador Administrador
-- 1 Organizador com 3 eventos
-- 3 Fotógrafos
-- 1 Cliente
-- 30 Fotos totais
-- 1 Pedido com transação
-- 20 Números de Atletas
-- 1 Cupão de Desconto
-
-🔐 CREDENCIAIS DE TESTE (Palavra-passe: Test1234!)
-────────────────────────────────────────────────
-
-👤 CLIENTE:
-   Email: cliente@sportsphotos.pt
-   Palavra-passe: Test1234!
-
-📸 FOTÓGRAFO:
-   Email: fotografo1@sportsphotos.pt
-   Palavra-passe: Test1234!
-
-🎯 ORGANIZADOR:
-   Email: organizador@sportsphotos.pt
-   Palavra-passe: Test1234!
-
-🔑 ADMINISTRADOR:
-   Email: admin@sportsphotos.pt
-   Palavra-passe: Test1234!
-
-────────────────────────────────────────────────
-  `);
+  console.log("\n🎉 Seed complete!");
+  console.log("   admin@laphotus.pt    / admin123   (ADMIN)");
+  console.log("   org@laphotus.pt      / org123     (ORGANIZER)");
+  console.log("   photo@laphotus.pt    / photo123   (PHOTOGRAPHER)");
+  console.log("   cliente@laphotus.pt  / cliente123 (CLIENT)");
 }
 
 main()
   .catch((e) => {
-    console.error("Erro no seed:", e);
+    console.error("❌ Seed failed:", e);
     process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .finally(() => prisma.$disconnect());
