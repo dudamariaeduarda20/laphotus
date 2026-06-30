@@ -1,6 +1,7 @@
 "use client";
 
 import PhotoCard from "./PhotoCard";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useState } from "react";
 
 interface PhotoGridProps {
@@ -16,6 +17,7 @@ export default function PhotoGrid({
   event,
   isLoading = false,
 }: PhotoGridProps) {
+  const { t } = useTranslation();
   const [sortBy, setSortBy] = useState("newest");
   const [filterPremium, setFilterPremium] = useState(false);
 
@@ -40,7 +42,7 @@ export default function PhotoGrid({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">A carregar fotos...</div>
+        <div className="text-gray-500">{t("grid.loading")}</div>
       </div>
     );
   }
@@ -50,10 +52,10 @@ export default function PhotoGrid({
       <div className="text-center py-12">
         <div className="text-6xl mb-4">📸</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Nenhuma foto ainda
+          {t("grid.empty.title")}
         </h3>
         <p className="text-gray-600">
-          Fotos deste evento aparecerão aqui quando fotógrafos as carregarem.
+          {t("grid.empty.desc")}
         </p>
       </div>
     );
@@ -66,16 +68,16 @@ export default function PhotoGrid({
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Ordenar por
+              {t("grid.sortBy")}
             </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             >
-              <option value="newest">Mais Recentes Primeiro</option>
-              <option value="price-low">Preço: Baixo para Alto</option>
-              <option value="price-high">Preço: Alto para Baixo</option>
+              <option value="newest">{t("grid.sort.newest")}</option>
+              <option value="price-low">{t("grid.sort.priceLow")}</option>
+              <option value="price-high">{t("grid.sort.priceHigh")}</option>
             </select>
           </div>
 
@@ -88,7 +90,7 @@ export default function PhotoGrid({
                 className="w-4 h-4 rounded border-gray-300"
               />
               <span className="text-sm font-medium text-gray-700">
-                Apenas Premium
+                {t("grid.premiumOnly")}
               </span>
             </label>
           </div>
@@ -104,7 +106,7 @@ export default function PhotoGrid({
 
       {/* Results Count */}
       <div className="mt-6 text-center text-sm text-gray-600">
-        Exibindo {filtered.length} de {photos.length} fotos
+        {t("grid.showing")} {filtered.length} {t("grid.of")} {photos.length} {t("grid.photos")}
       </div>
     </div>
   );

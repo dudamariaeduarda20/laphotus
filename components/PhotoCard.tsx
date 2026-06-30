@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/lib/contexts/CartContext";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useState } from "react";
 import { getPhotoImageUrl } from "@/lib/photoUrl";
 
@@ -31,6 +32,7 @@ interface PhotoCardProps {
 
 export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
   const { addItem } = useCart();
+  const { t } = useTranslation();
   const [added, setAdded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -86,7 +88,7 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
             <div className="opacity-0 group-hover:opacity-100 transition">
               <div className="text-white text-center">
                 <div className="text-2xl mb-2">👁️</div>
-                <div className="text-sm font-semibold">Ver Detalhes</div>
+                <div className="text-sm font-semibold">{t("photo.viewDetails")}</div>
               </div>
             </div>
           </div>
@@ -106,7 +108,7 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
                   € {photo.price.toFixed(2)}
                 </span>
               ) : (
-                <span className="text-sm text-gray-500">Grátis</span>
+                <span className="text-sm text-gray-500">{t("photo.free")}</span>
               )}
             </div>
 

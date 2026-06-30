@@ -1,12 +1,14 @@
 "use client";
 
 import { useCart } from "@/lib/contexts/CartContext";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 import Link from "next/link";
 import CartItem from "./CartItem";
 import { useState } from "react";
 
 export default function Cart() {
   const { items, getTotal, getItemCount, clearCart } = useCart();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const itemCount = getItemCount();
@@ -32,7 +34,7 @@ export default function Cart() {
         <div className="fixed right-0 top-0 h-screen w-full sm:w-96 bg-white shadow-lg z-50 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h2 className="text-lg font-bold text-gray-900">Carrinho de Compras</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t("cart.title")}</h2>
             <button
               onClick={() => setIsOpen(false)}
               className="text-gray-600 hover:text-gray-900"
@@ -46,9 +48,9 @@ export default function Cart() {
             {itemCount === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-600 p-4 text-center">
                 <div className="text-6xl mb-4">🛒</div>
-                <p>Seu carrinho está vazio</p>
+                <p>{t("cart.empty")}</p>
                 <p className="text-sm mt-2">
-                  Adicione fotos para começar
+                  {t("cart.empty.hint")}
                 </p>
               </div>
             ) : (
@@ -66,17 +68,17 @@ export default function Cart() {
               {/* Totals */}
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal:</span>
+                  <span className="text-gray-600">{t("cart.subtotal")}</span>
                   <span className="font-semibold">€ {total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between pb-2 border-b border-gray-200">
-                  <span className="text-gray-600">IVA (23%):</span>
+                  <span className="text-gray-600">{t("cart.vat")}</span>
                   <span className="font-semibold">
                     € {(total * 0.23).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between text-lg font-bold">
-                  <span>Total:</span>
+                  <span>{t("cart.total")}</span>
                   <span className="text-green-600">
                     € {(total * 1.23).toFixed(2)}
                   </span>
@@ -88,14 +90,14 @@ export default function Cart() {
                 href="/checkout"
                 className="w-full block text-center py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
               >
-                Finalizar Compra
+                {t("cart.checkout")}
               </Link>
 
               <button
                 onClick={clearCart}
                 className="w-full py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
               >
-                Limpar Carrinho
+                {t("cart.clear")}
               </button>
             </div>
           )}
