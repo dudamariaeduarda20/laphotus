@@ -1,29 +1,36 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface EventData {
+  id: string;
+  title: string;
+  sport: string;
+  date: string;
+  photoCount: number;
+  photosSold: number;
+  revenue: number;
+}
+
+interface OrganizerStats {
+  eventCount: number;
+  totalPhotosSold: number;
+  totalRevenue: number;
+  conversionRate: number;
+}
+
 export default function OrganizerDashboard() {
   const { isOrganizer, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [events, setEvents] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [stats, setStats] = useState<OrganizerStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!isOrganizer) {
-      router.push("/dashboard");
-      return;
-    }
-
-    fetchOrganizerData();
-  }, [isOrganizer, authLoading, router]);
-
-  const fetchOrganizerData = async () => {
+  const fetchOrganizerData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/organizer/stats");
@@ -37,7 +44,17 @@ export default function OrganizerDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isOrganizer) {
+      router.push("/dashboard");
+      return;
+    }
+
+    fetchOrganizerData();
+  }, [isOrganizer, authLoading, router, fetchOrganizerData]);
 
   if (loading) {
     return (

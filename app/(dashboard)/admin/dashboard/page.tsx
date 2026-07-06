@@ -1,29 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface AdminStats {
+  totalUsers: number;
+  photographersCount: number;
+  totalPhotos: number;
+  platformEarnings: number;
+  transactionCount: number;
+}
+
+interface AuditLog {
+  id: string;
+  action: string;
+  resource: string;
+  resourceId?: string;
+  createdAt: string;
+}
+
 export default function AdminDashboard() {
   const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [stats, setStats] = useState<any>(null);
-  const [logs, setLogs] = useState<any[]>([]);
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!isAdmin) {
-      router.push("/dashboard");
-      return;
-    }
-
-    fetchAdminData();
-  }, [isAdmin, authLoading, router]);
-
-  const fetchAdminData = async () => {
+  const fetchAdminData = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/stats");
@@ -37,7 +43,17 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAdmin) {
+      router.push("/dashboard");
+      return;
+    }
+
+    fetchAdminData();
+  }, [isAdmin, authLoading, router, fetchAdminData]);
 
   if (loading) {
     return (

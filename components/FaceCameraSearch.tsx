@@ -5,9 +5,12 @@ import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface FaceCameraSearchProps {
   eventId: string;
-  onMatch?: (matches: any[]) => void;
+  onMatch?: (matches: Array<{ photoId: string }>) => void;
   onLoading?: (loading: boolean) => void;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FaceDetector = any;
 
 /**
  * Câmera ao vivo com deteção de rosto em tempo real (MediaPipe FaceDetector).
@@ -25,7 +28,7 @@ export default function FaceCameraSearch({
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
-  const detectorRef = useRef<any>(null);
+  const detectorRef = useRef<FaceDetector | null>(null);
   const rafRef = useRef<number | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -34,51 +37,6 @@ export default function FaceCameraSearch({
   >("idle");
   const [error, setError] = useState<string | null>(null);
   const [faceFramed, setFaceFramed] = useState(false);
-
-  // Arranca câmera + carrega o modelo de deteção MediaPipe
-  const start = useCallback(async () => {
-    setStatus("loading");
-    setError(null);
-    try {
-      // 1. Carrega MediaPipe FaceDetector (wasm + modelo via CDN)
-      const { FaceDetector, FilesetResolver } = await import(
-        "@mediapipe/tasks-vision"
-      );
-      const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm"
-      );
-      detectorRef.current = await FaceDetector.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath:
-            "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
-          delegate: "GPU",
-        },
-        runningMode: "VIDEO",
-        minDetectionConfidence: 0.5,
-      });
-
-      // 2. Abre a câmera
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: 640, height: 480 },
-        audio: false,
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-      setStatus("ready");
-      detectLoop();
-    } catch (err) {
-      console.error(err);
-      setError(
-        err instanceof Error && err.name === "NotAllowedError"
-          ? t("face.error.denied")
-          : t("face.error.noCamera")
-      );
-      setStatus("error");
-    }
-  }, [t]);
 
   // Loop de deteção em tempo real -> desenha retângulo
   const detectLoop = useCallback(() => {
@@ -126,6 +84,51 @@ export default function FaceCameraSearch({
     };
     render();
   }, []);
+
+  // Arranca câmera + carrega o modelo de deteção MediaPipe
+  const start = useCallback(async () => {
+    setStatus("loading");
+    setError(null);
+    try {
+      // 1. Carrega MediaPipe FaceDetector (wasm + modelo via CDN)
+      const { FaceDetector, FilesetResolver } = await import(
+        "@mediapipe/tasks-vision"
+      );
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm"
+      );
+      detectorRef.current = await FaceDetector.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath:
+            "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+          delegate: "GPU",
+        },
+        runningMode: "VIDEO",
+        minDetectionConfidence: 0.5,
+      });
+
+      // 2. Abre a câmera
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: 640, height: 480 },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setStatus("ready");
+      detectLoop();
+    } catch (err) {
+      console.error(err);
+      setError(
+        err instanceof Error && err.name === "NotAllowedError"
+          ? t("face.error.denied")
+          : t("face.error.noCamera")
+      );
+      setStatus("error");
+    }
+  }, [t, detectLoop]);
 
   // Captura o frame atual e envia ao backend
   const search = useCallback(async () => {

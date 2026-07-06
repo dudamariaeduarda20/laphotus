@@ -1,8 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+
+interface EarningsData {
+  totalEarnings: number;
+  pendingEarnings: number;
+  transactionCount: number;
+  totalPhotographerPayout: number;
+  totalProcessed: number;
+}
 
 export default function AdminSettings() {
   const { isAdmin, loading: authLoading } = useAuth();
@@ -12,20 +20,10 @@ export default function AdminSettings() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [earnings, setEarnings] = useState<any>(null);
-  const [history, setHistory] = useState<any[]>([]);
+  const [earnings, setEarnings] = useState<EarningsData | null>(null);
+  const [history, setHistory] = useState<Array<{ id: string; photographerName: string; amount: number; commission: number; photographerPayout: number; createdAt: string }>>([]);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!isAdmin) {
-      router.push("/dashboard");
-      return;
-    }
-
-    fetchSettings();
-  }, [isAdmin, authLoading, router]);
-
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/settings");
@@ -40,7 +38,17 @@ export default function AdminSettings() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAdmin) {
+      router.push("/dashboard");
+      return;
+    }
+
+    fetchSettings();
+  }, [isAdmin, authLoading, router, fetchSettings]);
 
   const handleSaveRate = async () => {
     setSaving(true);

@@ -1,28 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+
+interface AuditLog {
+  id: string;
+  action: string;
+  resource: string;
+  resourceId?: string;
+  userName?: string;
+  userEmail?: string;
+  createdAt: string;
+}
 
 export default function AuditLogs() {
   const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterAction, setFilterAction] = useState<string>("");
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!isAdmin) {
-      router.push("/dashboard");
-      return;
-    }
-
-    fetchLogs();
-  }, [isAdmin, authLoading, router]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/audit-logs");
@@ -35,7 +35,17 @@ export default function AuditLogs() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAdmin) {
+      router.push("/dashboard");
+      return;
+    }
+
+    fetchLogs();
+  }, [isAdmin, authLoading, router, fetchLogs]);
 
   const filteredLogs = filterAction
     ? logs.filter((log) => log.action === filterAction)
@@ -127,7 +137,7 @@ export default function AuditLogs() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">
                     <code className="bg-gray-100 px-2 py-1 rounded text-xs">
-                      {log.resourceId.substring(0, 12)}...
+                      {log.resourceId ? log.resourceId.substring(0, 12) + "..." : "—"}
                     </code>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">

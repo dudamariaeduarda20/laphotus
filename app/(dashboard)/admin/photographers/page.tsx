@@ -1,28 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+
+interface Photographer {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  photoCount?: number;
+  rating?: number;
+  active: boolean;
+}
 
 export default function AdminPhotographers() {
   const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [photographers, setPhotographers] = useState<any[]>([]);
+  const [photographers, setPhotographers] = useState<Photographer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!isAdmin) {
-      router.push("/dashboard");
-      return;
-    }
-
-    fetchPhotographers();
-  }, [isAdmin, authLoading, router]);
-
-  const fetchPhotographers = async () => {
+  const fetchPhotographers = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch("/api/admin/photographers");
@@ -35,7 +36,17 @@ export default function AdminPhotographers() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAdmin) {
+      router.push("/dashboard");
+      return;
+    }
+
+    fetchPhotographers();
+  }, [isAdmin, authLoading, router, fetchPhotographers]);
 
   const handleActivate = async (userId: string) => {
     setActionInProgress(userId);
