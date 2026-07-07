@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
@@ -22,21 +22,6 @@ export default function AuditLogs() {
   const [error, setError] = useState<string | null>(null);
   const [filterAction, setFilterAction] = useState<string>("");
 
-  const fetchLogs = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/admin/audit-logs");
-      if (!res.ok) throw new Error("Falha ao carregar");
-
-      const { logs } = await res.json();
-      setLogs(logs);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     if (authLoading) return;
     if (!isAdmin) {
@@ -44,8 +29,23 @@ export default function AuditLogs() {
       return;
     }
 
-    fetchLogs();
-  }, [isAdmin, authLoading, router, fetchLogs]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/admin/audit-logs");
+        if (!res.ok) throw new Error("Falha ao carregar");
+
+        const { logs } = await res.json();
+        setLogs(logs);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erro");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [isAdmin, authLoading, router]);
 
   const filteredLogs = filterAction
     ? logs.filter((log) => log.action === filterAction)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
@@ -23,21 +23,6 @@ export default function AdminPhotographers() {
   const [error, setError] = useState<string | null>(null);
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
-  const fetchPhotographers = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/admin/photographers");
-      if (!res.ok) throw new Error("Falha ao carregar");
-
-      const { photographers } = await res.json();
-      setPhotographers(photographers);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     if (authLoading) return;
     if (!isAdmin) {
@@ -45,8 +30,23 @@ export default function AdminPhotographers() {
       return;
     }
 
-    fetchPhotographers();
-  }, [isAdmin, authLoading, router, fetchPhotographers]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/admin/photographers");
+        if (!res.ok) throw new Error("Falha ao carregar");
+
+        const { photographers } = await res.json();
+        setPhotographers(photographers);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erro");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [isAdmin, authLoading, router]);
 
   const handleActivate = async (userId: string) => {
     setActionInProgress(userId);

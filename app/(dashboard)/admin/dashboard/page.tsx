@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -29,22 +29,6 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAdminData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/admin/stats");
-      if (!res.ok) throw new Error("Falha ao carregar dados");
-
-      const data = await res.json();
-      setStats(data.stats);
-      setLogs(data.logs);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     if (authLoading) return;
     if (!isAdmin) {
@@ -52,8 +36,24 @@ export default function AdminDashboard() {
       return;
     }
 
-    fetchAdminData();
-  }, [isAdmin, authLoading, router, fetchAdminData]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/admin/stats");
+        if (!res.ok) throw new Error("Falha ao carregar dados");
+
+        const data = await res.json();
+        setStats(data.stats);
+        setLogs(data.logs);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erro");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [isAdmin, authLoading, router]);
 
   if (loading) {
     return (

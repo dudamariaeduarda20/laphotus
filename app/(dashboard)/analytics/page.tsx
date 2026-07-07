@@ -132,7 +132,7 @@ function RevenueChart({ events }: { events: EventStat[] }) {
 }
 
 export default function AnalyticsPage() {
-  const { user, isOrganizer, loading: authLoading } = useAuth();
+  const { isOrganizer, loading: authLoading } = useAuth();
   const router = useRouter();
 
   const [events, setEvents] = useState<EventStat[]>([]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
@@ -23,23 +23,6 @@ export default function AdminSettings() {
   const [earnings, setEarnings] = useState<EarningsData | null>(null);
   const [history, setHistory] = useState<Array<{ id: string; photographerName: string; amount: number; commission: number; photographerPayout: number; createdAt: string }>>([]);
 
-  const fetchSettings = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/admin/settings");
-      if (!res.ok) throw new Error("Falha ao carregar");
-
-      const data = await res.json();
-      setCommissionRate(data.commissionRate * 100);
-      setEarnings(data.earnings);
-      setHistory(data.history);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
     if (authLoading) return;
     if (!isAdmin) {
@@ -47,8 +30,25 @@ export default function AdminSettings() {
       return;
     }
 
-    fetchSettings();
-  }, [isAdmin, authLoading, router, fetchSettings]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/admin/settings");
+        if (!res.ok) throw new Error("Falha ao carregar");
+
+        const data = await res.json();
+        setCommissionRate(data.commissionRate * 100);
+        setEarnings(data.earnings);
+        setHistory(data.history);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erro");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [isAdmin, authLoading, router]);
 
   const handleSaveRate = async () => {
     setSaving(true);

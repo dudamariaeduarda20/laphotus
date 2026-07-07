@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { createHmac, timingSafeEqual } from "crypto";
 
 const SECRET =
   process.env.AUTH_SECRET || "laphotus-dev-insecure-secret-change-in-production";
@@ -12,31 +11,34 @@ export interface TokenPayload {
   [key: string]: unknown;
 }
 
-// ──────────────────────────────────────────────────────────────────
-// Token signing (HMAC-SHA256, Node.js built-in crypto — no new deps)
-// Format: base64url(JSON.stringify(payload)).hmacHex
-// ──────────────────────────────────────────────────────────────────
+// Simple token format: base64(payload).base64(payload+SECRET hash)
+// Edge-safe: no Node crypto imports
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0; // Convert to 32-bit integer
+  }
+  return Math.abs(hash).toString(36);
+}
 
 export function signToken(payload: object): string {
   const base64 = Buffer.from(JSON.stringify(payload)).toString("base64url");
-  const sig = createHmac("sha256", SECRET).update(base64).digest("hex");
+  const sig = simpleHash(base64 + SECRET);
   return `${base64}.${sig}`;
 }
 
 function verifyToken(token: string): TokenPayload | null {
   try {
     const lastDot = token.lastIndexOf(".");
-    if (lastDot === -1) return null; // unsigned legacy token — reject
+    if (lastDot === -1) return null;
 
     const base64 = token.slice(0, lastDot);
     const sig = token.slice(lastDot + 1);
 
-    const expected = createHmac("sha256", SECRET).update(base64).digest("hex");
-
-    const sigBuf = Buffer.from(sig, "hex");
-    const expBuf = Buffer.from(expected, "hex");
-    if (sigBuf.length !== expBuf.length) return null;
-    if (!timingSafeEqual(sigBuf, expBuf)) return null;
+    const expected = simpleHash(base64 + SECRET);
+    if (sig !== expected) return null;
 
     return JSON.parse(Buffer.from(base64, "base64url").toString("utf-8")) as TokenPayload;
   } catch {
@@ -48,7 +50,7 @@ function verifyToken(token: string): TokenPayload | null {
 // Request helpers
 // ──────────────────────────────────────────────────────────────────
 
-export async function getUserFromRequest(request: NextRequest) {
+export function getUserFromRequest(request: NextRequest) {
   const token = request.cookies.get("auth-token")?.value;
   if (!token) return null;
   return verifyToken(token);
