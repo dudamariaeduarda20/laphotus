@@ -1,7 +1,5 @@
-@import "tailwindcss";
-
-/* Google Fonts Import */
 @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
 /* Class-based dark mode for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
