@@ -29,8 +29,8 @@ export default function Header() {
     <header
       className={
         isHome
-          ? "sticky top-0 z-50 bg-[#09419b]"
-          : "sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm"
+          ? "sticky top-0 z-50 bg-[#09419b] pt-4"
+          : "sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm pt-4"
       }
     >
       <div className="container-editorial py-6 px-6 flex items-center justify-between">
