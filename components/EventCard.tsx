@@ -4,6 +4,8 @@ import { getPhotoImageUrl } from "@/lib/photoUrl";
 import { EVENT_CATEGORIES } from "@/lib/categories";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 
+const DEFAULT_EVENT_COVER = "/images/default-event-cover.jpg";
+
 const LOCALE_MAP: Record<string, string> = {
   pt: "pt-PT",
   en: "en-US",
@@ -31,7 +33,7 @@ export default function EventCard({ event }: EventCardProps) {
   const isUpcoming = eventDate > new Date();
   const sportLabel = EVENT_CATEGORIES.find((c) => c.value === event.sport);
 
-  // Capa: 1ª foto carregada (key uploads/) > banner real > emoji
+  // Capa: 1ª foto carregada (key uploads/) > banner real > default > emoji
   const uploadedCover = event.photos?.find((p: any) =>
     typeof p?.key === "string" && p.key.startsWith("uploads/")
   );
@@ -39,7 +41,7 @@ export default function EventCard({ event }: EventCardProps) {
     ? getPhotoImageUrl(uploadedCover.key, event.title)
     : event.banner && !event.banner.includes("placeholder")
     ? event.banner
-    : null;
+    : DEFAULT_EVENT_COVER;
 
   return (
     <Link href={`/photos/${event.id}`}>

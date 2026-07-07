@@ -20,6 +20,8 @@ const LOCALE_MAP: Record<string, string> = {
   de: "de-DE",
 };
 
+const DEFAULT_EVENT_COVER = "/images/default-event-cover.jpg";
+
 export default function EventGalleryPage({
   params,
 }: {
@@ -191,7 +193,7 @@ export default function EventGalleryPage({
             ? `/${uploadedCover.key}`
             : event.banner && !event.banner.includes("placeholder")
             ? event.banner
-            : null;
+            : DEFAULT_EVENT_COVER;
           return coverUrl ? (
             <Image
               src={coverUrl}
