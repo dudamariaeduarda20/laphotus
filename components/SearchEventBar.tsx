@@ -23,22 +23,25 @@ export default function SearchEventBar() {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <form onSubmit={submit} className="flex gap-6 border-b border-[#ddd] pb-4">
+      <form onSubmit={submit} className="flex gap-3 justify-center items-center">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("home.search.placeholder")}
-          className="input-minimal flex-1 text-lg"
+          className="flex-1 max-w-md rounded-full border border-white/50 bg-transparent px-6 py-3 text-base text-white placeholder-white/60 focus:outline-none focus:border-white transition"
         />
-        <button type="submit" className="btn-primary">
-          🔍 {t("home.search.button")}
+        <button
+          type="submit"
+          className="rounded-full bg-[#ff2f92] text-white font-medium px-8 py-3 hover:bg-[#ff54a6] transition"
+        >
+          {t("home.search.button")}
         </button>
       </form>
 
       <button
         onClick={() => setModalOpen(true)}
-        className="mt-4 text-sm text-[#666] hover:text-[#09419b] transition font-medium"
+        className="mt-4 text-sm text-white/80 hover:text-white transition font-medium"
       >
         {t("home.search.unknown")}
       </button>

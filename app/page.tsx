@@ -18,35 +18,32 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      {/* Hero */}
-      <section className="container-editorial section-lg text-center">
-        <div className="mb-8">
-          <h1 className="font-serif text-5xl sm:text-6xl text-[#09419b] mb-6">
+      {/* Hero + Categories — full blue block */}
+      <section className="bg-[#09419b] text-white">
+        <div className="container-editorial section-lg text-center">
+          <h1 className="font-serif font-bold uppercase text-4xl sm:text-5xl text-white mb-6 tracking-tight">
             {t("home.hero.title")}
           </h1>
-          <p className="font-sans text-lg text-[#666] max-w-2xl mx-auto mb-12">
+          <p className="font-sans text-lg text-white/80 max-w-2xl mx-auto mb-12">
             {t("home.hero.subtitle")}
           </p>
-        </div>
-        <SearchEventBar />
-      </section>
 
-      {/* Categories */}
-      <section className="container-editorial section-md border-t border-[#ddd]">
-        <h2 className="font-serif text-3xl text-[#09419b] text-center mb-8">
-          {t("home.categories.title")}
-        </h2>
-        <div className="flex flex-wrap justify-center gap-3">
-          {EVENT_CATEGORIES.map((c) => (
-            <Link
-              key={c.value}
-              href={`/photos?sport=${encodeURIComponent(c.value)}`}
-              className="px-4 py-2 bg-[#f5f5f5] text-[#333] rounded-full text-sm font-sans hover:bg-[#09419b] hover:text-white transition flex items-center gap-2"
-            >
-              <span>{c.icon}</span>
-              {t(c.labelKey)}
-            </Link>
-          ))}
+          <SearchEventBar />
+
+          <h2 className="font-serif font-bold uppercase text-2xl sm:text-3xl text-white text-center mt-20 mb-8 tracking-tight">
+            {t("home.categories.title")}
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3">
+            {EVENT_CATEGORIES.map((c) => (
+              <Link
+                key={c.value}
+                href={`/photos?sport=${encodeURIComponent(c.value)}`}
+                className="px-5 py-2 bg-[#f0bf38] text-[#09419b] rounded-full text-sm font-medium font-sans hover:bg-[#f7d15f] transition"
+              >
+                {t(c.labelKey)}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 

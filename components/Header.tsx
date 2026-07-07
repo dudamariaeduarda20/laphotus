@@ -3,7 +3,7 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Cart from "./Cart";
 import NotificationBell from "./NotificationBell";
 import LanguageSelector from "./LanguageSelector";
@@ -13,6 +13,12 @@ export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const { t } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  const navLink = isHome
+    ? "text-base font-sans text-white hover:text-[#f0bf38] transition"
+    : "text-base font-sans text-[#333] hover:text-[#09419b] transition";
 
   const handleLogout = async () => {
     await logout();
@@ -20,25 +26,35 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm">
+    <header
+      className={
+        isHome
+          ? "sticky top-0 z-50 bg-[#09419b]"
+          : "sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm"
+      }
+    >
       <div className="container-editorial py-6 px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img src="/logo-text.svg" alt="LAPHOTUS" className="h-10" />
+          <img
+            src={isHome ? "/logo-text-white.svg" : "/logo-text.svg"}
+            alt="LAPHOTUS"
+            className="h-10"
+          />
         </Link>
 
         {/* Navigation */}
         <nav className="flex items-center gap-6">
-          <Link href="/photos" className="text-base font-sans text-[#333] hover:text-[#09419b] transition">
+          <Link href="/photos" className={navLink}>
             {t("nav.events")}
           </Link>
 
           {!isAuthenticated && (
             <>
-              <Link href="/fotografo" className="hidden md:inline text-base font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/fotografo" className={`hidden md:inline ${navLink}`}>
                 {t("nav.photographer")}
               </Link>
-              <Link href="/organizador" className="hidden md:inline text-base font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/organizador" className={`hidden md:inline ${navLink}`}>
                 {t("nav.organizer")}
               </Link>
             </>
@@ -46,7 +62,7 @@ export default function Header() {
 
           {isAuthenticated ? (
             <>
-              <Link href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"} className="text-base font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"} className={navLink}>
                 {t("nav.dashboard")}
               </Link>
               <Cart />
@@ -97,7 +113,7 @@ export default function Header() {
             <>
               <ThemeToggle />
               <LanguageSelector />
-              <Link href="/auth/login" className="text-base font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/auth/login" className={navLink}>
                 {t("nav.login")}
               </Link>
               <button className="btn-primary text-sm">{t("nav.register")}</button>
