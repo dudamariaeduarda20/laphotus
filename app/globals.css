@@ -127,7 +127,7 @@ h4, h5, h6 {
 .btn-primary {
   background-color: var(--color-pink);
   color: white;
-  padding: 12px 32px;
+  padding: 8px 24px;
   border-radius: 6px;
   border: none;
   font-family: var(--font-sans);
