@@ -2,14 +2,17 @@
 
 import { useTheme } from "@/lib/contexts/ThemeContext";
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ isHome = false }: { isHome?: boolean }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition"
+      className={isHome
+        ? "p-2 rounded-lg hover:bg-white/10 text-white transition"
+        : "p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition"
+      }
     >
       {theme === "dark" ? (
         // Sun icon

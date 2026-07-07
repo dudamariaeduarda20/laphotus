@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { LOCALE_LABELS, SUPPORTED_LOCALES, type Locale } from "@/lib/contexts/TranslationContext";
 
-export default function LanguageSelector() {
+export default function LanguageSelector({ isHome = false }: { isHome?: boolean }) {
   const { locale, setLocale } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -23,12 +23,15 @@ export default function LanguageSelector() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-700 transition"
+        className={isHome
+          ? "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-white/10 text-sm font-medium text-white transition"
+          : "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-700 transition"
+        }
         aria-label="Select language"
       >
         <span className="text-base leading-none">{current.flag}</span>
         <span className="hidden sm:inline">{current.name}</span>
-        <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className={isHome ? "w-3.5 h-3.5 text-white/70" : "w-3.5 h-3.5 text-gray-400"} fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>

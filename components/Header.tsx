@@ -67,8 +67,8 @@ export default function Header() {
               </Link>
               <Cart />
               <NotificationBell />
-              <ThemeToggle />
-              <LanguageSelector />
+              <ThemeToggle isHome={isHome} />
+              <LanguageSelector isHome={isHome} />
               <div className="relative group">
                 <button className="flex items-center gap-2 px-4 py-2 rounded hover:bg-[#f5f5f5]">
                   <div className="w-8 h-8 bg-[#f0bf38]/20 rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
@@ -111,8 +111,8 @@ export default function Header() {
             </>
           ) : (
             <>
-              <ThemeToggle />
-              <LanguageSelector />
+              <ThemeToggle isHome={isHome} />
+              <LanguageSelector isHome={isHome} />
               <Link href="/auth/login" className={navLink}>
                 {t("nav.login")}
               </Link>
