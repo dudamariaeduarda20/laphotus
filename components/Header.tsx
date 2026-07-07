@@ -20,19 +20,19 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+    <header className="bg-[#09419b] dark:bg-[#072e70] border-b border-[#072e70] dark:border-[#051d47] sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <img src="/logo-icon.svg" alt="LAPHOTUS" className="w-8 h-8" />
-          <span className="font-bold text-lg hidden sm:inline text-gray-900 dark:text-white">LAPHOTUS</span>
+          <span className="font-bold text-lg hidden sm:inline text-white">LAPHOTUS</span>
         </Link>
 
         {/* Navigation */}
         <nav className="flex items-center gap-5">
           <Link
             href="/photos"
-            className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
+            className="text-white hover:text-[#e8f0ff] transition"
           >
             {t("nav.events")}
           </Link>
@@ -41,13 +41,13 @@ export default function Header() {
             <>
               <Link
                 href="/fotografo"
-                className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
+                className="hidden md:inline text-white hover:text-[#e8f0ff] transition"
               >
                 {t("nav.photographer")}
               </Link>
               <Link
                 href="/organizador"
-                className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
+                className="hidden md:inline text-white hover:text-[#e8f0ff] transition"
               >
                 {t("nav.organizer")}
               </Link>
@@ -58,7 +58,7 @@ export default function Header() {
             <>
               <Link
                 href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
+                className="text-white hover:text-[#e8f0ff] transition"
               >
                 {t("nav.dashboard")}
               </Link>
@@ -70,11 +70,11 @@ export default function Header() {
 
               {/* User Menu */}
               <div className="relative group">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
-                  <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
+                <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#072e70]">
+                  <div className="w-8 h-8 bg-[#e8f0ff] rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
                     {user?.name?.[0]?.toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium hidden sm:inline">
+                  <span className="text-sm font-medium hidden sm:inline text-white">
                     {user?.name}
                   </span>
                 </button>
@@ -144,7 +144,7 @@ export default function Header() {
               <LanguageSelector />
               <Link
                 href="/auth/login"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition"
+                className="text-white hover:text-[#e8f0ff] transition"
               >
                 {t("nav.login")}
               </Link>
