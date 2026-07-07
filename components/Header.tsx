@@ -24,9 +24,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#09419b] rounded-lg flex items-center justify-center text-white font-bold">
-            L
-          </div>
+          <img src="/logo-icon.svg" alt="LAPHOTUS" className="w-8 h-8" />
           <span className="font-bold text-lg hidden sm:inline text-gray-900 dark:text-white">LAPHOTUS</span>
         </Link>
 
