@@ -39,7 +39,7 @@ export default function Header() {
           <img
             src={isHome ? "/logo-text-white.svg" : "/logo-text.svg"}
             alt="LAPHOTUS"
-            className="h-14"
+            className="h-12"
           />
         </Link>
 
