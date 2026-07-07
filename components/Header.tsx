@@ -48,7 +48,7 @@ export default function Header() {
                 {t("nav.photographer")}
               </Link>
               <Link
-                href="/auth/register?type=organizador"
+                href="/organizador"
                 className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
               >
                 {t("nav.organizer")}
