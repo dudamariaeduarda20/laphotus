@@ -5,6 +5,8 @@ import { UserRole } from "@/lib/types";
 import { z } from "zod";
 import prisma from "@/lib/db/prisma";
 
+const DEFAULT_EVENT_COVER = "/images/default-event-cover.jpg";
+
 const createEventSchema = z.object({
   title: z.string().min(3),
   description: z.string().optional(),
@@ -96,7 +98,7 @@ export async function POST(request: NextRequest) {
       new Date(validated.date),
       validated.location || null,
       validated.sport,
-      validated.banner
+      validated.banner || DEFAULT_EVENT_COVER
     );
 
     return NextResponse.json(event, { status: 201 });

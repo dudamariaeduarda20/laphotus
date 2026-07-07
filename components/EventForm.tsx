@@ -8,6 +8,8 @@ interface EventFormProps {
   isLoading?: boolean;
 }
 
+const DEFAULT_EVENT_COVER = "/images/default-event-cover.jpg";
+
 export default function EventForm({
   onSubmit,
   initialData,
@@ -25,6 +27,7 @@ export default function EventForm({
   });
 
   const [error, setError] = useState<string | null>(null);
+  const displayBanner = formData.banner || DEFAULT_EVENT_COVER;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -142,6 +145,23 @@ export default function EventForm({
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           placeholder="https://exemplo.com/banner.jpg"
+        />
+        <p className="text-xs text-gray-500 mt-2">
+          {formData.banner ? "Imagem customizada" : "Usando capa padrão"}
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Pré-visualização da Capa
+        </label>
+        <img
+          src={displayBanner}
+          alt="Pré-visualização do banner do evento"
+          className="w-full h-48 object-cover rounded-lg bg-gray-100"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = DEFAULT_EVENT_COVER;
+          }}
         />
       </div>
 
