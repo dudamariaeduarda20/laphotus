@@ -64,20 +64,17 @@ export default function FaceCameraSearch({
           const box = det.boundingBox;
           if (!box) continue;
           framed = true;
-          // Óvalo elegante ao redor do rosto
-          ctx.strokeStyle = "#09419b";
-          ctx.lineWidth = 2.5;
-          ctx.beginPath();
-          ctx.ellipse(
-            box.originX + box.width / 2,
-            box.originY + box.height / 2,
-            box.width / 2,
-            box.height / 2,
-            0,
-            0,
-            2 * Math.PI
-          );
-          ctx.stroke();
+          // Retângulo de feedback
+          ctx.strokeStyle = "#22c55e";
+          ctx.lineWidth = 3;
+          ctx.strokeRect(box.originX, box.originY, box.width, box.height);
+          // Cantos destacados
+          ctx.fillStyle = "#22c55e";
+          const c = 14;
+          ctx.fillRect(box.originX, box.originY, c, 3);
+          ctx.fillRect(box.originX, box.originY, 3, c);
+          ctx.fillRect(box.originX + box.width - c, box.originY, c, 3);
+          ctx.fillRect(box.originX + box.width - 3, box.originY, 3, c);
         }
       } catch {
         // ignora frames falhados
