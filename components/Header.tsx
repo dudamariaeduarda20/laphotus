@@ -21,24 +21,24 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm">
-      <div className="container-editorial py-5 flex items-center justify-between">
+      <div className="container-editorial py-6 px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img src="/logo-text.svg" alt="LAPHOTUS" className="h-8" />
+          <img src="/logo-text.svg" alt="LAPHOTUS" className="h-10" />
         </Link>
 
         {/* Navigation */}
         <nav className="flex items-center gap-6">
-          <Link href="/photos" className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+          <Link href="/photos" className="text-base font-sans text-[#333] hover:text-[#09419b] transition">
             {t("nav.events")}
           </Link>
 
           {!isAuthenticated && (
             <>
-              <Link href="/fotografo" className="hidden md:inline text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/fotografo" className="hidden md:inline text-base font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.photographer")}
               </Link>
-              <Link href="/organizador" className="hidden md:inline text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/organizador" className="hidden md:inline text-base font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.organizer")}
               </Link>
             </>
@@ -46,7 +46,7 @@ export default function Header() {
 
           {isAuthenticated ? (
             <>
-              <Link href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"} className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"} className="text-base font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.dashboard")}
               </Link>
               <Cart />
@@ -54,7 +54,7 @@ export default function Header() {
               <ThemeToggle />
               <LanguageSelector />
               <div className="relative group">
-                <button className="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#f5f5f5]">
+                <button className="flex items-center gap-2 px-4 py-2 rounded hover:bg-[#f5f5f5]">
                   <div className="w-8 h-8 bg-[#f0bf38]/20 rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
                     {user?.name?.[0]?.toUpperCase()}
                   </div>
@@ -97,10 +97,10 @@ export default function Header() {
             <>
               <ThemeToggle />
               <LanguageSelector />
-              <Link href="/auth/login" className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/auth/login" className="text-base font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.login")}
               </Link>
-              <button className="btn-primary text-xs">{t("nav.register")}</button>
+              <button className="btn-primary text-sm">{t("nav.register")}</button>
             </>
           )}
         </nav>
