@@ -1,123 +1,224 @@
 @import "tailwindcss";
 
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 /* Class-based dark mode for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #333333;
 
-  /* Brand colors */
-  --brand-primary: #09419b;
-  --brand-primary-dark: #072e70;
-  --brand-primary-light: #e8f0ff;
-  --brand-secondary: #f0bf38;
-  --brand-secondary-light: #fef7e8;
-  --brand-secondary-dark: #332800;
-  --brand-accent: #ff2f92;
-  --brand-accent-light: #ffe8f5;
-  --brand-gray-light: #f3f4f6;
-  --brand-gray-medium: #6b7280;
-  --brand-gray-dark: #1f2937;
+  /* Editorial Minimalista Colors */
+  --color-blue: #09419b;
+  --color-yellow: #f0bf38;
+  --color-pink: #ff2f92;
+  --color-bg-light: #f5f5f5;
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+  --color-border: #dddddd;
+  --color-error: #e53e3e;
 
-  /* AI-Futuristic palette */
-  --brand-purple: #8B5CF6;
-  --brand-cyan: #06B6D4;
-  --brand-violet: #A78BFA;
+  /* Typography */
+  --font-serif: 'Merriweather', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Class-based dark — user toggle overrides system preference */
+/* Dark mode */
 html.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --color-text-primary: #ededed;
+  --color-text-secondary: #b0b0b0;
+  --color-border: #444444;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-
-  --animate-fade-in: fade-in 0.6s ease-out;
-  --animate-slide-up: slide-up 0.6s ease-out;
-  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
 }
 
-/* Animations */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes glow-pulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(9, 65, 155, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.8);
-  }
-}
-
-@keyframes gradient-shift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Brand typography */
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-montserrat);
+/* Editorial Typography Scale */
+h1 {
+  font-family: var(--font-serif);
+  font-size: 48px;
   font-weight: 700;
+  color: var(--color-blue);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin: 2rem 0 1rem;
 }
 
-.font-brand {
-  font-family: var(--font-montserrat);
+h2 {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-blue);
+  line-height: 1.2;
+  margin: 2rem 0 1rem;
 }
 
-
-/* Animation utilities */
-.animate-fade-in {
-  animation: fade-in 0.6s ease-out;
+h3 {
+  font-family: var(--font-sans);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 1.5rem 0 0.75rem;
 }
 
-.animate-slide-up {
-  animation: slide-up 0.6s ease-out;
+h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 1rem 0 0.5rem;
 }
 
-.animate-glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
+/* Utility Classes */
+.font-serif {
+  font-family: var(--font-serif);
 }
 
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
+.font-sans {
+  font-family: var(--font-sans);
 }
 
-/* Smooth transitions */
-.transition-smooth {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
+
+.text-blue {
+  color: var(--color-blue);
+}
+
+.bg-light {
+  background-color: var(--color-bg-light);
+}
+
+/* Soft Shadows (Editorial Style) */
+.shadow-soft {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-soft-hover {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--color-pink);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 6px;
+  border: none;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-blue);
+  border: 1px solid var(--color-blue);
+  padding: 12px 32px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-secondary:hover {
+  opacity: 0.8;
+}
+
+/* Form Inputs */
+.input-minimal {
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background-color: transparent;
+  padding: 8px 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.input-minimal:focus {
+  outline: none;
+  border-bottom-color: var(--color-blue);
+}
+
+.input-minimal::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Cards */
+.card-minimal {
+  background-color: white;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-minimal:hover {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Grid Layouts */
+.grid-2col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Container */
+.container-editorial {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Whitespace */
+.section-lg {
+  padding: 4rem 0;
+}
+
+.section-md {
+  padding: 2rem 0;
+}
+
+.gap-lg {
+  gap: 2rem;
 }

@@ -20,35 +20,26 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-r from-[#09419b]/90 via-[#8B5CF6]/70 to-[#06B6D4]/70 dark:from-[#09419b]/80 dark:via-[#8B5CF6]/60 dark:to-[#06B6D4]/60 border-b border-white/10 dark:border-white/5 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm">
+      <div className="container-editorial py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logo-icon-white.svg" alt="LAPHOTUS" className="w-8 h-8" />
-          <span className="font-bold text-lg hidden sm:inline text-white font-montserrat">LAPHOTUS</span>
+          <img src="/logo-icon.svg" alt="LAPHOTUS" className="w-8 h-8" />
+          <span className="font-serif font-bold text-lg hidden sm:inline text-[#09419b]">LAPHOTUS</span>
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-5">
-          <Link
-            href="/photos"
-            className="text-white hover:text-[#e8f0ff] transition"
-          >
+        <nav className="flex items-center gap-6">
+          <Link href="/photos" className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
             {t("nav.events")}
           </Link>
 
           {!isAuthenticated && (
             <>
-              <Link
-                href="/fotografo"
-                className="hidden md:inline text-white hover:text-[#e8f0ff] transition"
-              >
+              <Link href="/fotografo" className="hidden md:inline text-sm font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.photographer")}
               </Link>
-              <Link
-                href="/organizador"
-                className="hidden md:inline text-white hover:text-[#e8f0ff] transition"
-              >
+              <Link href="/organizador" className="hidden md:inline text-sm font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.organizer")}
               </Link>
             </>
@@ -56,83 +47,48 @@ export default function Header() {
 
           {isAuthenticated ? (
             <>
-              <Link
-                href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"}
-                className="text-white hover:text-[#e8f0ff] transition"
-              >
+              <Link href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"} className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.dashboard")}
               </Link>
-
               <Cart />
               <NotificationBell />
               <ThemeToggle />
               <LanguageSelector />
-
-              {/* User Menu */}
               <div className="relative group">
-                <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-[#072e70]">
-                  <div className="w-8 h-8 bg-[#e8f0ff] rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
+                <button className="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#f5f5f5]">
+                  <div className="w-8 h-8 bg-[#f0bf38]/20 rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
                     {user?.name?.[0]?.toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium hidden sm:inline text-white">
-                    {user?.name}
-                  </span>
+                  <span className="text-sm font-medium hidden sm:inline text-[#333]">{user?.name}</span>
                 </button>
-
-                {/* Dropdown Menu */}
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-t-lg"
-                  >
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#ddd] rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                  <Link href="/profile" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                     {t("nav.profile")}
                   </Link>
-                  <Link
-                    href="/settings"
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                  >
+                  <Link href="/settings" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                     {t("settings.title")}
                   </Link>
-
                   {user?.role === "PHOTOGRAPHER" && (
-                    <Link
-                      href="/upload"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
+                    <Link href="/upload" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                       {t("nav.uploadPhotos")}
                     </Link>
                   )}
-
                   {user?.role === "ORGANIZER" && (
                     <>
-                      <Link
-                        href="/events"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      >
+                      <Link href="/events" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                         {t("nav.myEvents")}
                       </Link>
-                      <Link
-                        href="/analytics"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      >
+                      <Link href="/analytics" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                         {t("nav.analytics")}
                       </Link>
                     </>
                   )}
-
                   {user?.role === "ADMIN" && (
-                    <Link
-                      href="/admin/dashboard"
-                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
+                    <Link href="/admin/dashboard" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                       {t("nav.adminPanel")}
                     </Link>
                   )}
-
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-b-lg border-t dark:border-gray-700"
-                  >
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5]">
                     {t("nav.logout")}
                   </button>
                 </div>
@@ -142,18 +98,10 @@ export default function Header() {
             <>
               <ThemeToggle />
               <LanguageSelector />
-              <Link
-                href="/auth/login"
-                className="text-white hover:text-[#e8f0ff] transition"
-              >
+              <Link href="/auth/login" className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
                 {t("nav.login")}
               </Link>
-              <Link
-                href="/auth/register"
-                className="px-4 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] transition"
-              >
-                {t("nav.register")}
-              </Link>
+              <button className="btn-primary text-xs">{t("nav.register")}</button>
             </>
           )}
         </nav>

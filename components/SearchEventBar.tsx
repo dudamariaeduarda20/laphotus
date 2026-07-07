@@ -23,27 +23,24 @@ export default function SearchEventBar() {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <form onSubmit={submit} className="flex gap-3">
+      <form onSubmit={submit} className="flex gap-6 border-b border-[#ddd] pb-4">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("home.search.placeholder")}
-          className="flex-1 px-6 py-4 rounded-full bg-white/95 dark:bg-gray-800/80 text-gray-900 dark:text-white text-lg shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur transition-smooth placeholder:text-gray-500"
+          className="input-minimal flex-1 text-lg"
         />
-        <button
-          type="submit"
-          className="px-8 py-4 bg-gradient-to-r from-white to-[#e8f0ff] dark:from-white/10 dark:to-white/5 text-[#09419b] dark:text-white rounded-full font-bold text-lg hover:shadow-2xl hover:shadow-white/50 hover:scale-105 transition-smooth shadow-xl"
-        >
+        <button type="submit" className="btn-primary">
           🔍 {t("home.search.button")}
         </button>
       </form>
 
       <button
         onClick={() => setModalOpen(true)}
-        className="mt-4 text-sm text-white/80 hover:text-white transition-smooth font-medium"
+        className="mt-4 text-sm text-[#666] hover:text-[#09419b] transition font-medium"
       >
-        → {t("home.search.unknown")}
+        {t("home.search.unknown")}
       </button>
 
       <AdvancedSearchModal open={modalOpen} onClose={() => setModalOpen(false)} />
