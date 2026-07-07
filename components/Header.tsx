@@ -42,7 +42,7 @@ export default function Header() {
           {!isAuthenticated && (
             <>
               <Link
-                href="/auth/register?type=fotografo"
+                href="/fotografo"
                 className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
               >
                 {t("nav.photographer")}
