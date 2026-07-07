@@ -28,17 +28,17 @@ export default function Header() {
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-6">
-          <Link href="/photos" className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+        <nav className="flex items-center gap-8">
+          <Link href="/photos" className="text-base font-sans font-medium text-[#333] hover:text-[#09419b] transition">
             {t("nav.events")}
           </Link>
 
           {!isAuthenticated && (
             <>
-              <Link href="/fotografo" className="hidden md:inline text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/fotografo" className="hidden md:inline text-base font-sans font-medium text-[#333] hover:text-[#09419b] transition">
                 {t("nav.photographer")}
               </Link>
-              <Link href="/organizador" className="hidden md:inline text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/organizador" className="hidden md:inline text-base font-sans font-medium text-[#333] hover:text-[#09419b] transition">
                 {t("nav.organizer")}
               </Link>
             </>
@@ -46,7 +46,7 @@ export default function Header() {
 
           {isAuthenticated ? (
             <>
-              <Link href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"} className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href={user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard"} className="text-base font-sans font-medium text-[#333] hover:text-[#09419b] transition">
                 {t("nav.dashboard")}
               </Link>
               <Cart />
@@ -61,33 +61,33 @@ export default function Header() {
                   <span className="text-sm font-medium hidden sm:inline text-[#333]">{user?.name}</span>
                 </button>
                 <div className="absolute right-0 mt-2 w-48 bg-white border border-[#ddd] rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                  <Link href="/profile" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                  <Link href="/profile" className="block px-4 py-3 text-base text-[#333] hover:bg-[#f5f5f5] border-b">
                     {t("nav.profile")}
                   </Link>
-                  <Link href="/settings" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                  <Link href="/settings" className="block px-4 py-3 text-base text-[#333] hover:bg-[#f5f5f5] border-b">
                     {t("settings.title")}
                   </Link>
                   {user?.role === "PHOTOGRAPHER" && (
-                    <Link href="/upload" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                    <Link href="/upload" className="block px-4 py-3 text-base text-[#333] hover:bg-[#f5f5f5] border-b">
                       {t("nav.uploadPhotos")}
                     </Link>
                   )}
                   {user?.role === "ORGANIZER" && (
                     <>
-                      <Link href="/events" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                      <Link href="/events" className="block px-4 py-3 text-base text-[#333] hover:bg-[#f5f5f5] border-b">
                         {t("nav.myEvents")}
                       </Link>
-                      <Link href="/analytics" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                      <Link href="/analytics" className="block px-4 py-3 text-base text-[#333] hover:bg-[#f5f5f5] border-b">
                         {t("nav.analytics")}
                       </Link>
                     </>
                   )}
                   {user?.role === "ADMIN" && (
-                    <Link href="/admin/dashboard" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                    <Link href="/admin/dashboard" className="block px-4 py-3 text-base text-[#333] hover:bg-[#f5f5f5] border-b">
                       {t("nav.adminPanel")}
                     </Link>
                   )}
-                  <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5]">
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-3 text-base text-[#333] hover:bg-[#f5f5f5]">
                     {t("nav.logout")}
                   </button>
                 </div>
@@ -97,10 +97,10 @@ export default function Header() {
             <>
               <ThemeToggle />
               <LanguageSelector />
-              <Link href="/auth/login" className="text-sm font-sans text-[#333] hover:text-[#09419b] transition">
+              <Link href="/auth/login" className="text-base font-sans font-medium text-[#333] hover:text-[#09419b] transition">
                 {t("nav.login")}
               </Link>
-              <button className="btn-primary text-xs">{t("nav.register")}</button>
+              <button className="btn-primary text-sm font-medium px-6 py-3">{t("nav.register")}</button>
             </>
           )}
         </nav>
