@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm">
-      <div className="container-editorial py-8 flex items-center justify-between">
+      <div className="container-editorial py-8 px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <img src="/logo-text.svg" alt="LAPHOTUS" className="h-12" />
@@ -54,8 +54,8 @@ export default function Header() {
               <ThemeToggle />
               <LanguageSelector />
               <div className="relative group">
-                <button className="flex items-center gap-2 px-3 py-1 rounded hover:bg-[#f5f5f5]">
-                  <div className="w-8 h-8 bg-[#f0bf38]/20 rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
+                <button className="flex items-center gap-2 px-4 py-2 rounded hover:bg-[#f5f5f5]">
+                  <div className="w-10 h-10 bg-[#f0bf38]/20 rounded-full flex items-center justify-center text-base font-bold text-[#09419b]">
                     {user?.name?.[0]?.toUpperCase()}
                   </div>
                   <span className="text-sm font-medium hidden sm:inline text-[#333]">{user?.name}</span>
