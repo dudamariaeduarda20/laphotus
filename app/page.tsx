@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <div className="bg-white">
       {/* Hero + Categories — full-viewport blue block, centered */}
-      <section className="bg-[#09419b] text-white min-h-[calc(100vh-88px)] flex items-center">
+      <section className="bg-[#09419b] text-white h-[calc(100vh-88px)] flex items-center justify-center">
         <div className="container-editorial w-full text-center py-16">
           <h1
             style={{ color: "#ffffff" }}
