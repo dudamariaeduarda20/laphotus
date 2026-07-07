@@ -3,6 +3,7 @@
 import Link from "next/link";
 import SearchEventBar from "@/components/SearchEventBar";
 import RecentEvents from "@/components/RecentEvents";
+import Grainient from "@/components/Grainient";
 import { EVENT_CATEGORIES } from "@/lib/categories";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 
@@ -18,9 +19,35 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      {/* Hero — full blue, top spacing + search */}
-      <section className="bg-[#09419b] text-white min-h-screen flex items-center justify-center pb-0">
-        <div className="container-editorial w-full text-center pt-16 pb-24 px-6 space-y-12">
+      {/* Hero — animated gradient background with overlay content */}
+      <section className="relative text-white min-h-screen flex items-center justify-center pb-0">
+        <div className="absolute inset-0">
+          <Grainient
+            color1="#051f3d"
+            color2="#09419b"
+            color3="#1a5fa0"
+            timeSpeed={0.8}
+            colorBalance={0.1}
+            warpStrength={0.8}
+            warpFrequency={3.5}
+            warpSpeed={1.5}
+            warpAmplitude={40.0}
+            blendAngle={-15}
+            blendSoftness={0.08}
+            rotationAmount={300.0}
+            noiseScale={1.8}
+            grainAmount={0.08}
+            grainScale={1.5}
+            grainAnimated={false}
+            contrast={1.3}
+            gamma={1.0}
+            saturation={0.95}
+            centerX={0.0}
+            centerY={-0.1}
+            zoom={1.2}
+          />
+        </div>
+        <div className="relative container-editorial w-full text-center pt-16 pb-24 px-6 space-y-12">
           <h1
             style={{ color: "#ffffff" }}
             className="font-serif font-bold uppercase text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight"
