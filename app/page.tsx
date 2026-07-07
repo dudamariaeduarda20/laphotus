@@ -18,22 +18,28 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      {/* Hero + Categories — full blue block */}
-      <section className="bg-[#09419b] text-white">
-        <div className="container-editorial section-lg text-center">
-          <h1 className="font-serif font-bold uppercase text-4xl sm:text-5xl text-white mb-6 tracking-tight">
+      {/* Hero + Categories — full-viewport blue block, centered */}
+      <section className="bg-[#09419b] text-white min-h-[calc(100vh-88px)] flex items-center">
+        <div className="container-editorial w-full text-center py-16">
+          <h1
+            style={{ color: "#ffffff" }}
+            className="font-serif font-bold uppercase text-4xl sm:text-5xl lg:text-6xl mb-6 tracking-tight leading-tight"
+          >
             {t("home.hero.title")}
           </h1>
-          <p className="font-sans text-lg text-white/80 max-w-2xl mx-auto mb-12">
+          <p className="font-sans text-lg text-white/80 max-w-2xl mx-auto mb-10">
             {t("home.hero.subtitle")}
           </p>
 
           <SearchEventBar />
 
-          <h2 className="font-serif font-bold uppercase text-2xl sm:text-3xl text-white text-center mt-20 mb-8 tracking-tight">
+          <h2
+            style={{ color: "#ffffff" }}
+            className="font-serif font-bold uppercase text-2xl sm:text-3xl text-center mt-16 mb-8 tracking-tight"
+          >
             {t("home.categories.title")}
           </h2>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
             {EVENT_CATEGORIES.map((c) => (
               <Link
                 key={c.value}
