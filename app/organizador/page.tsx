@@ -23,7 +23,8 @@ export default function OrganizerLandingPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Hero */}
       <section style={{ background: "linear-gradient(to bottom right, #09419b, #0a2d6e)" }} className="text-white">
-        <div className="max-w-5xl mx-auto px-4 py-24 text-center">
+        <div className="max-w-5xl mx-auto px-4 py-16 text-center">
+          <img src="/logo-full.svg" alt="LAPHOTUS" className="h-16 mx-auto mb-8" />
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             {t("landing.organizer.hero.title")}
           </h1>

@@ -46,7 +46,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
-          <span className="font-bold text-white">LAPHOTUS</span>
+          <img src="/logo-icon.svg" alt="LAPHOTUS" className="h-6" />
           <span>© {year} LAPHOTUS · {t("footer.tagline")}</span>
           <span>{t("footer.privacy")}</span>
         </div>
