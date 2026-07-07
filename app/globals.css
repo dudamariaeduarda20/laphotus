@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* Class-based dark mode for Tailwind v4 */
@@ -20,7 +20,7 @@
   --color-error: #e53e3e;
 
   /* Typography */
-  --font-serif: 'Merriweather', Georgia, serif;
+  --font-serif: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -55,7 +55,7 @@ h1 {
   font-weight: 700;
   color: var(--color-blue);
   line-height: 1.2;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;
   margin: 2rem 0 1rem;
 }
 
@@ -65,14 +65,16 @@ h2 {
   font-weight: 700;
   color: var(--color-blue);
   line-height: 1.2;
+  letter-spacing: -0.02em;
   margin: 2rem 0 1rem;
 }
 
 h3 {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-primary);
+  letter-spacing: -0.02em;
   margin: 1.5rem 0 0.75rem;
 }
 
