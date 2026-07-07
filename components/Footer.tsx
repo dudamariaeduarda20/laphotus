@@ -7,8 +7,8 @@ export default function Footer() {
   const { t } = useTranslation();
   const year = new Date().getFullYear();
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-16">
-      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
+    <footer className="relative overflow-hidden text-gray-300 mt-20 bg-gradient-to-r from-gray-900 via-[#09419b]/20 to-gray-900 dark:from-gray-950 dark:via-[#09419b]/10 dark:to-gray-950">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
         <div>
           <h4 className="font-bold text-white mb-3">{t("footer.institutional")}</h4>
           <ul className="space-y-2">
@@ -44,11 +44,11 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
-          <img src="/logo-icon.svg" alt="LAPHOTUS" className="h-6" />
-          <span>© {year} LAPHOTUS · {t("footer.tagline")}</span>
-          <span>{t("footer.privacy")}</span>
+      <div className="relative z-10 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
+          <img src="/logo-icon-white.svg" alt="LAPHOTUS" className="h-6 opacity-80 hover:opacity-100 transition-smooth" />
+          <span className="font-light">© {year} LAPHOTUS · {t("footer.tagline")}</span>
+          <span className="hover:text-gray-200 transition-smooth cursor-pointer">{t("footer.privacy")}</span>
         </div>
       </div>
     </footer>

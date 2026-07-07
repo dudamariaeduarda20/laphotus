@@ -20,27 +20,33 @@ export default function OrganizerLandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900">
       {/* Hero */}
-      <section style={{ background: "linear-gradient(to bottom right, #09419b, #0a2d6e)" }} className="text-white">
-        <div className="max-w-5xl mx-auto px-4 py-16 text-center">
-          <img src="/logo-full.svg" alt="LAPHOTUS" className="h-16 mx-auto mb-8" />
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            {t("landing.organizer.hero.title")}
-          </h1>
-          <p className="text-lg text-[#e8f0ff] mb-10 max-w-2xl mx-auto">
-            {t("landing.organizer.hero.subtitle")}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <section className="relative overflow-hidden text-white" style={{ background: "linear-gradient(135deg, #09419b 0%, #8B5CF6 50%, #06B6D4 100%)" }}>
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#06B6D4] rounded-full mix-blend-multiply filter blur-3xl"></div>
+        </div>
+        <div className="relative max-w-5xl mx-auto px-4 py-24 sm:py-32 text-center">
+          <div className="animate-fade-in">
+            <img src="/logo-full.svg" alt="LAPHOTUS" className="h-20 mx-auto mb-10 drop-shadow-lg" />
+            <h1 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">
+              {t("landing.organizer.hero.title")}
+            </h1>
+            <p className="text-lg sm:text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+              {t("landing.organizer.hero.subtitle")}
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <Link
               href="/auth/register?type=organizador"
-              className="px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-[#e8f0ff] transition"
+              className="px-8 py-4 bg-white text-[#09419b] font-bold rounded-full text-lg hover:shadow-2xl hover:shadow-white/50 hover:scale-105 transition-smooth"
             >
               {t("landing.organizer.hero.cta")}
             </Link>
             <Link
               href="/auth/login?type=organizador"
-              className="px-8 py-3 border border-white/40 text-white font-semibold rounded-lg hover:bg-white/10 transition"
+              className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full text-lg hover:bg-white/10 hover:backdrop-blur transition-smooth"
             >
               {t("landing.organizer.hero.ctaSecondary")}
             </Link>
@@ -49,36 +55,42 @@ export default function OrganizerLandingPage() {
       </section>
 
       {/* Como funciona */}
-      <section className="max-w-5xl mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-10">
+      <section className="max-w-5xl mx-auto px-4 py-20">
+        <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white text-center mb-16">
           {t("landing.organizer.how.title")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((s, i) => (
-            <div key={s.titleKey} className="text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#e8f0ff] dark:bg-blue-900 flex items-center justify-center text-2xl font-bold text-[#09419b] dark:text-blue-300">
-                {i + 1}
+            <div key={s.titleKey} className="group relative p-8 rounded-2xl bg-white dark:bg-gray-800/60 glass hover:glass-dark transition-smooth border border-gray-100 dark:border-gray-700/50 hover:shadow-xl hover:-translate-y-1" style={{ animationDelay: `${i * 0.1}s` }}>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#09419b]/0 via-[#8B5CF6]/0 to-[#06B6D4]/0 group-hover:from-[#09419b]/5 group-hover:via-[#8B5CF6]/5 group-hover:to-[#06B6D4]/5 rounded-2xl transition-smooth"></div>
+              <div className="relative text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#09419b] via-[#8B5CF6] to-[#06B6D4] flex items-center justify-center text-2xl font-bold text-white shadow-lg group-hover:shadow-2xl group-hover:shadow-[#09419b]/50 transition-smooth">
+                  {i + 1}
+                </div>
+                <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{s.icon}</div>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-lg">{t(s.titleKey)}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t(s.descKey)}</p>
               </div>
-              <div className="text-3xl mb-3">{s.icon}</div>
-              <h3 className="font-bold text-gray-900 dark:text-white mb-2">{t(s.titleKey)}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{t(s.descKey)}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Vantagens */}
-      <section className="bg-white dark:bg-gray-900 py-16">
+      <section className="relative py-20 bg-gradient-to-r from-[#09419b]/5 via-[#8B5CF6]/5 to-[#06B6D4]/5 dark:from-[#09419b]/10 dark:via-[#8B5CF6]/10 dark:to-[#06B6D4]/10">
         <div className="max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-10">
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white text-center mb-16">
             {t("landing.organizer.benefits.title")}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((b) => (
-              <div key={b.titleKey} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
-                <div className="text-3xl mb-3">{b.icon}</div>
-                <h3 className="font-bold text-gray-900 dark:text-white mb-2">{t(b.titleKey)}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{t(b.descKey)}</p>
+            {benefits.map((b, i) => (
+              <div key={b.titleKey} className="group relative p-8 rounded-2xl bg-white dark:bg-gray-800/60 glass hover:glass-dark transition-smooth border border-gray-100 dark:border-gray-700/50 hover:shadow-xl hover:-translate-y-1" style={{ animationDelay: `${i * 0.1}s` }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#09419b]/0 via-[#8B5CF6]/0 to-[#06B6D4]/0 group-hover:from-[#09419b]/5 group-hover:via-[#8B5CF6]/5 group-hover:to-[#06B6D4]/5 rounded-2xl transition-smooth"></div>
+                <div className="relative text-center">
+                  <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{b.icon}</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-lg">{t(b.titleKey)}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t(b.descKey)}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -86,29 +98,33 @@ export default function OrganizerLandingPage() {
       </section>
 
       {/* Marketplace de fotógrafos */}
-      <section className="max-w-5xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+      <section className="max-w-5xl mx-auto px-4 py-20 text-center">
+        <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-6">
           {t("landing.organizer.marketplace.title")}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-12">
           {t("landing.organizer.marketplace.desc")}
         </p>
         <Link
           href="/photos"
-          className="inline-block px-6 py-3 border border-[#09419b] text-[#09419b] dark:text-[#6ba3ff] font-semibold rounded-lg hover:bg-[#e8f0ff] dark:hover:bg-blue-950 transition"
+          className="inline-block px-10 py-4 bg-gradient-to-r from-[#09419b] to-[#8B5CF6] text-white font-bold rounded-full text-lg hover:shadow-2xl hover:shadow-[#09419b]/50 hover:scale-105 transition-smooth"
         >
           {t("landing.organizer.marketplace.cta")}
         </Link>
       </section>
 
       {/* CTA final */}
-      <section className="bg-[#09419b] text-white py-16 text-center">
-        <div className="max-w-2xl mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-3">{t("landing.organizer.final.title")}</h2>
-          <p className="text-[#e8f0ff] mb-8">{t("landing.organizer.final.subtitle")}</p>
+      <section className="relative overflow-hidden text-white py-24" style={{ background: "linear-gradient(135deg, #09419b 0%, #8B5CF6 50%, #06B6D4 100%)" }}>
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#06B6D4] rounded-full mix-blend-multiply filter blur-3xl"></div>
+        </div>
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
+          <h2 className="text-5xl sm:text-6xl font-bold mb-6 leading-tight">{t("landing.organizer.final.title")}</h2>
+          <p className="text-lg sm:text-xl text-white/90 mb-10">{t("landing.organizer.final.subtitle")}</p>
           <Link
             href="/auth/register?type=organizador"
-            className="inline-block px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-[#e8f0ff] transition"
+            className="inline-block px-10 py-4 bg-white text-[#09419b] font-bold rounded-full text-lg hover:shadow-2xl hover:shadow-white/50 hover:scale-105 transition-smooth"
           >
             {t("landing.organizer.final.cta")}
           </Link>

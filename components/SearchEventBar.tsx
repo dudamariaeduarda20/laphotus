@@ -23,17 +23,17 @@ export default function SearchEventBar() {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <form onSubmit={submit} className="flex gap-2">
+      <form onSubmit={submit} className="flex gap-3">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("home.search.placeholder")}
-          className="flex-1 px-5 py-4 rounded-xl text-gray-900 text-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
+          className="flex-1 px-6 py-4 rounded-full bg-white/95 dark:bg-gray-800/80 text-gray-900 dark:text-white text-lg shadow-xl focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur transition-smooth placeholder:text-gray-500"
         />
         <button
           type="submit"
-          className="px-6 py-4 bg-[#09419b] text-white rounded-xl font-semibold text-lg hover:bg-[#09419b] transition shadow-lg"
+          className="px-8 py-4 bg-gradient-to-r from-white to-[#e8f0ff] dark:from-white/10 dark:to-white/5 text-[#09419b] dark:text-white rounded-full font-bold text-lg hover:shadow-2xl hover:shadow-white/50 hover:scale-105 transition-smooth shadow-xl"
         >
           🔍 {t("home.search.button")}
         </button>
@@ -41,9 +41,9 @@ export default function SearchEventBar() {
 
       <button
         onClick={() => setModalOpen(true)}
-        className="mt-3 text-sm text-white/90 underline hover:text-white"
+        className="mt-4 text-sm text-white/80 hover:text-white transition-smooth font-medium"
       >
-        {t("home.search.unknown")}
+        → {t("home.search.unknown")}
       </button>
 
       <AdvancedSearchModal open={modalOpen} onClose={() => setModalOpen(false)} />
