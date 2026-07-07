@@ -27,13 +27,13 @@ export default function OrganizerLandingPage() {
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             {t("landing.organizer.hero.title")}
           </h1>
-          <p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-[#e8f0ff] mb-10 max-w-2xl mx-auto">
             {t("landing.organizer.hero.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/auth/register?type=organizador"
-              className="px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-blue-50 transition"
+              className="px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-[#e8f0ff] transition"
             >
               {t("landing.organizer.hero.cta")}
             </Link>
@@ -94,7 +94,7 @@ export default function OrganizerLandingPage() {
         </p>
         <Link
           href="/photos"
-          className="inline-block px-6 py-3 border border-[#09419b] text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition"
+          className="inline-block px-6 py-3 border border-[#09419b] text-[#09419b] dark:text-[#6ba3ff] font-semibold rounded-lg hover:bg-[#e8f0ff] dark:hover:bg-blue-950 transition"
         >
           {t("landing.organizer.marketplace.cta")}
         </Link>
@@ -104,10 +104,10 @@ export default function OrganizerLandingPage() {
       <section className="bg-[#09419b] text-white py-16 text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-3xl font-bold mb-3">{t("landing.organizer.final.title")}</h2>
-          <p className="text-blue-100 mb-8">{t("landing.organizer.final.subtitle")}</p>
+          <p className="text-[#e8f0ff] mb-8">{t("landing.organizer.final.subtitle")}</p>
           <Link
             href="/auth/register?type=organizador"
-            className="inline-block px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-blue-50 transition"
+            className="inline-block px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-[#e8f0ff] transition"
           >
             {t("landing.organizer.final.cta")}
           </Link>

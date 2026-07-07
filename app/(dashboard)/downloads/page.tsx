@@ -43,7 +43,7 @@ export default function DownloadsPage() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -70,7 +70,7 @@ export default function DownloadsPage() {
           </p>
           <Link
             href="/photos"
-            className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
           >
             {t("dashboard.searchPhotos")}
           </Link>
@@ -89,10 +89,10 @@ export default function DownloadsPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl font-bold text-[#f0bf38]">
                     € {order.total.toFixed(2)}
                   </div>
-                  <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                  <span className="inline-block px-3 py-1 bg-[#fef7e8] text-green-800 text-xs font-semibold rounded-full">
                     {t("success.order.paid")}
                   </span>
                 </div>
@@ -133,7 +133,7 @@ export default function DownloadsPage() {
                             alert(t("downloads.err.download"));
                           }
                         }}
-                        className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
+                        className="px-4 py-2 bg-[#09419b] text-white text-sm rounded-lg hover:bg-[#09419b]"
                       >
                         ⬇ {t("downloads.download")}
                       </button>
@@ -148,7 +148,7 @@ export default function DownloadsPage() {
                   <span>€ {order.subtotal.toFixed(2)}</span>
                 </div>
                 {order.discount > 0 && (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-[#f0bf38]">
                     <span>{t("checkout.discount")}:</span>
                     <span>-€ {order.discount.toFixed(2)}</span>
                   </div>

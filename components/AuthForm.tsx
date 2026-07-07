@@ -151,7 +151,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+        className="w-full py-3 bg-[#09419b] text-white font-medium rounded-lg hover:bg-[#09419b] disabled:opacity-50 disabled:cursor-not-allowed transition"
       >
         {loading ? t("common.loading") : mode === "register" ? t("auth.createAccount") : t("auth.submit.login")}
       </button>
@@ -160,14 +160,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
         {mode === "register" ? (
           <>
             {t("auth.haveAccount")}{" "}
-            <a href="/auth/login" className="text-blue-600 hover:underline">
+            <a href="/auth/login" className="text-[#09419b] hover:underline">
               {t("auth.submit.login")}
             </a>
           </>
         ) : (
           <>
             {t("auth.noAccount")}{" "}
-            <a href="/auth/register" className="text-blue-600 hover:underline">
+            <a href="/auth/register" className="text-[#09419b] hover:underline">
               {t("auth.createOne")}
             </a>
           </>

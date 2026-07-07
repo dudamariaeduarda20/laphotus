@@ -56,7 +56,7 @@ export default function AuditLogs() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -124,7 +124,7 @@ export default function AuditLogs() {
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-6 py-4 font-semibold text-gray-900">
-                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+                    <span className="inline-block px-3 py-1 bg-[#e8f0ff] text-blue-800 rounded text-xs">
                       {log.action.replace(/_/g, " ")}
                     </span>
                   </td>

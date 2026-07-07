@@ -26,7 +26,7 @@ export default function FaceMatchResults({
   const { t } = useTranslation();
   if (matches.length === 0) {
     return (
-      <div className="bg-blue-50 rounded-lg p-8 text-center border border-blue-200">
+      <div className="bg-[#e8f0ff] rounded-lg p-8 text-center border border-blue-200">
         <div className="text-5xl mb-3">🔍</div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
           {t("facematch.noMatch.title")}
@@ -70,7 +70,7 @@ export default function FaceMatchResults({
                   <span className="text-sm font-semibold text-gray-700">
                     {t("facematch.match")}
                   </span>
-                  <span className="text-lg font-bold text-green-600">
+                  <span className="text-lg font-bold text-[#f0bf38]">
                     {match.matchPercent}%
                   </span>
                 </div>
@@ -93,7 +93,7 @@ export default function FaceMatchResults({
 
                 {/* Confidence Badge */}
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
+                  <span className="inline-block px-2 py-1 bg-[#e8f0ff] text-blue-800 text-xs font-semibold rounded">
                     {t("facematch.confidence")} {Math.round(match.confidence * 100)}%
                   </span>
                   {match.isPremium && (
@@ -106,12 +106,12 @@ export default function FaceMatchResults({
                 {/* Price */}
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">{t("facematch.price")}</span>
-                  <span className="font-bold text-blue-600">€ {match.price.toFixed(2)}</span>
+                  <span className="font-bold text-[#09419b]">€ {match.price.toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Action */}
-              <button className="w-full mt-2 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold transition">
+              <button className="w-full mt-2 px-3 py-2 bg-[#09419b] text-white text-sm rounded-lg hover:bg-[#09419b] font-semibold transition">
                 {t("photo.viewDetails")}
               </button>
             </div>

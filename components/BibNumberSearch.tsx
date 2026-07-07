@@ -50,7 +50,7 @@ export default function BibNumberSearch({
         <button
           onClick={handleSearch}
           disabled={searching || !bibNumber.trim()}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-semibold"
+          className="px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] disabled:opacity-50 font-semibold"
         >
           {searching ? t("bib.searching") : t("common.search")}
         </button>

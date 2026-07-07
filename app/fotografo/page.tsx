@@ -33,7 +33,7 @@ export default function PhotographerLandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/auth/register?type=fotografo"
-              className="px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-blue-50 transition"
+              className="px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-[#e8f0ff] transition"
             >
               {t("landing.photographer.hero.cta")}
             </Link>
@@ -94,7 +94,7 @@ export default function PhotographerLandingPage() {
         </p>
         <Link
           href="/photos"
-          className="inline-block px-6 py-3 border border-[#09419b] text-[#09419b] dark:text-[#09419b] font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-[#0a2d6e] transition"
+          className="inline-block px-6 py-3 border border-[#09419b] text-[#09419b] dark:text-[#09419b] font-semibold rounded-lg hover:bg-[#e8f0ff] dark:hover:bg-[#0a2d6e] transition"
         >
           {t("landing.photographer.marketplace.cta")}
         </Link>
@@ -107,7 +107,7 @@ export default function PhotographerLandingPage() {
           <p className="text-[#e8f0ff] mb-8">{t("landing.photographer.final.subtitle")}</p>
           <Link
             href="/auth/register?type=fotografo"
-            className="inline-block px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-blue-50 transition"
+            className="inline-block px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-[#e8f0ff] transition"
           >
             {t("landing.photographer.final.cta")}
           </Link>

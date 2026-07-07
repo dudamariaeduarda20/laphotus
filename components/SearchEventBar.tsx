@@ -33,7 +33,7 @@ export default function SearchEventBar() {
         />
         <button
           type="submit"
-          className="px-6 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition shadow-lg"
+          className="px-6 py-4 bg-[#09419b] text-white rounded-xl font-semibold text-lg hover:bg-[#09419b] transition shadow-lg"
         >
           🔍 {t("home.search.button")}
         </button>

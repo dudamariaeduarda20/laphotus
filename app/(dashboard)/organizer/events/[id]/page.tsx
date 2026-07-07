@@ -154,7 +154,7 @@ export default function OrganizerEventDashboardPage({
   return (
     <div>
       <div className="mb-6">
-        <Link href="/organizer/dashboard" className="text-sm text-[#09419b] hover:text-blue-700">
+        <Link href="/organizer/dashboard" className="text-sm text-[#09419b] hover:text-[#09419b]">
           ← {t("organizer.eventDashboard.back")}
         </Link>
         <div className="flex items-center justify-between flex-wrap gap-4 mt-2">
@@ -167,7 +167,7 @@ export default function OrganizerEventDashboardPage({
           </div>
           <button
             onClick={handleCopyInvite}
-            className="px-4 py-2 border border-[#09419b] text-[#09419b] dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 text-sm font-semibold transition"
+            className="px-4 py-2 border border-[#09419b] text-[#09419b] dark:text-[#6ba3ff] rounded-lg hover:bg-[#e8f0ff] dark:hover:bg-blue-950 text-sm font-semibold transition"
           >
             {inviteCopied ? `✓ ${t("organizer.eventDashboard.inviteCopied")}` : t("organizer.eventDashboard.copyInvite")}
           </button>
@@ -182,7 +182,7 @@ export default function OrganizerEventDashboardPage({
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("organizer.eventDashboard.photosSold")}</p>
-          <p className="text-2xl font-bold text-green-600 mt-1">{detail.totals.photosSold}</p>
+          <p className="text-2xl font-bold text-[#f0bf38] mt-1">{detail.totals.photosSold}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("organizer.eventDashboard.revenue")}</p>

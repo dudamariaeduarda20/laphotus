@@ -89,7 +89,7 @@ export default function PhotoDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default function PhotoDetailPage() {
         <p className="text-gray-600 mb-6">{error}</p>
         <Link
           href={`/photos/${eventId}`}
-          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
         >
           {t("photodetail.backGallery")}
         </Link>
@@ -129,11 +129,11 @@ export default function PhotoDetailPage() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <div className="mb-6 text-sm text-gray-500 flex items-center gap-2">
-        <Link href="/photos" className="hover:text-blue-600">
+        <Link href="/photos" className="hover:text-[#09419b]">
           {t("nav.events")}
         </Link>
         <span>/</span>
-        <Link href={`/photos/${eventId}`} className="hover:text-blue-600">
+        <Link href={`/photos/${eventId}`} className="hover:text-[#09419b]">
           {photo.event?.title || "Evento"}
         </Link>
         <span>/</span>
@@ -174,7 +174,7 @@ export default function PhotoDetailPage() {
             {t("photodetail.eventLabel")}{" "}
             <Link
               href={`/photos/${eventId}`}
-              className="text-blue-600 hover:underline"
+              className="text-[#09419b] hover:underline"
             >
               {photo.event?.title || "Evento"}
             </Link>
@@ -183,7 +183,7 @@ export default function PhotoDetailPage() {
           {/* Preço */}
           <div className="mb-6">
             {photo.price > 0 ? (
-              <span className="text-4xl font-bold text-green-600">
+              <span className="text-4xl font-bold text-[#f0bf38]">
                 € {photo.price.toFixed(2)}
               </span>
             ) : (
@@ -201,8 +201,8 @@ export default function PhotoDetailPage() {
             onClick={handleAddToCart}
             className={`w-full py-3 rounded-lg font-semibold text-white transition mb-3 ${
               added
-                ? "bg-green-600"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-[#f0bf38]"
+                : "bg-[#09419b] hover:bg-[#09419b]"
             }`}
           >
             {added ? `✓ ${t("photodetail.added")}` : t("photodetail.addToCart")}
@@ -253,7 +253,7 @@ export default function PhotoDetailPage() {
       <div className="mt-10 border-t border-gray-200 pt-6">
         <Link
           href={`/photos/${eventId}`}
-          className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2"
+          className="text-[#09419b] hover:text-[#09419b] font-semibold flex items-center gap-2"
         >
           ← {t("photodetail.backEventGallery")}
         </Link>

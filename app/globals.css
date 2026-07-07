@@ -6,6 +6,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Brand colors */
+  --brand-primary: #09419b;
+  --brand-primary-dark: #072e70;
+  --brand-primary-light: #e8f0ff;
+  --brand-secondary: #f0bf38;
+  --brand-secondary-light: #fef7e8;
+  --brand-secondary-dark: #332800;
+  --brand-accent: #ff2f92;
+  --brand-accent-light: #ffe8f5;
+  --brand-gray-light: #f3f4f6;
+  --brand-gray-medium: #6b7280;
+  --brand-gray-dark: #1f2937;
 }
 
 /* Class-based dark — user toggle overrides system preference */

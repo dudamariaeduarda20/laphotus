@@ -58,7 +58,7 @@ export default function PhotoBibNumbers({
             {numbers.map((num) => (
               <span
                 key={num}
-                className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold"
+                className="inline-block px-3 py-1 bg-[#e8f0ff] text-blue-800 rounded-full text-sm font-semibold"
               >
                 #{num}
               </span>
@@ -76,7 +76,7 @@ export default function PhotoBibNumbers({
         {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
-            className="text-sm text-blue-600 hover:text-blue-700 font-semibold"
+            className="text-sm text-[#09419b] hover:text-[#09419b] font-semibold"
           >
             ✎ {t("bib.detected.edit")}
           </button>
@@ -91,12 +91,12 @@ export default function PhotoBibNumbers({
               {numbers.map((num) => (
                 <div
                   key={num}
-                  className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  className="flex items-center gap-2 px-3 py-1 bg-[#e8f0ff] text-blue-800 rounded-full text-sm"
                 >
                   <span>#{num}</span>
                   <button
                     onClick={() => handleRemoveNumber(num)}
-                    className="text-blue-600 hover:text-blue-800 font-bold"
+                    className="text-[#09419b] hover:text-blue-800 font-bold"
                   >
                     ✕
                   </button>
@@ -120,7 +120,7 @@ export default function PhotoBibNumbers({
             />
             <button
               onClick={handleAddNumber}
-              className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
+              className="px-3 py-2 bg-[#09419b] text-white text-sm rounded-lg hover:bg-[#09419b]"
             >
               +
             </button>
@@ -131,7 +131,7 @@ export default function PhotoBibNumbers({
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex-1 px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
+              className="flex-1 px-3 py-2 bg-[#f0bf38] text-white text-sm rounded-lg hover:bg-[#f0bf38] disabled:opacity-50"
             >
               {saving ? t("bib.detected.saving") : t("common.save")}
             </button>
@@ -156,7 +156,7 @@ export default function PhotoBibNumbers({
             numbers.map((num) => (
               <span
                 key={num}
-                className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold"
+                className="inline-block px-3 py-1 bg-[#e8f0ff] text-blue-800 rounded-full text-sm font-semibold"
               >
                 #{num}
               </span>

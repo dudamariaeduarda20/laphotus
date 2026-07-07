@@ -24,7 +24,7 @@ export default function Home() {
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             {t("home.hero.title")}
           </h1>
-          <p className="text-lg text-blue-100 mb-10 max-w-2xl mx-auto">
+          <p className="text-lg text-[#e8f0ff] mb-10 max-w-2xl mx-auto">
             {t("home.hero.subtitle")}
           </p>
           <SearchEventBar />
@@ -41,7 +41,7 @@ export default function Home() {
             <Link
               key={c.value}
               href={`/photos?sport=${encodeURIComponent(c.value)}`}
-              className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-600 transition flex items-center gap-2"
+              className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-[#09419b] hover:text-[#09419b] transition flex items-center gap-2"
             >
               <span>{c.icon}</span>
               {t(c.labelKey)}
@@ -57,15 +57,15 @@ export default function Home() {
       <section className="bg-white dark:bg-gray-900 border-y border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           <div>
-            <div className="text-4xl font-bold text-blue-600">+5 mil</div>
+            <div className="text-4xl font-bold text-[#09419b]">+5 mil</div>
             <div className="text-gray-600 dark:text-gray-400 mt-1">{t("home.stats.photographers")}</div>
           </div>
           <div>
-            <div className="text-4xl font-bold text-blue-600">+12 mil</div>
+            <div className="text-4xl font-bold text-[#09419b]">+12 mil</div>
             <div className="text-gray-600 dark:text-gray-400 mt-1">{t("home.stats.events")}</div>
           </div>
           <div>
-            <div className="text-4xl font-bold text-blue-600">+8 milhões</div>
+            <div className="text-4xl font-bold text-[#09419b]">+8 milhões</div>
             <div className="text-gray-600 dark:text-gray-400 mt-1">{t("home.stats.photos")}</div>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function Home() {
         <div className="text-center">
           <Link
             href="/auth/register"
-            className="inline-block px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg hover:bg-blue-700 transition"
+            className="inline-block px-8 py-4 bg-[#09419b] text-white rounded-xl font-semibold text-lg hover:bg-[#09419b] transition"
           >
             {t("home.sell.cta")}
           </Link>

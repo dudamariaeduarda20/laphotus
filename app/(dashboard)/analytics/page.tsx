@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="text-center py-16">
-        <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+        <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-[#09419b]" />
       </div>
     );
   }
@@ -218,7 +218,7 @@ export default function AnalyticsPage() {
         </div>
         <Link
           href="/events"
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-[#09419b] hover:underline"
         >
           ← Eventos
         </Link>
@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
         {events.length === 0 ? (
           <div className="p-10 text-center text-gray-400 text-sm">
             Nenhum evento ainda.{" "}
-            <Link href="/events/new" className="text-blue-600 hover:underline">
+            <Link href="/events/new" className="text-[#09419b] hover:underline">
               Crie um evento
             </Link>{" "}
             para começar.
@@ -296,7 +296,7 @@ export default function AnalyticsPage() {
                             {ev.title}
                           </div>
                           <div className="text-xs text-gray-400 mt-0.5">
-                            <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-medium">
+                            <span className="px-1.5 py-0.5 bg-[#e8f0ff] text-[#09419b] rounded text-xs font-medium">
                               {ev.sport}
                             </span>
                           </div>
@@ -314,7 +314,7 @@ export default function AnalyticsPage() {
                           <span
                             className={
                               ev.photosSold > 0
-                                ? "text-green-700 font-semibold"
+                                ? "text-[#f0bf38] font-semibold"
                                 : "text-gray-400"
                             }
                           >
@@ -347,7 +347,7 @@ export default function AnalyticsPage() {
                     <td className="px-5 py-3 text-right font-semibold text-gray-700">
                       {stats ? `${stats.conversionRate.toFixed(1)}%` : "—"}
                     </td>
-                    <td className="px-5 py-3 text-right font-bold text-blue-700">
+                    <td className="px-5 py-3 text-right font-bold text-[#09419b]">
                       €{events.reduce((s, e) => s + e.revenue, 0).toFixed(2)}
                     </td>
                   </tr>

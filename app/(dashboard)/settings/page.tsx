@@ -37,7 +37,7 @@ export default function SettingsPage() {
           <button
             onClick={toggleTheme}
             className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none ${
-              theme === "dark" ? "bg-blue-600" : "bg-gray-300"
+              theme === "dark" ? "bg-[#09419b]" : "bg-gray-300"
             }`}
             aria-label="Toggle dark mode"
           >
@@ -63,7 +63,7 @@ export default function SettingsPage() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{t("settings.language.desc")}</p>
           </div>
           {saved && (
-            <span className="text-sm text-green-600 font-medium flex items-center gap-1">
+            <span className="text-sm text-[#f0bf38] font-medium flex items-center gap-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
@@ -83,7 +83,7 @@ export default function SettingsPage() {
                 disabled={saving}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg border-2 transition text-left ${
                   isActive
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                    ? "border-[#09419b] bg-[#e8f0ff] dark:bg-blue-950 text-[#09419b] dark:text-blue-300"
                     : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300"
                 }`}
               >
@@ -93,7 +93,7 @@ export default function SettingsPage() {
                   <div className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{l}</div>
                 </div>
                 {isActive && (
-                  <svg className="w-4 h-4 ml-auto text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 ml-auto text-[#09419b]" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 )}

@@ -53,7 +53,7 @@ export default function RecentEvents() {
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-[#09419b]"></div>
         </div>
       ) : events.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
@@ -71,7 +71,7 @@ export default function RecentEvents() {
       <div className="text-center mt-8">
         <Link
           href="/photos"
-          className="inline-block px-6 py-3 border border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition"
+          className="inline-block px-6 py-3 border border-[#09419b] text-[#09419b] rounded-lg font-semibold hover:bg-[#e8f0ff] transition"
         >
           {t("home.recent.viewall")}
         </Link>

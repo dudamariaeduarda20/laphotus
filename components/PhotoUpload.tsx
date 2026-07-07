@@ -69,14 +69,14 @@ export default function PhotoUpload({
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    e.currentTarget.classList.add("bg-blue-50");
+    e.currentTarget.classList.add("bg-[#e8f0ff]");
   };
   const handleDragLeave = (e: React.DragEvent) => {
-    e.currentTarget.classList.remove("bg-blue-50");
+    e.currentTarget.classList.remove("bg-[#e8f0ff]");
   };
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    e.currentTarget.classList.remove("bg-blue-50");
+    e.currentTarget.classList.remove("bg-[#e8f0ff]");
     if (e.dataTransfer.files) addFiles(e.dataTransfer.files);
   };
 
@@ -183,7 +183,7 @@ export default function PhotoUpload({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition mb-6"
+        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-[#09419b] transition mb-6"
       >
         <div className="text-6xl mb-4">📸</div>
         <p className="text-lg font-semibold text-gray-900 mb-2">
@@ -193,7 +193,7 @@ export default function PhotoUpload({
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
         >
           Selecionar Ficheiros
         </button>
@@ -281,7 +281,7 @@ export default function PhotoUpload({
                       item.status === "error"
                         ? "text-red-600"
                         : item.status === "done"
-                        ? "text-green-600"
+                        ? "text-[#f0bf38]"
                         : "text-gray-500"
                     }`}
                   >
@@ -348,7 +348,7 @@ export default function PhotoUpload({
             type="button"
             onClick={handleUpload}
             disabled={uploading || pendingCount === 0}
-            className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="w-full py-3 bg-[#09419b] text-white font-semibold rounded-lg hover:bg-[#09419b] disabled:opacity-50"
           >
             {uploading
               ? "A enviar…"
@@ -358,7 +358,7 @@ export default function PhotoUpload({
       )}
 
       {/* Tips */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-gray-700">
+      <div className="bg-[#e8f0ff] border border-blue-200 rounded-lg p-4 text-sm text-gray-700">
         <p className="font-semibold mb-2">💡 Dicas:</p>
         <ul className="list-disc list-inside space-y-1">
           <li>Suporta JPG, PNG, WEBP (máx. 10MB cada)</li>

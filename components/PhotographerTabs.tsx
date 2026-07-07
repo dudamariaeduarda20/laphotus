@@ -26,7 +26,7 @@ export default function PhotographerTabs() {
             href={tab.href}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               active
-                ? "bg-blue-600 text-white"
+                ? "bg-[#09419b] text-white"
                 : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
             }`}
           >

@@ -96,13 +96,13 @@ export default function SelfieUpload({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition ${
           isDragging
-            ? "border-blue-500 bg-blue-50"
+            ? "border-[#09419b] bg-[#e8f0ff]"
             : "border-gray-300 bg-gray-50 hover:border-gray-400"
         }`}
       >
         {isProcessing ? (
           <div className="space-y-3">
-            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-[#09419b]"></div>
             <p className="text-gray-700 font-semibold">{t("selfie.processing")}</p>
             <p className="text-sm text-gray-500">
               {t("selfie.processingDesc")}
@@ -118,7 +118,7 @@ export default function SelfieUpload({
                 setFileName(null);
                 setError(null);
               }}
-              className="mt-3 text-blue-600 hover:text-blue-700 font-semibold text-sm"
+              className="mt-3 text-[#09419b] hover:text-[#09419b] font-semibold text-sm"
             >
               {t("selfie.another")}
             </button>
@@ -143,7 +143,7 @@ export default function SelfieUpload({
             />
             <label
               htmlFor="selfie-input"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer font-semibold"
+              className="inline-block px-4 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] cursor-pointer font-semibold"
             >
               {t("selfie.select")}
             </label>

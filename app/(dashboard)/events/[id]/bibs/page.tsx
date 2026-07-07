@@ -74,7 +74,7 @@ export default function EventBibsPage({
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    e.currentTarget.classList.remove("bg-blue-50");
+    e.currentTarget.classList.remove("bg-[#e8f0ff]");
     const file = e.dataTransfer.files[0];
     if (file?.name.endsWith(".csv")) handleFileChange(file);
   };
@@ -114,7 +114,7 @@ export default function EventBibsPage({
         </div>
         <Link
           href={`/events/${eventId}/edit`}
-          className="text-sm text-blue-600 hover:underline"
+          className="text-sm text-[#09419b] hover:underline"
         >
           ← Editar evento
         </Link>
@@ -131,8 +131,8 @@ export default function EventBibsPage({
         </p>
 
         <div
-          onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("bg-blue-50"); }}
-          onDragLeave={(e) => e.currentTarget.classList.remove("bg-blue-50")}
+          onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("bg-[#e8f0ff]"); }}
+          onDragLeave={(e) => e.currentTarget.classList.remove("bg-[#e8f0ff]")}
           onDrop={handleDrop}
           className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition cursor-pointer"
           onClick={() => fileRef.current?.click()}
@@ -187,7 +187,7 @@ export default function EventBibsPage({
 
         {/* Result / Error */}
         {result && (
-          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
+          <div className="mt-4 p-3 bg-[#fef7e8] border border-green-200 rounded-lg text-sm text-green-800">
             ✓ {result.inserted} inserido{result.inserted !== 1 ? "s" : ""},{" "}
             {result.updated} atualizado{result.updated !== 1 ? "s" : ""}.
             {result.errors.length > 0 && (
@@ -206,7 +206,7 @@ export default function EventBibsPage({
         <button
           onClick={handleUpload}
           disabled={!csvFile || uploading || preview.length === 0}
-          className="mt-4 px-5 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          className="mt-4 px-5 py-2 bg-[#09419b] text-white text-sm font-semibold rounded-lg hover:bg-[#09419b] disabled:opacity-50"
         >
           {uploading ? "A carregar…" : `Importar ${preview.length} dorsal${preview.length !== 1 ? "is" : ""}`}
         </button>
@@ -221,7 +221,7 @@ export default function EventBibsPage({
         </div>
         {loadingBibs ? (
           <div className="p-8 text-center">
-            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-[#09419b]"></div>
           </div>
         ) : bibs.length === 0 ? (
           <div className="p-10 text-center text-gray-400 text-sm">

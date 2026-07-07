@@ -61,7 +61,7 @@ export default function EventCard({ event }: EventCardProps) {
             </div>
           )}
           <div className="absolute top-2 right-2">
-            <span className="px-3 py-1 bg-white/90 text-xs font-bold text-blue-600 rounded-full">
+            <span className="px-3 py-1 bg-white/90 text-xs font-bold text-[#09419b] rounded-full">
               {sportLabel ? t(sportLabel.labelKey) : event.sport}
             </span>
           </div>
@@ -85,7 +85,7 @@ export default function EventCard({ event }: EventCardProps) {
                 })}
               </span>
               {isUpcoming && (
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                <span className="text-xs bg-[#fef7e8] text-green-800 px-2 py-1 rounded">
                   {t("eventCard.upcoming")}
                 </span>
               )}
@@ -106,7 +106,7 @@ export default function EventCard({ event }: EventCardProps) {
 
           {/* CTA */}
           <div className="pt-4 border-t border-gray-200">
-            <button className="w-full text-center text-blue-600 font-semibold hover:text-blue-700">
+            <button className="w-full text-center text-[#09419b] font-semibold hover:text-[#09419b]">
               {t("eventCard.viewGallery")}
             </button>
           </div>

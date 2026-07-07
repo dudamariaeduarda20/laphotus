@@ -99,7 +99,7 @@ export default function AdvancedSearchModal({
             onClick={() => setTab("data")}
             className={`flex-1 py-3 text-sm font-semibold ${
               tab === "data"
-                ? "text-blue-600 border-b-2 border-blue-600"
+                ? "text-[#09419b] border-b-2 border-[#09419b]"
                 : "text-gray-500 hover:text-gray-800"
             }`}
           >
@@ -109,7 +109,7 @@ export default function AdvancedSearchModal({
             onClick={() => setTab("categoria")}
             className={`flex-1 py-3 text-sm font-semibold ${
               tab === "categoria"
-                ? "text-blue-600 border-b-2 border-blue-600"
+                ? "text-[#09419b] border-b-2 border-[#09419b]"
                 : "text-gray-500 hover:text-gray-800"
             }`}
           >
@@ -126,7 +126,7 @@ export default function AdvancedSearchModal({
                   <button
                     key={p.value}
                     onClick={() => go(presetRange(p.value) as Record<string, string>)}
-                    className="px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:border-blue-500 hover:text-blue-600 transition"
+                    className="px-4 py-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#09419b] hover:text-[#09419b] transition"
                   >
                     {t(p.labelKey)}
                   </button>
@@ -147,7 +147,7 @@ export default function AdvancedSearchModal({
                   <button
                     onClick={submitMonth}
                     disabled={!month}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold disabled:opacity-50"
+                    className="px-4 py-2 bg-[#09419b] text-white rounded-lg font-semibold disabled:opacity-50"
                   >
                     {t("home.search.button")}
                   </button>
@@ -160,7 +160,7 @@ export default function AdvancedSearchModal({
                 <button
                   key={c.value}
                   onClick={() => go({ sport: c.value })}
-                  className="px-3 py-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:border-blue-500 hover:text-blue-600 transition flex flex-col items-center gap-1"
+                  className="px-3 py-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:border-[#09419b] hover:text-[#09419b] transition flex flex-col items-center gap-1"
                 >
                   <span className="text-xl">{c.icon}</span>
                   <span className="text-xs text-center">{t(c.labelKey)}</span>

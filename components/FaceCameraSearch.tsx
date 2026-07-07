@@ -238,7 +238,7 @@ export default function FaceCameraSearch({
             <span
               className={`px-3 py-1 rounded-full text-xs font-semibold ${
                 faceFramed
-                  ? "bg-green-500 text-white"
+                  ? "bg-[#fef7e8]0 text-white"
                   : "bg-yellow-500/90 text-white"
               }`}
             >
@@ -254,7 +254,7 @@ export default function FaceCameraSearch({
           <button
             onClick={start}
             disabled={status === "loading"}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
+            className="px-6 py-3 bg-[#09419b] text-white rounded-lg font-semibold hover:bg-[#09419b] disabled:opacity-50"
           >
             {status === "loading" ? t("face.starting") : t("face.activate")}
           </button>
@@ -262,7 +262,7 @@ export default function FaceCameraSearch({
           <button
             onClick={search}
             disabled={status === "searching" || !faceFramed}
-            className="px-8 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50"
+            className="px-8 py-3 bg-[#f0bf38] text-white rounded-lg font-semibold hover:bg-[#f0bf38] disabled:opacity-50"
           >
             {status === "searching" ? t("face.searching") : `🔍 ${t("home.search.button")}`}
           </button>

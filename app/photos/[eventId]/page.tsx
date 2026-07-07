@@ -150,7 +150,7 @@ export default function EventGalleryPage({
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
         </div>
       </div>
     );
@@ -167,7 +167,7 @@ export default function EventGalleryPage({
           <p className="text-gray-600 mb-6">{error}</p>
           <Link
             href="/photos"
-            className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
           >
             {t("event.back")}
           </Link>
@@ -231,7 +231,7 @@ export default function EventGalleryPage({
             </div>
             <h1 className="text-4xl font-bold mb-2">{event.title}</h1>
             {event.location && (
-              <p className="text-blue-100 flex items-center gap-2">
+              <p className="text-[#e8f0ff] flex items-center gap-2">
                 <span>📍</span>
                 {event.location}
               </p>
@@ -301,7 +301,7 @@ export default function EventGalleryPage({
                 }}
                 className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
                   faceInputMode === "camera"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[#09419b] text-white"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -315,7 +315,7 @@ export default function EventGalleryPage({
                 }}
                 className={`px-4 py-2 rounded-md text-sm font-semibold transition ${
                   faceInputMode === "upload"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[#09419b] text-white"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -358,7 +358,7 @@ export default function EventGalleryPage({
           <div className="mb-10">
             {facePhotos.length > 0 ? (
               <>
-                <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                <div className="mb-4 p-3 bg-[#fef7e8] rounded-lg">
                   <p className="text-sm text-green-800">
                     {facePhotos.length}{" "}
                     {facePhotos.length !== 1 ? t("facematch.photos") : t("facematch.photo")}{" "}
@@ -415,14 +415,14 @@ export default function EventGalleryPage({
         </h2>
 
         {bibNumberFilter && (
-          <div className="mb-4 p-3 bg-blue-50 rounded-lg flex items-center justify-between">
+          <div className="mb-4 p-3 bg-[#e8f0ff] rounded-lg flex items-center justify-between">
             <p className="text-sm text-blue-800">
               {t("grid.showing")} {filteredPhotos.length} {t("grid.photos")}{" "}
               {t("event.gallery.forBib")} #{bibNumberFilter}
             </p>
             <button
               onClick={() => setBibNumberFilter("")}
-              className="text-sm text-blue-700 underline hover:text-blue-900"
+              className="text-sm text-[#09419b] underline hover:text-blue-900"
             >
               {t("bib.clear")}
             </button>
@@ -441,7 +441,7 @@ export default function EventGalleryPage({
       <div className="max-w-7xl mx-auto px-4 py-6 border-t border-gray-200">
         <Link
           href="/photos"
-          className="text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-2"
+          className="text-[#09419b] hover:text-[#09419b] font-semibold flex items-center gap-2"
         >
           ← {t("event.back")}
         </Link>

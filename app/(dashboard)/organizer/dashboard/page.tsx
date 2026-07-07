@@ -59,7 +59,7 @@ export default function OrganizerDashboard() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -85,7 +85,7 @@ export default function OrganizerDashboard() {
           <div className="text-gray-600 text-sm font-semibold">
             Total de Eventos
           </div>
-          <div className="text-4xl font-bold text-blue-600 mt-2">
+          <div className="text-4xl font-bold text-[#09419b] mt-2">
             {stats?.eventCount || 0}
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function OrganizerDashboard() {
           <div className="text-gray-600 text-sm font-semibold">
             Fotos Vendidas
           </div>
-          <div className="text-4xl font-bold text-green-600 mt-2">
+          <div className="text-4xl font-bold text-[#f0bf38] mt-2">
             {stats?.totalPhotosSold || 0}
           </div>
         </div>
@@ -159,12 +159,12 @@ export default function OrganizerDashboard() {
                     {new Date(event.date).toLocaleDateString("pt-PT")}
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                    <span className="inline-block px-3 py-1 bg-[#e8f0ff] text-blue-800 rounded-full text-sm font-semibold">
                       {event.photoCount || 0}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                    <span className="inline-block px-3 py-1 bg-[#fef7e8] text-green-800 rounded-full text-sm font-semibold">
                       {event.photosSold || 0}
                     </span>
                   </td>
@@ -174,7 +174,7 @@ export default function OrganizerDashboard() {
                   <td className="px-6 py-4">
                     <Link
                       href={`/organizer/events/${event.id}`}
-                      className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                      className="text-[#09419b] hover:text-[#09419b] font-semibold text-sm"
                     >
                       Ver Detalhes →
                     </Link>
@@ -188,7 +188,7 @@ export default function OrganizerDashboard() {
         {events.length === 0 && (
           <div className="p-12 text-center text-gray-600">
             Nenhum evento criado ainda.{" "}
-            <Link href="/events/new" className="text-blue-600 hover:text-blue-700">
+            <Link href="/events/new" className="text-[#09419b] hover:text-[#09419b]">
               Criar agora
             </Link>
           </div>

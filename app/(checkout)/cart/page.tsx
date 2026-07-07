@@ -75,7 +75,7 @@ export default function CartPage() {
                 </p>
                 <Link
                   href="/photos"
-                  className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
                 >
                   {t("dashboard.searchEvents")}
                 </Link>
@@ -111,12 +111,12 @@ export default function CartPage() {
               {/* Cupom */}
               <div className="pb-6 border-b border-gray-200">
                 {coupon ? (
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-[#fef7e8] rounded-lg">
                     <div className="text-sm">
                       <span className="font-semibold text-green-800">
                         {coupon.code}
                       </span>
-                      <span className="text-green-700">
+                      <span className="text-[#f0bf38]">
                         {" "}
                         ·{" "}
                         {coupon.discountType === "percentage"
@@ -168,8 +168,8 @@ export default function CartPage() {
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-green-700">{t("checkout.discount")}:</span>
-                    <span className="font-semibold text-green-700">
+                    <span className="text-[#f0bf38]">{t("checkout.discount")}:</span>
+                    <span className="font-semibold text-[#f0bf38]">
                       − € {discount.toFixed(2)}
                     </span>
                   </div>
@@ -184,12 +184,12 @@ export default function CartPage() {
 
               <div className="flex justify-between text-lg font-bold mb-6 pt-4">
                 <span>{t("cart.total")}</span>
-                <span className="text-green-600">€ {total.toFixed(2)}</span>
+                <span className="text-[#f0bf38]">€ {total.toFixed(2)}</span>
               </div>
 
               <Link
                 href="/checkout"
-                className="w-full block text-center py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 mb-3"
+                className="w-full block text-center py-3 bg-[#09419b] text-white font-semibold rounded-lg hover:bg-[#09419b] mb-3"
               >
                 {t("cart.checkout")}
               </Link>
@@ -203,7 +203,7 @@ export default function CartPage() {
 
               <Link
                 href="/photos"
-                className="block text-center text-blue-600 hover:text-blue-700 text-sm font-semibold mt-4"
+                className="block text-center text-[#09419b] hover:text-[#09419b] text-sm font-semibold mt-4"
               >
                 {t("cartpage.continue")}
               </Link>

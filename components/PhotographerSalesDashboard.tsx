@@ -103,7 +103,7 @@ export default function PhotographerSalesDashboard() {
   if (loading) {
     return (
       <div className="mb-8 text-center py-10">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -122,13 +122,13 @@ export default function PhotographerSalesDashboard() {
       <h2 className="text-xl font-bold text-gray-900 mb-4">Vendas</h2>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card label="Receita total" value={eur(stats.totalRevenue)} accent="text-green-600" />
+        <Card label="Receita total" value={eur(stats.totalRevenue)} accent="text-[#f0bf38]" />
         <Card label="Vendas" value={String(stats.totalSales)} />
         <Card label="Fotos à venda" value={String(stats.photosForSale)} />
         <Card
           label="Disponível p/ saque"
           value={eur(stats.pendingPayout)}
-          accent="text-blue-600"
+          accent="text-[#09419b]"
         />
       </div>
 

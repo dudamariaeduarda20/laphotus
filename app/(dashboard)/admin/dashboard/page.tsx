@@ -58,7 +58,7 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
           <div className="text-gray-600 text-sm font-semibold">
             Utilizadores Totais
           </div>
-          <div className="text-4xl font-bold text-blue-600 mt-2">
+          <div className="text-4xl font-bold text-[#09419b] mt-2">
             {stats?.totalUsers || 0}
           </div>
           <div className="text-xs text-gray-500 mt-2">
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
           <div className="text-gray-600 text-sm font-semibold">
             Fotos Processadas
           </div>
-          <div className="text-4xl font-bold text-green-600 mt-2">
+          <div className="text-4xl font-bold text-[#f0bf38] mt-2">
             {stats?.totalPhotos || 0}
           </div>
         </div>

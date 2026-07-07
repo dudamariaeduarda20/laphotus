@@ -114,7 +114,7 @@ export default function NotificationBell() {
               Notificações
             </span>
             {loading && (
-              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-[#09419b] border-t-transparent rounded-full animate-spin" />
             )}
           </div>
 
@@ -128,7 +128,7 @@ export default function NotificationBell() {
                 <div
                   key={n.id}
                   className={`px-4 py-3 flex gap-3 hover:bg-gray-50 ${
-                    !n.read ? "bg-blue-50/50" : ""
+                    !n.read ? "bg-[#e8f0ff]/50" : ""
                   }`}
                 >
                   <div className="text-lg flex-shrink-0 mt-0.5">

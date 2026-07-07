@@ -104,7 +104,7 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
           <div className="flex items-center justify-between">
             <div>
               {photo.price > 0 ? (
-                <span className="text-lg font-bold text-green-600">
+                <span className="text-lg font-bold text-[#f0bf38]">
                   € {photo.price.toFixed(2)}
                 </span>
               ) : (
@@ -117,8 +117,8 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
               onClick={handleAddToCart}
               className={`px-3 py-1 text-xs font-semibold rounded transition ${
                 added
-                  ? "bg-green-600 text-white"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  ? "bg-[#f0bf38] text-white"
+                  : "bg-[#09419b] text-white hover:bg-[#09419b]"
               }`}
             >
               {added ? "✓" : "+"}

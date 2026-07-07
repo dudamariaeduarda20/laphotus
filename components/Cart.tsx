@@ -79,7 +79,7 @@ export default function Cart() {
                 </div>
                 <div className="flex justify-between text-lg font-bold">
                   <span>{t("cart.total")}</span>
-                  <span className="text-green-600">
+                  <span className="text-[#f0bf38]">
                     € {(total * 1.23).toFixed(2)}
                   </span>
                 </div>
@@ -88,7 +88,7 @@ export default function Cart() {
               {/* Buttons */}
               <Link
                 href="/checkout"
-                className="w-full block text-center py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
+                className="w-full block text-center py-3 bg-[#09419b] text-white font-semibold rounded-lg hover:bg-[#09419b]"
               >
                 {t("cart.checkout")}
               </Link>

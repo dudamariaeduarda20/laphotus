@@ -81,7 +81,7 @@ export default function MyPhotosPage() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -110,7 +110,7 @@ export default function MyPhotosPage() {
           </p>
           <Link
             href="/upload"
-            className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
           >
             Carregar Fotos
           </Link>
@@ -171,15 +171,15 @@ export default function MyPhotosPage() {
 
                   {/* Stats */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="bg-blue-50 rounded p-2">
+                    <div className="bg-[#e8f0ff] rounded p-2">
                       <span className="text-gray-600">Preço:</span>
-                      <p className="font-bold text-blue-600">
+                      <p className="font-bold text-[#09419b]">
                         € {photo.price.toFixed(2)}
                       </p>
                     </div>
-                    <div className="bg-green-50 rounded p-2">
+                    <div className="bg-[#fef7e8] rounded p-2">
                       <span className="text-gray-600">Estado:</span>
-                      <p className="font-bold text-green-600">{photo.status}</p>
+                      <p className="font-bold text-[#f0bf38]">{photo.status}</p>
                     </div>
                   </div>
 
@@ -187,7 +187,7 @@ export default function MyPhotosPage() {
                   {editingPhotoId !== photo.id && (
                     <button
                       onClick={() => setEditingPhotoId(photo.id)}
-                      className="w-full px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-semibold"
+                      className="w-full px-3 py-2 bg-[#09419b] text-white text-sm rounded-lg hover:bg-[#09419b] font-semibold"
                     >
                       ✎ Editar Dorsais
                     </button>

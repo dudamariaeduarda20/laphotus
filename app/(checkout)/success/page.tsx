@@ -54,7 +54,7 @@ function SuccessContent() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
           <p className="mt-4 text-gray-600">{t("success.processing")}</p>
         </div>
       </div>
@@ -73,7 +73,7 @@ function SuccessContent() {
         </p>
         <Link
           href="/cart"
-          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
         >
           {t("checkout.backCart")}
         </Link>
@@ -84,7 +84,7 @@ function SuccessContent() {
   return (
     <div className="max-w-2xl mx-auto py-12">
       {/* Success Message */}
-      <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center mb-8">
+      <div className="bg-[#fef7e8] border border-green-200 rounded-lg p-8 text-center mb-8">
         <div className="text-6xl mb-4">✓</div>
         <h1 className="text-3xl font-bold text-green-900 mb-2">
           {t("success.title")}
@@ -115,7 +115,7 @@ function SuccessContent() {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">{t("success.order.status")}</span>
-            <span className="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm font-semibold rounded-full">
+            <span className="inline-block px-3 py-1 bg-[#fef7e8] text-green-800 text-sm font-semibold rounded-full">
               {t("success.order.paid")}
             </span>
           </div>
@@ -127,7 +127,7 @@ function SuccessContent() {
       </div>
 
       {/* Next Steps */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 mb-8">
+      <div className="bg-[#e8f0ff] border border-blue-200 rounded-lg p-8 mb-8">
         <h3 className="font-bold text-blue-900 mb-4">{t("success.steps.title")}</h3>
         <ul className="space-y-3 text-blue-900">
           <li className="flex items-start gap-3">
@@ -149,13 +149,13 @@ function SuccessContent() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/downloads"
-          className="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 text-center"
+          className="inline-block px-6 py-3 bg-[#f0bf38] text-white font-semibold rounded-lg hover:bg-[#f0bf38] text-center"
         >
           ⬇ {t("success.downloads")}
         </Link>
         <Link
           href="/photos"
-          className="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 text-center"
+          className="inline-block px-6 py-3 bg-[#09419b] text-white font-semibold rounded-lg hover:bg-[#09419b] text-center"
         >
           🔍 {t("success.more")}
         </Link>

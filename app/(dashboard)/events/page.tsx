@@ -64,7 +64,7 @@ export default function EventsPage() {
         </div>
         <Link
           href="/events/new"
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] transition"
         >
           + Criar Evento
         </Link>
@@ -78,7 +78,7 @@ export default function EventsPage() {
 
       {loading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
         </div>
       ) : events.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-12 text-center">
@@ -91,7 +91,7 @@ export default function EventsPage() {
           </p>
           <Link
             href="/events/new"
-            className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
           >
             Criar Evento
           </Link>
@@ -132,7 +132,7 @@ export default function EventsPage() {
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
+                    <span className="px-2 py-1 bg-[#e8f0ff] text-blue-800 text-xs font-semibold rounded">
                       {event.sport}
                     </span>
                   </td>
@@ -146,7 +146,7 @@ export default function EventsPage() {
                     <div className="flex gap-2 flex-wrap">
                       <Link
                         href={`/events/${event.id}/edit`}
-                        className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+                        className="text-[#09419b] hover:text-[#09419b] font-semibold text-sm"
                       >
                         Editar
                       </Link>

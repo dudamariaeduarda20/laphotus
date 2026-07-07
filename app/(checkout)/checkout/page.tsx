@@ -58,7 +58,7 @@ export default function CheckoutPage() {
         </p>
         <Link
           href="/photos"
-          className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
         >
           {t("checkout.empty.browse")}
         </Link>
@@ -95,7 +95,7 @@ export default function CheckoutPage() {
             </h2>
 
             {coupon ? (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
+              <div className="p-4 bg-[#fef7e8] border border-green-200 rounded-lg flex items-center justify-between">
                 <p className="text-green-800 font-semibold">
                   ✓ {coupon.code} {t("checkout.coupon.applied")}
                   {coupon.discountType === "percentage"
@@ -104,7 +104,7 @@ export default function CheckoutPage() {
                 </p>
                 <Link
                   href="/cart"
-                  className="text-sm text-blue-600 hover:text-blue-700 underline"
+                  className="text-sm text-[#09419b] hover:text-[#09419b] underline"
                 >
                   {t("checkout.coupon.change")}
                 </Link>
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
             ) : (
               <p className="text-sm text-gray-600">
                 {t("checkout.coupon.have")}{" "}
-                <Link href="/cart" className="text-blue-600 underline">
+                <Link href="/cart" className="text-[#09419b] underline">
                   {t("checkout.coupon.applyCart")}
                 </Link>{" "}
                 {t("checkout.coupon.before")}
@@ -127,7 +127,7 @@ export default function CheckoutPage() {
             </h2>
 
             <div className="space-y-3">
-              <label className="flex items-center p-4 border-2 border-blue-500 rounded-lg cursor-pointer bg-blue-50">
+              <label className="flex items-center p-4 border-2 border-[#09419b] rounded-lg cursor-pointer bg-[#e8f0ff]">
                 <input
                   type="radio"
                   name="payment"
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
               </div>
 
               {discountAmount > 0 && (
-                <div className="flex justify-between text-green-600">
+                <div className="flex justify-between text-[#f0bf38]">
                   <span>
                     {t("checkout.discount")}{coupon ? ` (${coupon.code})` : ""}:
                   </span>
@@ -199,14 +199,14 @@ export default function CheckoutPage() {
 
             <div className="flex justify-between text-xl font-bold mb-6 pt-4">
               <span>{t("cart.total")}</span>
-              <span className="text-green-600">€ {total.toFixed(2)}</span>
+              <span className="text-[#f0bf38]">€ {total.toFixed(2)}</span>
             </div>
 
             {/* Payment Button (exige login) */}
             {!authLoading && !isAuthenticated ? (
               <Link
                 href="/auth/login"
-                className="w-full block text-center py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 mb-3"
+                className="w-full block text-center py-3 bg-[#09419b] text-white font-semibold rounded-lg hover:bg-[#09419b] mb-3"
               >
                 {t("checkout.loginToFinish")}
               </Link>
@@ -214,13 +214,13 @@ export default function CheckoutPage() {
               <button
                 onClick={handlePayment}
                 disabled={processingPayment || authLoading}
-                className="w-full py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 mb-3"
+                className="w-full py-3 bg-[#f0bf38] text-white font-semibold rounded-lg hover:bg-[#f0bf38] disabled:opacity-50 mb-3"
               >
                 {processingPayment ? t("checkout.processing") : `💳 ${t("cart.checkout")}`}
               </button>
             )}
 
-            <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-xs text-green-800">
+            <div className="p-3 bg-[#fef7e8] border border-green-200 rounded-lg text-xs text-green-800">
               <p className="font-semibold mb-1">{t("checkout.demo2.title")}</p>
               <p>{t("checkout.demo2.desc")}</p>
             </div>
@@ -228,7 +228,7 @@ export default function CheckoutPage() {
             <div className="mt-4 pt-4 border-t border-gray-200">
               <Link
                 href="/cart"
-                className="block text-center text-blue-600 hover:text-blue-700 text-sm font-semibold"
+                className="block text-center text-[#09419b] hover:text-[#09419b] text-sm font-semibold"
               >
                 ← {t("checkout.backCart")}
               </Link>

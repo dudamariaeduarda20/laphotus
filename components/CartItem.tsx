@@ -28,7 +28,7 @@ export default function CartItem({ item }: CartItemProps) {
 
       {/* Price & Remove */}
       <div className="text-right flex flex-col justify-between">
-        <div className="text-lg font-bold text-green-600">
+        <div className="text-lg font-bold text-[#f0bf38]">
           € {item.price.toFixed(2)}
         </div>
         <button

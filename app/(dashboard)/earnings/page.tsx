@@ -74,7 +74,7 @@ export default function EarningsPage() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -97,7 +97,7 @@ export default function EarningsPage() {
         {/* Total Earnings */}
         <div className="bg-white rounded-lg shadow p-6">
           <p className="text-sm text-gray-600 mb-2">Total Acumulado</p>
-          <h2 className="text-4xl font-bold text-green-600 mb-2">
+          <h2 className="text-4xl font-bold text-[#f0bf38] mb-2">
             € {earnings?.totalEarnings.toFixed(2) || "0.00"}
           </h2>
           <p className="text-sm text-gray-600">
@@ -108,7 +108,7 @@ export default function EarningsPage() {
         {/* This Month */}
         <div className="bg-white rounded-lg shadow p-6">
           <p className="text-sm text-gray-600 mb-2">Este Mês</p>
-          <h2 className="text-4xl font-bold text-blue-600 mb-2">
+          <h2 className="text-4xl font-bold text-[#09419b] mb-2">
             € {earnings?.thisMonth.toFixed(2) || "0.00"}
           </h2>
           <p className="text-sm text-gray-600">Rendimento mensal</p>
@@ -169,7 +169,7 @@ export default function EarningsPage() {
                     <td className="px-6 py-4 text-sm text-red-600">
                       -€ {tx.commission.toFixed(2)}
                     </td>
-                    <td className="px-6 py-4 text-sm font-bold text-green-600">
+                    <td className="px-6 py-4 text-sm font-bold text-[#f0bf38]">
                       € {tx.photographerPayout.toFixed(2)}
                     </td>
                   </tr>
@@ -185,7 +185,7 @@ export default function EarningsPage() {
       </div>
 
       {/* Saque */}
-      <div className="mt-8 bg-green-50 border border-green-200 rounded-lg p-6">
+      <div className="mt-8 bg-[#fef7e8] border border-green-200 rounded-lg p-6">
         <h3 className="font-bold text-green-900 mb-1">💰 Saque</h3>
         <p className="text-sm text-green-800 mb-1">
           Saldo disponível:{" "}
@@ -193,20 +193,20 @@ export default function EarningsPage() {
             € {(earnings?.totalEarnings || 0).toFixed(2)}
           </span>
         </p>
-        <p className="text-xs text-green-700 mb-4">
+        <p className="text-xs text-[#f0bf38] mb-4">
           O pedido é registado e processado manualmente pelo admin.
         </p>
         <button
           onClick={handleWithdraw}
           disabled={withdrawing || (earnings?.totalEarnings || 0) <= 0}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-semibold disabled:opacity-50"
+          className="px-4 py-2 bg-[#f0bf38] text-white rounded-lg hover:bg-[#f0bf38] text-sm font-semibold disabled:opacity-50"
         >
           {withdrawing ? "A solicitar…" : "Solicitar saque"}
         </button>
         {withdrawMsg && (
           <p
             className={`mt-3 text-sm ${
-              withdrawMsg.startsWith("✓") ? "text-green-700" : "text-red-600"
+              withdrawMsg.startsWith("✓") ? "text-[#f0bf38]" : "text-red-600"
             }`}
           >
             {withdrawMsg}
@@ -215,7 +215,7 @@ export default function EarningsPage() {
       </div>
 
       {/* Bank Info */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
+      <div className="mt-6 bg-[#e8f0ff] border border-blue-200 rounded-lg p-6">
         <h3 className="font-bold text-blue-900 mb-2">💳 Informações Bancárias</h3>
         <p className="text-sm text-blue-800">
           Conta bancária:{" "}

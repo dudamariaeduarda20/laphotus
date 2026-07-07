@@ -76,7 +76,7 @@ export default function AdminSettings() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function AdminSettings() {
       )}
 
       {success && (
-        <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+        <div className="p-4 bg-[#fef7e8] border border-green-200 rounded-lg text-green-800">
           ✓ {success}
         </div>
       )}
@@ -137,7 +137,7 @@ export default function AdminSettings() {
             <button
               onClick={handleSaveRate}
               disabled={saving}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-semibold"
+              className="px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] disabled:opacity-50 font-semibold"
             >
               {saving ? "A guardar..." : "Guardar Alterações"}
             </button>
@@ -151,7 +151,7 @@ export default function AdminSettings() {
           <div className="text-gray-600 text-sm font-semibold">
             Comissões Totais
           </div>
-          <div className="text-3xl font-bold text-green-600 mt-2">
+          <div className="text-3xl font-bold text-[#f0bf38] mt-2">
             € {(earnings?.totalEarnings || 0).toFixed(2)}
           </div>
           <div className="text-xs text-gray-500 mt-2">
@@ -163,7 +163,7 @@ export default function AdminSettings() {
           <div className="text-gray-600 text-sm font-semibold">
             Pago aos Fotógrafos
           </div>
-          <div className="text-3xl font-bold text-blue-600 mt-2">
+          <div className="text-3xl font-bold text-[#09419b] mt-2">
             € {(earnings?.totalPhotographerPayout || 0).toFixed(2)}
           </div>
         </div>
@@ -213,13 +213,13 @@ export default function AdminSettings() {
                   <td className="px-6 py-4 font-semibold text-gray-900">
                     {item.photographerName}
                   </td>
-                  <td className="px-6 py-4 text-green-600 font-semibold">
+                  <td className="px-6 py-4 text-[#f0bf38] font-semibold">
                     € {item.amount.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-red-600 font-semibold">
                     € {item.commission.toFixed(2)}
                   </td>
-                  <td className="px-6 py-4 text-blue-600 font-semibold">
+                  <td className="px-6 py-4 text-[#09419b] font-semibold">
                     € {item.photographerPayout.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">

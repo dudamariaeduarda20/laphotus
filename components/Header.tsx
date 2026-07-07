@@ -24,7 +24,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
+          <div className="w-8 h-8 bg-[#09419b] rounded-lg flex items-center justify-center text-white font-bold">
             L
           </div>
           <span className="font-bold text-lg hidden sm:inline text-gray-900 dark:text-white">LAPHOTUS</span>
@@ -73,7 +73,7 @@ export default function Header() {
               {/* User Menu */}
               <div className="relative group">
                 <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
-                  <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center text-sm font-bold text-blue-600">
+                  <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center text-sm font-bold text-[#09419b]">
                     {user?.name?.[0]?.toUpperCase()}
                   </div>
                   <span className="text-sm font-medium hidden sm:inline">
@@ -152,7 +152,7 @@ export default function Header() {
               </Link>
               <Link
                 href="/auth/register"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="px-4 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] transition"
               >
                 {t("nav.register")}
               </Link>

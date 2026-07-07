@@ -149,7 +149,7 @@ export default function EventForm({
         <button
           type="submit"
           disabled={isLoading}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          className="px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] disabled:opacity-50"
         >
           {isLoading ? "A guardar..." : initialData ? "Atualizar Evento" : "Criar Evento"}
         </button>

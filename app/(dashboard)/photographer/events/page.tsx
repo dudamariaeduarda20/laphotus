@@ -66,7 +66,7 @@ export default function PhotographerEventsPage() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export default function PhotographerEventsPage() {
           </p>
           <Link
             href="/upload"
-            className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="inline-block px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b]"
           >
             {t("photographer.tabs.upload")}
           </Link>
@@ -107,7 +107,7 @@ export default function PhotographerEventsPage() {
             <div key={ev.id} className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-bold text-gray-900 dark:text-white">{ev.title}</h3>
-                <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 text-xs font-semibold rounded">
+                <span className="px-2 py-1 bg-[#e8f0ff] dark:bg-blue-900 text-blue-800 dark:text-blue-300 text-xs font-semibold rounded">
                   {ev.sport}
                 </span>
               </div>
@@ -124,7 +124,7 @@ export default function PhotographerEventsPage() {
                   <p className="text-xs text-gray-500">{t("photographer.events.soldCount")}</p>
                 </div>
                 <div>
-                  <p className="font-bold text-green-600">{eur(ev.revenue)}</p>
+                  <p className="font-bold text-[#f0bf38]">{eur(ev.revenue)}</p>
                   <p className="text-xs text-gray-500">{t("photographer.events.revenue")}</p>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function PhotographerEventsPage() {
                     <td className="px-6 py-3 text-sm text-gray-500">
                       {new Date(s.createdAt).toLocaleDateString("pt-PT")}
                     </td>
-                    <td className="px-6 py-3 text-sm font-bold text-green-600 text-right">
+                    <td className="px-6 py-3 text-sm font-bold text-[#f0bf38] text-right">
                       {eur(s.price)}
                     </td>
                   </tr>

@@ -89,7 +89,7 @@ export default function AdminPhotographers() {
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -154,7 +154,7 @@ export default function AdminPhotographers() {
                     {photo.user.email}
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                    <span className="inline-block px-3 py-1 bg-[#e8f0ff] text-blue-800 rounded-full text-sm font-semibold">
                       {photo.photoCount || 0}
                     </span>
                   </td>
@@ -168,7 +168,7 @@ export default function AdminPhotographers() {
                   </td>
                   <td className="px-6 py-4">
                     {photo.active ? (
-                      <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                      <span className="inline-block px-3 py-1 bg-[#fef7e8] text-green-800 rounded-full text-sm font-semibold">
                         Ativo
                       </span>
                     ) : (
@@ -182,7 +182,7 @@ export default function AdminPhotographers() {
                       <button
                         onClick={() => handleActivate(photo.user.id)}
                         disabled={actionInProgress === photo.user.id}
-                        className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50"
+                        className="px-3 py-1 bg-[#f0bf38] text-white text-sm rounded hover:bg-[#f0bf38] disabled:opacity-50"
                       >
                         ✓ Ativar
                       </button>

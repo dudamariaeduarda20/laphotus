@@ -33,7 +33,7 @@ export default function ProfilePage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Avatar */}
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center text-2xl font-bold text-blue-600">
+            <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center text-2xl font-bold text-[#09419b]">
               {user?.name?.[0]?.toUpperCase()}
             </div>
             <div>
@@ -109,7 +109,7 @@ export default function ProfilePage() {
           <div className="flex gap-4 pt-4">
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] transition"
             >
               {t("profile.save")}
             </button>
@@ -122,7 +122,7 @@ export default function ProfilePage() {
           </div>
 
           {saved && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+            <div className="p-4 bg-[#fef7e8] border border-green-200 rounded-lg text-green-800">
               ✓ {t("profile.saved")}
             </div>
           )}

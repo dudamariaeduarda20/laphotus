@@ -52,7 +52,7 @@ function PhotosContent() {
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4">
           <h1 className="text-4xl font-bold mb-2">{t("events.title")}</h1>
-          <p className="text-blue-100">
+          <p className="text-[#e8f0ff]">
             {t("events.subtitle")}
           </p>
         </div>
@@ -114,7 +114,7 @@ function PhotosContent() {
         {/* Loading */}
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
           </div>
         )}
 
