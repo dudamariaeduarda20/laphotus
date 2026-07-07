@@ -22,7 +22,7 @@ export default function OrganizerLandingPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-700 to-blue-900 text-white">
+      <section style={{ background: "linear-gradient(to bottom right, #09419b, #0a2d6e)" }} className="text-white">
         <div className="max-w-5xl mx-auto px-4 py-24 text-center">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             {t("landing.organizer.hero.title")}
@@ -33,7 +33,7 @@ export default function OrganizerLandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/auth/register?type=organizador"
-              className="px-8 py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-blue-50 transition"
+              className="px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-blue-50 transition"
             >
               {t("landing.organizer.hero.cta")}
             </Link>
@@ -55,7 +55,7 @@ export default function OrganizerLandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((s, i) => (
             <div key={s.titleKey} className="text-center">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-2xl font-bold text-blue-700 dark:text-blue-300">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#e8f0ff] dark:bg-blue-900 flex items-center justify-center text-2xl font-bold text-[#09419b] dark:text-blue-300">
                 {i + 1}
               </div>
               <div className="text-3xl mb-3">{s.icon}</div>
@@ -94,20 +94,20 @@ export default function OrganizerLandingPage() {
         </p>
         <Link
           href="/photos"
-          className="inline-block px-6 py-3 border border-blue-600 text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition"
+          className="inline-block px-6 py-3 border border-[#09419b] text-blue-600 dark:text-blue-400 font-semibold rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition"
         >
           {t("landing.organizer.marketplace.cta")}
         </Link>
       </section>
 
       {/* CTA final */}
-      <section className="bg-blue-700 text-white py-16 text-center">
+      <section className="bg-[#09419b] text-white py-16 text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-3xl font-bold mb-3">{t("landing.organizer.final.title")}</h2>
           <p className="text-blue-100 mb-8">{t("landing.organizer.final.subtitle")}</p>
           <Link
             href="/auth/register?type=organizador"
-            className="inline-block px-8 py-3 bg-white text-blue-700 font-bold rounded-lg hover:bg-blue-50 transition"
+            className="inline-block px-8 py-3 bg-white text-[#09419b] font-bold rounded-lg hover:bg-blue-50 transition"
           >
             {t("landing.organizer.final.cta")}
           </Link>

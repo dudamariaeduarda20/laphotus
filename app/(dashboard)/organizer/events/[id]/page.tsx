@@ -57,7 +57,7 @@ function RevenueChart({ data }: { data: RevenueByDay[] }) {
         const x = i * (bw + gap);
         const y = H - h;
         return (
-          <rect key={d.date} x={x} y={y} width={bw} height={h} rx={2} className="fill-yellow-500">
+          <rect key={d.date} x={x} y={y} width={bw} height={h} rx={2} className="fill-[#f0bf38]">
             <title>
               {d.date}: {eur(d.revenue)} ({d.count} venda{d.count !== 1 ? "s" : ""})
             </title>
@@ -138,7 +138,7 @@ export default function OrganizerEventDashboardPage({
   if (loading && !detail) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#09419b]"></div>
       </div>
     );
   }
@@ -154,7 +154,7 @@ export default function OrganizerEventDashboardPage({
   return (
     <div>
       <div className="mb-6">
-        <Link href="/organizer/dashboard" className="text-sm text-blue-600 hover:text-blue-700">
+        <Link href="/organizer/dashboard" className="text-sm text-[#09419b] hover:text-blue-700">
           ← {t("organizer.eventDashboard.back")}
         </Link>
         <div className="flex items-center justify-between flex-wrap gap-4 mt-2">
@@ -167,7 +167,7 @@ export default function OrganizerEventDashboardPage({
           </div>
           <button
             onClick={handleCopyInvite}
-            className="px-4 py-2 border border-blue-600 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 text-sm font-semibold transition"
+            className="px-4 py-2 border border-[#09419b] text-[#09419b] dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 text-sm font-semibold transition"
           >
             {inviteCopied ? `✓ ${t("organizer.eventDashboard.inviteCopied")}` : t("organizer.eventDashboard.copyInvite")}
           </button>
@@ -190,7 +190,7 @@ export default function OrganizerEventDashboardPage({
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("organizer.eventDashboard.orders")}</p>
-          <p className="text-2xl font-bold text-blue-600 mt-1">{detail.totals.orderCount}</p>
+          <p className="text-2xl font-bold text-[#09419b] mt-1">{detail.totals.orderCount}</p>
         </div>
       </div>
 
@@ -207,7 +207,7 @@ export default function OrganizerEventDashboardPage({
                 onClick={() => setDays(d)}
                 className={`px-3 py-1 text-sm rounded-lg font-semibold transition ${
                   days === d
-                    ? "bg-blue-600 text-white"
+                    ? "bg-[#09419b] text-white"
                     : "border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
@@ -302,13 +302,13 @@ export default function OrganizerEventDashboardPage({
             />
             <button
               onClick={fetchDetail}
-              className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
+              className="px-3 py-1.5 text-sm bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] font-semibold"
             >
               {t("organizer.eventDashboard.filterApply")}
             </button>
             <button
               onClick={handleExportCsv}
-              className="px-3 py-1.5 text-sm border border-yellow-600 text-yellow-600 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-950 font-semibold"
+              className="px-3 py-1.5 text-sm border border-yellow-600 text-yellow-600 rounded-lg hover:bg-[#fef7e8] dark:hover:bg-[#332800] font-semibold"
             >
               {t("organizer.eventDashboard.exportCsv")}
             </button>
