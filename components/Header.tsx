@@ -33,7 +33,7 @@ export default function Header() {
           : "sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm pt-4"
       }
     >
-      <div className="container-editorial py-10 px-6 flex items-center justify-between">
+      <div className="container-editorial py-8 px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <img
