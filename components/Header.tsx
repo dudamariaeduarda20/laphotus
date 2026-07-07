@@ -23,9 +23,8 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm">
       <div className="container-editorial py-8 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <img src="/logo-icon.svg" alt="LAPHOTUS" className="w-8 h-8" />
-          <span className="font-serif font-bold text-lg hidden sm:inline text-[#09419b]">LAPHOTUS</span>
+        <Link href="/" className="flex items-center">
+          <img src="/logo-text.svg" alt="LAPHOTUS" className="h-12" />
         </Link>
 
         {/* Navigation */}
