@@ -17,8 +17,8 @@ export default function Header() {
   const isHome = pathname === "/";
 
   const navLink = isHome
-    ? "text-base font-sans text-white hover:text-[#f0bf38] transition"
-    : "text-base font-sans text-[#333] hover:text-[#09419b] transition";
+    ? "text-lg font-sans text-white hover:text-[#f0bf38] transition"
+    : "text-lg font-sans text-[#333] hover:text-[#09419b] transition";
 
   const handleLogout = async () => {
     await logout();
@@ -33,18 +33,18 @@ export default function Header() {
           : "sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm pt-4"
       }
     >
-      <div className="container-editorial py-6 px-6 flex items-center justify-between">
+      <div className="container-editorial py-10 px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <img
             src={isHome ? "/logo-text-white.svg" : "/logo-text.svg"}
             alt="LAPHOTUS"
-            className="h-10"
+            className="h-14"
           />
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-6">
+        <nav className="flex items-center gap-8">
           <Link href="/photos" className={navLink}>
             {t("nav.events")}
           </Link>
