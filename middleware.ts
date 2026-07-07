@@ -32,6 +32,7 @@ export async function middleware(request: NextRequest) {
     "/checkout",
     "/success",
     "/my-photos",
+    "/photographer",
     "/profile",
     "/settings",
     "/admin",

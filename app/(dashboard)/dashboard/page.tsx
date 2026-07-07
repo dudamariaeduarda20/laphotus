@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import Link from "next/link";
 import PhotographerSalesDashboard from "@/components/PhotographerSalesDashboard";
+import PhotographerTabs from "@/components/PhotographerTabs";
 
 export default function DashboardPage() {
   const { user, isPhotographer, isOrganizer, isClient, isAdmin } = useAuth();
@@ -11,6 +12,8 @@ export default function DashboardPage() {
 
   return (
     <div>
+      {isPhotographer && <PhotographerTabs />}
+
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t("dashboard.title")}</h1>
       <p className="text-gray-600 dark:text-gray-400 mb-8">{t("dashboard.welcome")}, {user?.name}!</p>
 
@@ -28,6 +31,12 @@ export default function DashboardPage() {
               </Link>
               <Link href="/my-photos" className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition">
                 {t("dashboard.myPhotos")}
+              </Link>
+              <Link href="/photographer/events" className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition">
+                {t("photographer.tabs.events")}
+              </Link>
+              <Link href="/photographer/opportunities" className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition">
+                {t("photographer.tabs.opportunities")}
               </Link>
               <Link href="/earnings" className="block px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-center transition">
                 💰 {t("dashboard.myEarnings")}

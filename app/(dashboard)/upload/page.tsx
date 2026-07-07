@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PhotoUpload from "@/components/PhotoUpload";
+import PhotographerTabs from "@/components/PhotographerTabs";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 function UploadContent() {
@@ -54,6 +55,7 @@ function UploadContent() {
 
   return (
     <div>
+      <PhotographerTabs />
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Carregar Fotos</h1>
       <p className="text-gray-600 mb-8">
         Carregue fotos para eventos e defina preços

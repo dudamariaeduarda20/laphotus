@@ -76,3 +76,114 @@ export async function getPhotographerStats(
     salesByDay: days,
   };
 }
+
+export interface PhotographerEventSummary {
+  id: string;
+  title: string;
+  sport: string;
+  date: string;
+  photoCount: number;
+  soldCount: number;
+  revenue: number;
+}
+
+export interface SoldPhotoEntry {
+  photoId: string;
+  photoName: string;
+  eventId: string;
+  eventTitle: string;
+  price: number;
+  orderId: string;
+  createdAt: string;
+}
+
+export interface PhotographerEventsResult {
+  events: PhotographerEventSummary[];
+  recentSales: SoldPhotoEntry[];
+}
+
+/**
+ * Eventos onde o fotógrafo tem fotos carregadas + histórico real de vendas
+ * por foto (join OrderItem -> Photo -> Event, filtrado por Order pago).
+ */
+export async function getPhotographerEvents(
+  userId: string
+): Promise<PhotographerEventsResult | null> {
+  const photographer = await prisma.photographer.findUnique({
+    where: { userId },
+  });
+  if (!photographer) return null;
+
+  const photos = await prisma.photo.findMany({
+    where: { photographerId: photographer.id },
+    select: {
+      id: true,
+      eventId: true,
+      event: { select: { id: true, title: true, sport: true, date: true } },
+    },
+  });
+
+  const eventMap = new Map<string, PhotographerEventSummary>();
+  for (const p of photos) {
+    const existing = eventMap.get(p.eventId);
+    if (existing) {
+      existing.photoCount += 1;
+    } else {
+      eventMap.set(p.eventId, {
+        id: p.event.id,
+        title: p.event.title,
+        sport: p.event.sport,
+        date: p.event.date.toISOString(),
+        photoCount: 1,
+        soldCount: 0,
+        revenue: 0,
+      });
+    }
+  }
+
+  const orderItems = await prisma.orderItem.findMany({
+    where: {
+      photo: { photographerId: photographer.id },
+      order: { status: "COMPLETED" },
+    },
+    orderBy: { createdAt: "desc" },
+    select: {
+      price: true,
+      createdAt: true,
+      orderId: true,
+      photo: {
+        select: {
+          id: true,
+          name: true,
+          eventId: true,
+          event: { select: { title: true } },
+        },
+      },
+    },
+  });
+
+  const recentSales: SoldPhotoEntry[] = [];
+  for (const item of orderItems) {
+    const ev = eventMap.get(item.photo.eventId);
+    if (ev) {
+      ev.soldCount += 1;
+      ev.revenue += item.price;
+    }
+    recentSales.push({
+      photoId: item.photo.id,
+      photoName: item.photo.name,
+      eventId: item.photo.eventId,
+      eventTitle: item.photo.event.title,
+      price: item.price,
+      orderId: item.orderId,
+      createdAt: item.createdAt.toISOString(),
+    });
+  }
+
+  return {
+    events: Array.from(eventMap.values()).sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    ),
+    recentSales: recentSales.slice(0, 20),
+  };
+}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import PhotographerTabs from "@/components/PhotographerTabs";
 
 export default function EarningsPage() {
   const { user, isPhotographer, loading: authLoading } = useAuth();
@@ -88,6 +89,7 @@ export default function EarningsPage() {
 
   return (
     <div>
+      <PhotographerTabs />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Meus Ganhos</h1>
 
       {/* Summary Cards */}
