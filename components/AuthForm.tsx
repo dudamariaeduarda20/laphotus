@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { UserRole } from "@/lib/types";
@@ -10,16 +10,28 @@ interface AuthFormProps {
   mode: "login" | "register";
 }
 
+const ROLE_BY_TYPE: Record<string, UserRole> = {
+  fotografo: UserRole.PHOTOGRAPHER,
+  organizador: UserRole.ORGANIZER,
+  cliente: UserRole.CLIENT,
+};
+
 export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, register } = useAuth();
   const { t } = useTranslation();
+
+  const initialRole =
+    mode === "register"
+      ? ROLE_BY_TYPE[searchParams.get("type") || ""] || UserRole.CLIENT
+      : UserRole.CLIENT;
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     name: "",
-    role: UserRole.CLIENT,
+    role: initialRole,
   });
 
   const [loading, setLoading] = useState(false);

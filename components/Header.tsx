@@ -42,13 +42,13 @@ export default function Header() {
           {!isAuthenticated && (
             <>
               <Link
-                href="/auth/register"
+                href="/auth/register?type=fotografo"
                 className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
               >
                 {t("nav.photographer")}
               </Link>
               <Link
-                href="/auth/register"
+                href="/auth/register?type=organizador"
                 className="hidden md:inline text-gray-600 hover:text-gray-900 transition"
               >
                 {t("nav.organizer")}

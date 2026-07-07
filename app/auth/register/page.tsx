@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 import RegisterHeader from "@/components/RegisterHeader";
 
@@ -10,7 +11,9 @@ export default function RegisterPage() {
   return (
     <div>
       <RegisterHeader />
-      <AuthForm mode="register" />
+      <Suspense fallback={null}>
+        <AuthForm mode="register" />
+      </Suspense>
     </div>
   );
 }
