@@ -18,9 +18,9 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      {/* Hero + Categories — full-viewport blue block, centered */}
-      <section className="bg-[#09419b] text-white h-[calc(100vh-88px)] flex items-center justify-center">
-        <div className="container-editorial w-full text-center py-24 px-6 space-y-12">
+      {/* Hero — full blue, top spacing + search */}
+      <section className="bg-[#09419b] text-white min-h-screen flex items-center justify-center pb-0">
+        <div className="container-editorial w-full text-center pt-16 pb-24 px-6 space-y-12">
           <h1
             style={{ color: "#ffffff" }}
             className="font-serif font-bold uppercase text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight"
@@ -32,25 +32,28 @@ export default function Home() {
           </p>
 
           <SearchEventBar />
+        </div>
+      </section>
 
-          <div className="space-y-8">
-            <h2
-              style={{ color: "#ffffff" }}
-              className="font-serif font-bold uppercase text-2xl sm:text-3xl text-center tracking-tight"
-            >
-              {t("home.categories.title")}
-            </h2>
-            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-              {EVENT_CATEGORIES.map((c) => (
-                <Link
-                  key={c.value}
-                  href={`/photos?sport=${encodeURIComponent(c.value)}`}
-                  className="px-5 py-2 bg-[#f0bf38] text-[#09419b] rounded-full text-sm font-medium font-sans hover:bg-[#f7d15f] transition"
-                >
-                  {t(c.labelKey)}
-                </Link>
-              ))}
-            </div>
+      {/* Categories — separate white section */}
+      <section className="bg-white text-gray-900 py-16 px-6">
+        <div className="container-editorial w-full text-center space-y-8">
+          <h2
+            style={{ color: "#09419b" }}
+            className="font-serif font-bold uppercase text-2xl sm:text-3xl tracking-tight"
+          >
+            {t("home.categories.title")}
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+            {EVENT_CATEGORIES.map((c) => (
+              <Link
+                key={c.value}
+                href={`/photos?sport=${encodeURIComponent(c.value)}`}
+                className="px-5 py-2 bg-[#f0bf38] text-[#09419b] rounded-full text-sm font-medium font-sans hover:bg-[#f7d15f] transition"
+              >
+                {t(c.labelKey)}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
