@@ -57,7 +57,7 @@ function RevenueChart({ data }: { data: RevenueByDay[] }) {
         const x = i * (bw + gap);
         const y = H - h;
         return (
-          <rect key={d.date} x={x} y={y} width={bw} height={h} rx={2} className="fill-emerald-500">
+          <rect key={d.date} x={x} y={y} width={bw} height={h} rx={2} className="fill-yellow-500">
             <title>
               {d.date}: {eur(d.revenue)} ({d.count} venda{d.count !== 1 ? "s" : ""})
             </title>
@@ -186,7 +186,7 @@ export default function OrganizerEventDashboardPage({
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("organizer.eventDashboard.revenue")}</p>
-          <p className="text-2xl font-bold text-emerald-600 mt-1">{eur(detail.totals.revenue)}</p>
+          <p className="text-2xl font-bold text-yellow-600 mt-1">{eur(detail.totals.revenue)}</p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("organizer.eventDashboard.orders")}</p>
@@ -260,7 +260,7 @@ export default function OrganizerEventDashboardPage({
                       {p.name}
                     </td>
                     <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">{p.photosSold}</td>
-                    <td className="px-6 py-3 text-sm font-semibold text-emerald-600">{eur(p.revenue)}</td>
+                    <td className="px-6 py-3 text-sm font-semibold text-yellow-600">{eur(p.revenue)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -308,7 +308,7 @@ export default function OrganizerEventDashboardPage({
             </button>
             <button
               onClick={handleExportCsv}
-              className="px-3 py-1.5 text-sm border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950 font-semibold"
+              className="px-3 py-1.5 text-sm border border-yellow-600 text-yellow-600 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-950 font-semibold"
             >
               {t("organizer.eventDashboard.exportCsv")}
             </button>
