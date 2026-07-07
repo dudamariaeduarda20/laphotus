@@ -5,7 +5,13 @@ import {
   searchByEmbedding,
   faceServiceHealthy,
 } from "@/lib/services/insightFaceService";
-import { awsEnabled, searchFacesByBytes } from "@/lib/services/faceService";
+import {
+  awsEnabled,
+  searchFacesByBytes,
+  searchFacesByAWSRekognition,
+  isUsingAWSRekognition,
+  isFallbackMode,
+} from "@/lib/services/faceService";
 import prisma from "@/lib/db/prisma";
 
 /**
@@ -40,20 +46,22 @@ export async function POST(request: NextRequest) {
 
     let matches: any[] = [];
     let engine = "";
+    let usingFallback = false;
 
     // Debug: log engine availability
     console.log("[search-face] Engine status:", {
-      awsEnabled: awsEnabled(),
+      awsExplicitEnabled: isUsingAWSRekognition(),
+      fallbackMode: isFallbackMode(),
       faceServiceUrl: !!process.env.FACE_SERVICE_URL,
       env: process.env.NODE_ENV,
     });
 
-    // === Motor 1: AWS Rekognition (identity matching real, se creds presentes) ===
-    if (awsEnabled()) {
+    // === Motor 1: AWS Rekognition (se EXPLICITAMENTE HABILITADO) ===
+    if (isUsingAWSRekognition()) {
       try {
-        matches = await searchFacesByBytes(eventId, buffer, 80);
+        matches = await searchFacesByAWSRekognition(eventId, buffer);
         if (matches.length > 0) {
-          engine = "AWS Rekognition";
+          engine = "AWS Rekognition (99% strict)";
           return NextResponse.json(
             {
               matches,
@@ -61,25 +69,27 @@ export async function POST(request: NextRequest) {
                 total: matches.length,
                 bestMatch: matches[0]?.matchPercent || 0,
                 engine,
+                usingFallback: false,
               },
             },
             { status: 200 }
           );
         }
       } catch (err) {
-        console.error("AWS error:", err);
-        // fallback para próximo motor
+        console.error("AWS Rekognition error:", err);
+        // Fallback para próximo motor
       }
     }
 
-    // === Motor 2: InsightFace + pgvector (face-service ativo) ===
+    // === Motor 2: InsightFace + pgvector (fallback: face-service ativo) ===
     if (await faceServiceHealthy()) {
+      usingFallback = true;
       try {
         // 1. Embedding via InsightFace
         const result = await embedImage(buffer, "selfie.jpg", file.type);
         if (result.found && result.embedding) {
-          // 2. Busca vetorial KNN
-          const hits = await searchByEmbedding(eventId, result.embedding, 0.7, 50);
+          // 2. Busca vetorial KNN (threshold 80% para fallback tolerante)
+          const hits = await searchByEmbedding(eventId, result.embedding, 0.80, 50);
           if (hits.length > 0) {
             // 3. Enriquecimento com dados das fotos
             const photoIds = hits.map((h) => h.photoId);
@@ -119,9 +129,12 @@ export async function POST(request: NextRequest) {
                 summary: {
                   total: matches.length,
                   bestMatch: matches[0]?.matchPercent || 0,
-                  engine: "InsightFace + pgvector",
+                  engine: "InsightFace + pgvector (80% tolerance)",
                   facesDetected: result.facesDetected,
                   detScore: result.detScore,
+                  usingFallback: true,
+                  fallbackMessage:
+                    "Busca em nível de prototipagem — versão final em breve",
                 },
               },
               { status: 200 }
@@ -140,6 +153,10 @@ export async function POST(request: NextRequest) {
         message:
           "Reconhecimento facial indisponível. Use a busca por número de bibs ou por nome do fotógrafo.",
         unavailable: true,
+        usingFallback,
+        fallbackMessage: usingFallback
+          ? "Busca em nível de prototipagem — versão final em breve"
+          : undefined,
       },
       { status: 200 }
     );

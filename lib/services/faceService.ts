@@ -17,7 +17,8 @@ const rekognitionClient = new RekognitionClient({
 });
 
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-faces-prod";
-const SIMILARITY_THRESHOLD = 80; // 80% = tolerância comercial (óculos/boné/luz)
+const AWS_THRESHOLD_STRICT = 99; // 99% = strict para AWS (preciso alta)
+const PGVECTOR_THRESHOLD = 80; // 80% = pgvector (fallback tolerante)
 
 /**
  * Modo mock: verifica se AWS creds estão configuradas
@@ -26,9 +27,21 @@ function isMockMode(): boolean {
   return !process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY;
 }
 
-/** AWS Rekognition ativo (creds presentes). */
+/** AWS Rekognition ativo (env var explícito OU creds presentes). */
 export function awsEnabled(): boolean {
-  return !isMockMode();
+  const explicitEnabled = process.env.AWS_REKOGNITION_ENABLED === "true";
+  const credsPresent = !isMockMode();
+  return explicitEnabled || credsPresent;
+}
+
+/** Verifica se AWS Rekognition está sendo usado (vs fallback pgvector). */
+export function isUsingAWSRekognition(): boolean {
+  return process.env.AWS_REKOGNITION_ENABLED === "true" && !isMockMode();
+}
+
+/** Fallback ativo: usando pgvector em lugar de AWS. */
+export function isFallbackMode(): boolean {
+  return !isUsingAWSRekognition();
 }
 
 /**
@@ -75,17 +88,89 @@ export async function indexFaceByBytes(
  * SearchFacesByImage com bytes crus (sem S3). Usado na busca por selfie quando
  * o AWS Rekognition está ativo. Threshold comercial 80% (óculos/boné/luz).
  * Mapeia FaceId -> Photo via awsFaceId guardado em faceVector.
+ *
+ * DEPRECATED: use searchFacesByAWSRekognition() em seu lugar (threshold configurável).
  */
 export async function searchFacesByBytes(
   eventId: string,
   imageBytes: Buffer,
-  threshold: number = SIMILARITY_THRESHOLD
+  threshold: number = PGVECTOR_THRESHOLD
 ) {
   const cmd = new SearchFacesByImageCommand({
     CollectionId: COLLECTION_ID,
     Image: { Bytes: new Uint8Array(imageBytes) },
     MaxFaces: 50,
     FaceMatchThreshold: threshold,
+  });
+
+  const resp = await rekognitionClient.send(cmd);
+  const faceMatches = resp.FaceMatches || [];
+  if (faceMatches.length === 0) return [];
+
+  const matches = await Promise.all(
+    faceMatches.map(async (m) => {
+      const awsFaceId = m.Face?.FaceId;
+      if (!awsFaceId) return null;
+      const similarity = (m.Similarity || 0) / 100;
+
+      const faceIndex = await prisma.faceIndex.findFirst({
+        where: {
+          faceVector: { contains: awsFaceId },
+          photo: { eventId, status: "AVAILABLE" },
+        },
+        include: {
+          photo: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              isPremium: true,
+              photographer: { select: { user: { select: { name: true } } } },
+            },
+          },
+        },
+      });
+      if (!faceIndex) return null;
+
+      return {
+        photoId: faceIndex.photo.id,
+        photoName: faceIndex.photo.name,
+        matchPercent: Math.round(similarity * 100),
+        similarity,
+        confidence: similarity,
+        price: faceIndex.photo.price,
+        isPremium: faceIndex.photo.isPremium,
+        photographerName: faceIndex.photo.photographer?.user.name || "Fotógrafo",
+      };
+    })
+  );
+
+  return matches
+    .filter((m): m is NonNullable<typeof m> => m !== null)
+    .sort((a, b) => b.matchPercent - a.matchPercent);
+}
+
+/**
+ * searchFacesByAWSRekognition: procura por selfie usando AWS Rekognition
+ * com threshold ESTRITO de 99% (produção).
+ *
+ * Retorna array de matches ou vazio se nenhum match.
+ * Use isto quando AWS Rekognition está EXPLICITAMENTE HABILITADO.
+ */
+export async function searchFacesByAWSRekognition(
+  eventId: string,
+  imageBytes: Buffer
+) {
+  if (!isUsingAWSRekognition()) {
+    console.warn("[Face] AWS Rekognition disabled. Use pgvector fallback instead.");
+    return [];
+  }
+
+  const cmd = new SearchFacesByImageCommand({
+    CollectionId: COLLECTION_ID,
+    Image: { Bytes: new Uint8Array(imageBytes) },
+    MaxFaces: 50,
+    FaceMatchThreshold: AWS_THRESHOLD_STRICT, // 99% strict
   });
 
   const resp = await rekognitionClient.send(cmd);
@@ -283,7 +368,7 @@ export async function processFaceIndex(
 export async function matchFaceInEvent(
   eventId: string,
   selfieS3Key: string,
-  threshold: number = SIMILARITY_THRESHOLD
+  threshold: number = PGVECTOR_THRESHOLD
 ) {
   try {
     if (isMockMode()) {
@@ -531,7 +616,7 @@ export async function compareTwoFaces(
       CollectionId: COLLECTION_ID,
       FaceId: faceId1,
       MaxFaces: 1,
-      FaceMatchThreshold: SIMILARITY_THRESHOLD,
+      FaceMatchThreshold: PGVECTOR_THRESHOLD,
     });
 
     const compareResponse = await rekognitionClient.send(compareCommand);
