@@ -44,7 +44,7 @@ export default function Home() {
               className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-600 transition flex items-center gap-2"
             >
               <span>{c.icon}</span>
-              {c.label}
+              {t(c.labelKey)}
             </Link>
           ))}
         </div>

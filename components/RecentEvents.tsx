@@ -45,7 +45,7 @@ export default function RecentEvents() {
           <option value="">{t("home.recent.filter")}</option>
           {EVENT_CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>
-              {c.label}
+              {t(c.labelKey)}
             </option>
           ))}
         </select>

@@ -10,6 +10,15 @@ import SelfieUpload from "@/components/SelfieUpload";
 import FaceCameraSearch from "@/components/FaceCameraSearch";
 import { useCart } from "@/lib/contexts/CartContext";
 import { useTranslation } from "@/lib/hooks/useTranslation";
+import { EVENT_CATEGORIES } from "@/lib/categories";
+
+const LOCALE_MAP: Record<string, string> = {
+  pt: "pt-PT",
+  en: "en-US",
+  es: "es-ES",
+  fr: "fr-FR",
+  de: "de-DE",
+};
 
 export default function EventGalleryPage({
   params,
@@ -33,7 +42,7 @@ export default function EventGalleryPage({
 
   const router = useRouter();
   const { addItems, applyCoupon } = useCart();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   // Pacote: adiciona todas as fotos do evento ao carrinho + aplica PACOTE20.
   const handleBuyAllEvent = async () => {
@@ -207,10 +216,13 @@ export default function EventGalleryPage({
           <div className="max-w-7xl mx-auto px-4 w-full pb-8 text-white">
             <div className="flex items-center gap-2 mb-2">
               <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-semibold">
-                {event.sport}
+                {(() => {
+                  const cat = EVENT_CATEGORIES.find((c) => c.value === event.sport);
+                  return cat ? t(cat.labelKey) : event.sport;
+                })()}
               </span>
               <span className="text-sm opacity-90">
-                {eventDate.toLocaleDateString("pt-PT", {
+                {eventDate.toLocaleDateString(LOCALE_MAP[locale] || "pt-PT", {
                   month: "short",
                   day: "numeric",
                   year: "numeric",

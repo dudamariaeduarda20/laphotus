@@ -1,6 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getPhotoImageUrl } from "@/lib/photoUrl";
+import { EVENT_CATEGORIES } from "@/lib/categories";
+import { useTranslation } from "@/lib/hooks/useTranslation";
+
+const LOCALE_MAP: Record<string, string> = {
+  pt: "pt-PT",
+  en: "en-US",
+  es: "es-ES",
+  fr: "fr-FR",
+  de: "de-DE",
+};
 
 interface EventCardProps {
   event: {
@@ -15,9 +25,11 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event }: EventCardProps) {
+  const { t, locale } = useTranslation();
   const photoCount = event.photos?.length || 0;
   const eventDate = new Date(event.date);
   const isUpcoming = eventDate > new Date();
+  const sportLabel = EVENT_CATEGORIES.find((c) => c.value === event.sport);
 
   // Capa: 1ª foto carregada (key uploads/) > banner real > emoji
   const uploadedCover = event.photos?.find((p: any) =>
@@ -50,7 +62,7 @@ export default function EventCard({ event }: EventCardProps) {
           )}
           <div className="absolute top-2 right-2">
             <span className="px-3 py-1 bg-white/90 text-xs font-bold text-blue-600 rounded-full">
-              {event.sport}
+              {sportLabel ? t(sportLabel.labelKey) : event.sport}
             </span>
           </div>
         </div>
@@ -66,7 +78,7 @@ export default function EventCard({ event }: EventCardProps) {
             <div className="flex items-center gap-2">
               <span>📅</span>
               <span>
-                {eventDate.toLocaleDateString("pt-BR", {
+                {eventDate.toLocaleDateString(LOCALE_MAP[locale] || "pt-PT", {
                   month: "short",
                   day: "numeric",
                   year: "numeric",
@@ -74,7 +86,7 @@ export default function EventCard({ event }: EventCardProps) {
               </span>
               {isUpcoming && (
                 <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                  Upcoming
+                  {t("eventCard.upcoming")}
                 </span>
               )}
             </div>
@@ -88,14 +100,14 @@ export default function EventCard({ event }: EventCardProps) {
 
             <div className="flex items-center gap-2">
               <span>📸</span>
-              <span>{photoCount} photos</span>
+              <span>{photoCount} {t("eventCard.photos")}</span>
             </div>
           </div>
 
           {/* CTA */}
           <div className="pt-4 border-t border-gray-200">
             <button className="w-full text-center text-blue-600 font-semibold hover:text-blue-700">
-              View Gallery →
+              {t("eventCard.viewGallery")}
             </button>
           </div>
         </div>

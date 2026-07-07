@@ -163,7 +163,7 @@ export default function AdvancedSearchModal({
                   className="px-3 py-3 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:border-blue-500 hover:text-blue-600 transition flex flex-col items-center gap-1"
                 >
                   <span className="text-xl">{c.icon}</span>
-                  <span className="text-xs text-center">{c.label}</span>
+                  <span className="text-xs text-center">{t(c.labelKey)}</span>
                 </button>
               ))}
             </div>

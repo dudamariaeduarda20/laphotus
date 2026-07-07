@@ -9,7 +9,7 @@ import { useTranslation } from "@/lib/hooks/useTranslation";
 function SuccessContent() {
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const sessionId = searchParams.get("session");
   const orderId = searchParams.get("order");
   const [confirmed, setConfirmed] = useState(false);
@@ -108,7 +108,9 @@ function SuccessContent() {
           <div className="flex justify-between">
             <span className="text-gray-600">{t("success.order.date")}</span>
             <span className="font-semibold text-gray-900">
-              {new Date().toLocaleDateString("pt-PT")}
+              {new Date().toLocaleDateString(
+                { pt: "pt-PT", en: "en-US", es: "es-ES", fr: "fr-FR", de: "de-DE" }[locale] || "pt-PT"
+              )}
             </span>
           </div>
           <div className="flex justify-between">

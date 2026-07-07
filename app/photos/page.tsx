@@ -90,7 +90,7 @@ function PhotosContent() {
                 <option value="">{t("events.allCategories")}</option>
                 {EVENT_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
-                    {c.label}
+                    {t(c.labelKey)}
                   </option>
                 ))}
               </select>

@@ -5,24 +5,24 @@
  */
 export interface EventCategory {
   value: string;
-  label: string;
+  labelKey: string;
   icon: string;
 }
 
 export const EVENT_CATEGORIES: EventCategory[] = [
-  { value: "Corrida de Rua", label: "Corrida de Rua", icon: "🏃" },
-  { value: "Futebol", label: "Futebol", icon: "⚽" },
-  { value: "Ciclismo", label: "Ciclismo", icon: "🚴" },
-  { value: "Triathlon", label: "Triathlon", icon: "🏊" },
-  { value: "Crossfit", label: "Crossfit", icon: "🏋️" },
-  { value: "Beach Tennis", label: "Beach Tennis", icon: "🎾" },
-  { value: "Padel", label: "Padel", icon: "🎾" },
-  { value: "Natação", label: "Natação", icon: "🏊" },
-  { value: "Atletismo", label: "Atletismo", icon: "🏅" },
-  { value: "Vôlei", label: "Voleibol", icon: "🏐" },
-  { value: "Basquete", label: "Basquetebol", icon: "🏀" },
-  { value: "Shows/Festival", label: "Shows & Festivais", icon: "🎤" },
-  { value: "Formatura", label: "Formatura", icon: "🎓" },
-  { value: "Escolar", label: "Escolar", icon: "🏫" },
-  { value: "Social", label: "Social", icon: "🥂" },
+  { value: "Corrida de Rua", labelKey: "category.corridaDeRua", icon: "🏃" },
+  { value: "Futebol", labelKey: "category.futebol", icon: "⚽" },
+  { value: "Ciclismo", labelKey: "category.ciclismo", icon: "🚴" },
+  { value: "Triathlon", labelKey: "category.triathlon", icon: "🏊" },
+  { value: "Crossfit", labelKey: "category.crossfit", icon: "🏋️" },
+  { value: "Beach Tennis", labelKey: "category.beachTennis", icon: "🎾" },
+  { value: "Padel", labelKey: "category.padel", icon: "🎾" },
+  { value: "Natação", labelKey: "category.natacao", icon: "🏊" },
+  { value: "Atletismo", labelKey: "category.atletismo", icon: "🏅" },
+  { value: "Vôlei", labelKey: "category.voleibol", icon: "🏐" },
+  { value: "Basquete", labelKey: "category.basquetebol", icon: "🏀" },
+  { value: "Shows/Festival", labelKey: "category.shows", icon: "🎤" },
+  { value: "Formatura", labelKey: "category.formatura", icon: "🎓" },
+  { value: "Escolar", labelKey: "category.escolar", icon: "🏫" },
+  { value: "Social", labelKey: "category.social", icon: "🥂" },
 ];
