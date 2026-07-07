@@ -17,8 +17,8 @@ export default function Header() {
   const isHome = pathname === "/";
 
   const navLink = isHome
-    ? "text-lg font-sans text-white hover:text-[#f0bf38] transition"
-    : "text-lg font-sans text-[#333] hover:text-[#09419b] transition";
+    ? "text-base font-sans text-white hover:text-[#f0bf38] transition"
+    : "text-base font-sans text-[#333] hover:text-[#09419b] transition";
 
   const handleLogout = async () => {
     await logout();
