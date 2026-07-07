@@ -21,10 +21,10 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm">
-      <div className="container-editorial py-8 px-6 flex items-center justify-between">
+      <div className="container-editorial py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img src="/logo-text.svg" alt="LAPHOTUS" className="h-12" />
+          <img src="/logo-text.svg" alt="LAPHOTUS" className="h-10" />
         </Link>
 
         {/* Navigation */}
