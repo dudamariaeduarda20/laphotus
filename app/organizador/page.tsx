@@ -61,8 +61,7 @@ export default function OrganizerLandingPage() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((s, i) => (
-            <div key={s.titleKey} className="group relative p-8 rounded-2xl bg-white dark:bg-gray-800/60 glass hover:glass-dark transition-smooth border border-gray-100 dark:border-gray-700/50 hover:shadow-xl hover:-translate-y-1" style={{ animationDelay: `${i * 0.1}s` }}>
-              <div className="absolute inset-0 bg-gradient-to-br from-[#09419b]/0 via-[#8B5CF6]/0 to-[#06B6D4]/0 group-hover:from-[#09419b]/5 group-hover:via-[#8B5CF6]/5 group-hover:to-[#06B6D4]/5 rounded-2xl transition-smooth"></div>
+            <div key={s.titleKey} className="group relative p-8 rounded-2xl bg-white/80 dark:bg-gray-800/40 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/60 transition-smooth border border-white/40 dark:border-white/10 hover:shadow-xl hover:-translate-y-1">
               <div className="relative text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#09419b] via-[#8B5CF6] to-[#06B6D4] flex items-center justify-center text-2xl font-bold text-white shadow-lg group-hover:shadow-2xl group-hover:shadow-[#09419b]/50 transition-smooth">
                   {i + 1}
@@ -83,9 +82,8 @@ export default function OrganizerLandingPage() {
             {t("landing.organizer.benefits.title")}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((b, i) => (
-              <div key={b.titleKey} className="group relative p-8 rounded-2xl bg-white dark:bg-gray-800/60 glass hover:glass-dark transition-smooth border border-gray-100 dark:border-gray-700/50 hover:shadow-xl hover:-translate-y-1" style={{ animationDelay: `${i * 0.1}s` }}>
-                <div className="absolute inset-0 bg-gradient-to-br from-[#09419b]/0 via-[#8B5CF6]/0 to-[#06B6D4]/0 group-hover:from-[#09419b]/5 group-hover:via-[#8B5CF6]/5 group-hover:to-[#06B6D4]/5 rounded-2xl transition-smooth"></div>
+            {benefits.map((b) => (
+              <div key={b.titleKey} className="group relative p-8 rounded-2xl bg-white/80 dark:bg-gray-800/40 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/60 transition-smooth border border-white/40 dark:border-white/10 hover:shadow-xl hover:-translate-y-1">
                 <div className="relative text-center">
                   <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{b.icon}</div>
                   <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-lg">{t(b.titleKey)}</h3>

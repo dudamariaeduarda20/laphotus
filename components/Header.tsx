@@ -20,7 +20,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 glass dark:glass-dark bg-gradient-to-r from-[#09419b]/80 via-[#8B5CF6]/60 to-[#06B6D4]/60 dark:from-[#09419b]/70 dark:via-[#8B5CF6]/50 dark:to-[#06B6D4]/50 border-b border-white/10 dark:border-white/5 backdrop-blur-md">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-[#09419b]/90 via-[#8B5CF6]/70 to-[#06B6D4]/70 dark:from-[#09419b]/80 dark:via-[#8B5CF6]/60 dark:to-[#06B6D4]/60 border-b border-white/10 dark:border-white/5 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">

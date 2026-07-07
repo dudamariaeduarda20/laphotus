@@ -45,12 +45,11 @@ export default function Home() {
           {t("home.categories.title")}
         </h2>
         <div className="flex flex-wrap justify-center gap-3">
-          {EVENT_CATEGORIES.map((c, i) => (
+          {EVENT_CATEGORIES.map((c) => (
             <Link
               key={c.value}
               href={`/photos?sport=${encodeURIComponent(c.value)}`}
-              className="px-5 py-3 bg-white dark:bg-gray-800/60 glass hover:glass-dark rounded-full text-sm font-semibold text-gray-700 dark:text-gray-200 hover:text-[#09419b] dark:hover:text-[#6ba3ff] transition-smooth hover:shadow-lg flex items-center gap-2"
-              style={{ animationDelay: `${i * 0.05}s` }}
+              className="px-5 py-3 bg-white/90 dark:bg-gray-800/50 backdrop-blur-md rounded-full text-sm font-semibold text-gray-700 dark:text-gray-200 hover:text-[#09419b] dark:hover:text-[#6ba3ff] hover:bg-white/95 dark:hover:bg-gray-800/70 border border-white/30 dark:border-white/10 transition-smooth hover:shadow-lg flex items-center gap-2"
             >
               <span className="text-lg">{c.icon}</span>
               {t(c.labelKey)}
@@ -72,9 +71,8 @@ export default function Home() {
           ].map((stat, i) => (
             <div
               key={i}
-              className="group relative p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800/50 dark:to-gray-900/50 glass hover:glass-dark transition-smooth border border-gray-100 dark:border-gray-700/50"
+              className="group relative p-8 rounded-2xl bg-white/80 dark:bg-gray-800/40 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/60 transition-smooth border border-white/40 dark:border-white/10 hover:shadow-lg"
             >
-              <div className={`bg-gradient-to-r ${stat.color} to-transparent opacity-0 group-hover:opacity-10 absolute inset-0 rounded-2xl transition-smooth`}></div>
               <div className="relative text-center">
                 <div className={`text-5xl sm:text-6xl font-bold bg-gradient-to-r ${stat.color} to-[#06B6D4] bg-clip-text text-transparent mb-2`}>
                   {stat.value}
@@ -95,13 +93,11 @@ export default function Home() {
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">{t("home.sell.subtitle")}</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {sellFeatures.map((f, i) => (
+          {sellFeatures.map((f) => (
             <div
               key={f.titleKey}
-              className="group relative p-8 rounded-2xl bg-white dark:bg-gray-800/60 glass hover:glass-dark transition-smooth border border-gray-100 dark:border-gray-700/50 hover:shadow-xl hover:-translate-y-1"
-              style={{ animationDelay: `${i * 0.1}s` }}
+              className="group relative p-8 rounded-2xl bg-white/80 dark:bg-gray-800/40 backdrop-blur-md hover:bg-white/90 dark:hover:bg-gray-800/60 transition-smooth border border-white/40 dark:border-white/10 hover:shadow-xl hover:-translate-y-1"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#09419b]/0 via-[#8B5CF6]/0 to-[#06B6D4]/0 group-hover:from-[#09419b]/5 group-hover:via-[#8B5CF6]/5 group-hover:to-[#06B6D4]/5 rounded-2xl transition-smooth"></div>
               <div className="relative text-center">
                 <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">{f.icon}</div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-lg">{t(f.titleKey)}</h3>
