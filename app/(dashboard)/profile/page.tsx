@@ -2,16 +2,25 @@
 
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
+    name: "",
+    email: "",
   });
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

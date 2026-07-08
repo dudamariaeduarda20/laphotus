@@ -53,7 +53,7 @@ export default function PhotoDetailPage() {
       eventId,
       eventTitle: photo.event?.title || "Evento",
       photographerId: photo.photographer?.id || "",
-      photographerName: photo.photographer?.userId || "Fotógrafo",
+      photographerName: photo.photographer?.name || "Fotógrafo",
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
