@@ -19,11 +19,11 @@ const rekognitionClient = new RekognitionClient({
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-faces-prod";
 
 // Threshold de match AWS (0-100). Fotos espontâneas (suor/ângulo/expressão)
-// exigem tolerância — default 72, ajustável via AWS_FACE_THRESHOLD.
+// exigem tolerância — default 65, ajustável via AWS_FACE_THRESHOLD.
 // AVISO: cada ponto abaixo ↑ falsos-positivos (comprador vê foto de estranho).
 const AWS_FACE_THRESHOLD = (() => {
   const v = Number(process.env.AWS_FACE_THRESHOLD);
-  return Number.isFinite(v) && v > 0 && v <= 100 ? v : 72;
+  return Number.isFinite(v) && v > 0 && v <= 100 ? v : 65;
 })();
 const PGVECTOR_THRESHOLD = 80; // 80% = pgvector (fallback tolerante)
 const MAX_FACES_PER_PHOTO = 15; // multi-face: fotos de grupo/prova indexam todos os rostos
@@ -185,7 +185,7 @@ export async function searchFacesByBytes(
 /**
  * searchFacesByAWSRekognition: procura por selfie usando AWS Rekognition.
  *
- * Threshold tolerante (AWS_FACE_THRESHOLD, default 72) para apanhar fotos
+ * Threshold tolerante (AWS_FACE_THRESHOLD, default 65) para apanhar fotos
  * espontâneas — suor, ângulo, expressão. Retorna array ordenado por match%.
  */
 export async function searchFacesByAWSRekognition(
