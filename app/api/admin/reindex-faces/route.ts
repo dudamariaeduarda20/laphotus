@@ -32,6 +32,61 @@ async function fetchPhotoBytes(key: string): Promise<Buffer | null> {
   return null;
 }
 
+/**
+ * GET /api/admin/reindex-faces
+ *
+ * Diagnóstico read-only (zero custo AWS): quantas FaceIndex têm multi-face
+ * (`awsFaceIds[]`, código novo) vs só single-face (`awsFaceId`, código antigo
+ * pré-multi-face) vs erro/no-face.
+ */
+export async function GET(request: NextRequest) {
+  const secret = request.headers.get("x-reindex-secret");
+  if (!secret || secret !== process.env.REINDEX_SECRET) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const rows = await prisma.faceIndex.findMany({
+    select: { photoId: true, faceVector: true, confidence: true },
+  });
+
+  let multiFace = 0;
+  let singleFaceLegacy = 0;
+  let noFaceDetected = 0;
+  let unknown = 0;
+  let totalFacesAcrossAll = 0;
+  const sample: unknown[] = [];
+
+  for (const r of rows) {
+    try {
+      const parsed = JSON.parse(r.faceVector || "{}");
+      if (Array.isArray(parsed.awsFaceIds)) {
+        multiFace++;
+        totalFacesAcrossAll += parsed.awsFaceIds.length;
+        if (sample.length < 5) sample.push({ photoId: r.photoId, faces: parsed.awsFaceIds.length });
+      } else if (parsed.awsFaceId) {
+        singleFaceLegacy++;
+        totalFacesAcrossAll += 1;
+      } else if (parsed.error === "no_face_detected") {
+        noFaceDetected++;
+      } else {
+        unknown++;
+      }
+    } catch {
+      unknown++;
+    }
+  }
+
+  return NextResponse.json({
+    totalFaceIndexRows: rows.length,
+    multiFaceRows: multiFace,
+    singleFaceLegacyRows: singleFaceLegacy,
+    noFaceDetectedRows: noFaceDetected,
+    unknownRows: unknown,
+    totalFacesAcrossAllPhotos: totalFacesAcrossAll,
+    sample,
+  });
+}
+
 export async function POST(request: NextRequest) {
   const secret = request.headers.get("x-reindex-secret");
   if (!secret || secret !== process.env.REINDEX_SECRET) {
