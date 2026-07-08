@@ -290,7 +290,10 @@ export default function EventGalleryPage({
             </h2>
             <p className="text-sm text-gray-600 mb-4">
               {t("event.face.desc")}{" "}
-              <span className="font-semibold">InsightFace + pgvector</span>.
+              <span className="inline-flex items-center gap-1 font-semibold text-green-600">
+                <span className="w-2 h-2 rounded-full bg-green-500" aria-hidden />
+                Busca facial ativa
+              </span>
             </p>
 
             {/* Toggle câmera / upload */}
