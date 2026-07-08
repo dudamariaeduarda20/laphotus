@@ -10,19 +10,19 @@
  *
  * Uso (creds AWS + DB de produção):
  *   AWS_REKOGNITION_ENABLED=true \
- *   AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... AWS_REGION=eu-north-1 \
+ *   AWS_ACCESS_KEY_ID=... AWS_SECRET_ACCESS_KEY=... AWS_REGION=eu-west-1 \
  *   AWS_REKOGNITION_COLLECTION_ID=laphotus-faces-prod \
  *   DATABASE_URL="<supabase-pooler-url>" npx tsx scripts/reindex-faces-aws.ts
  *
  * Pré-requisito: a coleção Rekognition tem de existir. Criar uma vez:
- *   aws rekognition create-collection --collection-id laphotus-faces-prod --region eu-north-1
+ *   aws rekognition create-collection --collection-id laphotus-faces-prod --region eu-west-1
  */
 import { RekognitionClient, IndexFacesCommand } from "@aws-sdk/client-rekognition";
 import prisma from "@/lib/db/prisma";
 import { readFile } from "fs/promises";
 import path from "path";
 
-const REGION = process.env.AWS_REGION || "eu-north-1";
+const REGION = process.env.AWS_REGION || "eu-west-1";
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-faces-prod";
 const MAX_FACES_PER_PHOTO = 15; // indexa todos os rostos por foto (grupo/prova)
 
