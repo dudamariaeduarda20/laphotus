@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import AuthForm from "@/components/AuthForm";
 import RegisterHeader from "@/components/RegisterHeader";
+import RegisterContent from "@/components/RegisterContent";
 
 export const metadata = {
   title: "Registar - Fotos Desporto",
@@ -12,7 +12,7 @@ export default function RegisterPage() {
     <div>
       <RegisterHeader />
       <Suspense fallback={null}>
-        <AuthForm mode="register" />
+        <RegisterContent />
       </Suspense>
     </div>
   );
