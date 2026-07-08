@@ -26,7 +26,7 @@ export default function Home() {
       {isAuthenticated && isClient && (
         <div className="bg-[#f0bf38]/10 border-l-4 border-[#f0bf38] px-6 py-4 mb-0">
           <p className="text-lg font-semibold text-[#09419b]">
-            Olá, {user?.name}! Bem-vindo de volta.
+            {t("home.welcome", "Olá")}, {user?.name}! {t("home.welcomeBack", "Bem-vindo de volta.")}
           </p>
         </div>
       )}

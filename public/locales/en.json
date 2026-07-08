@@ -433,5 +433,16 @@
   "organizer.eventDashboard.buyer": "Buyer",
   "organizer.eventDashboard.items": "Items",
   "organizer.eventDashboard.status": "Status",
-  "organizer.eventDashboard.ordersEmpty": "No orders match the selected filters."
+  "organizer.eventDashboard.ordersEmpty": "No orders match the selected filters.",
+  "home.welcome": "Hello",
+  "home.welcomeBack": "Welcome back.",
+  "notFound.title": "Page not found",
+  "notFound.desc": "The page you are looking for doesn't exist or was moved.",
+  "notFound.home": "Back to home",
+  "notFound.events": "Browse events",
+  "settings.theme": "Appearance",
+  "settings.theme.desc": "Switch between light and dark theme.",
+  "settings.theme.light": "Light theme active",
+  "settings.theme.dark": "Dark theme active",
+  "auth.err.fillRequired": "Please fill in all required fields"
 }

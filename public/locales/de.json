@@ -433,5 +433,16 @@
   "organizer.eventDashboard.buyer": "Käufer",
   "organizer.eventDashboard.items": "Artikel",
   "organizer.eventDashboard.status": "Status",
-  "organizer.eventDashboard.ordersEmpty": "Keine Bestellungen für die ausgewählten Filter."
+  "organizer.eventDashboard.ordersEmpty": "Keine Bestellungen für die ausgewählten Filter.",
+  "home.welcome": "Hallo",
+  "home.welcomeBack": "Willkommen zurück.",
+  "notFound.title": "Seite nicht gefunden",
+  "notFound.desc": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+  "notFound.home": "Zur Startseite",
+  "notFound.events": "Events ansehen",
+  "settings.theme": "Darstellung",
+  "settings.theme.desc": "Zwischen hellem und dunklem Thema wechseln.",
+  "settings.theme.light": "Helles Thema aktiv",
+  "settings.theme.dark": "Dunkles Thema aktiv",
+  "auth.err.fillRequired": "Bitte füllen Sie alle Felder aus"
 }
