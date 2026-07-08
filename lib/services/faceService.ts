@@ -21,7 +21,7 @@ const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-fac
 // Threshold de match AWS (0-100). Fotos espontâneas (suor/ângulo/expressão)
 // exigem tolerância — default 65, ajustável via AWS_FACE_THRESHOLD.
 // AVISO: cada ponto abaixo ↑ falsos-positivos (comprador vê foto de estranho).
-const AWS_FACE_THRESHOLD = (() => {
+export const AWS_FACE_THRESHOLD = (() => {
   const v = Number(process.env.AWS_FACE_THRESHOLD);
   return Number.isFinite(v) && v > 0 && v <= 100 ? v : 65;
 })();

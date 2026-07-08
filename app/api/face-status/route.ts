@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { awsEnabled, isUsingAWSRekognition } from "@/lib/services/faceService";
+import {
+  awsEnabled,
+  isUsingAWSRekognition,
+  AWS_FACE_THRESHOLD,
+} from "@/lib/services/faceService";
 
 // Lê env em runtime (não no build) — senão o valor fica congelado no bundle.
 export const dynamic = "force-dynamic";
@@ -27,6 +31,7 @@ export async function GET() {
     enabledFlagRaw: process.env.AWS_REKOGNITION_ENABLED ?? null, // "true"/"false"/null (não é secret)
     region: process.env.AWS_REGION ?? null,
     collectionId: process.env.AWS_REKOGNITION_COLLECTION_ID ?? null,
+    faceMatchThreshold: AWS_FACE_THRESHOLD,
 
     hint:
       "rekognitionActive precisa ser true. Se false: falta hasAccessKey/hasSecretKey (env não chegou ao runtime — reveja scope Production + redeploy) ou enabledFlagRaw='false'.",
