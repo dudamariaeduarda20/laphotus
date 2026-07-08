@@ -6,9 +6,12 @@ import RecentEvents from "@/components/RecentEvents";
 import Grainient from "@/components/Grainient";
 import { EVENT_CATEGORIES } from "@/lib/categories";
 import { useTranslation } from "@/lib/hooks/useTranslation";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function Home() {
   const { t } = useTranslation();
+  const { user, isAuthenticated, isPhotographer, isOrganizer, isAdmin } = useAuth();
+  const isClient = isAuthenticated && !isPhotographer && !isOrganizer && !isAdmin;
 
   const sellFeatures = [
     { icon: "📸", titleKey: "home.sell.noFee.title", descKey: "home.sell.noFee.desc" },
@@ -19,6 +22,15 @@ export default function Home() {
 
   return (
     <div className="bg-white">
+      {/* Welcome banner for logged-in clients */}
+      {isAuthenticated && isClient && (
+        <div className="bg-[#f0bf38]/10 border-l-4 border-[#f0bf38] px-6 py-4 mb-0">
+          <p className="text-lg font-semibold text-[#09419b]">
+            Olá, {user?.name}! Bem-vindo de volta.
+          </p>
+        </div>
+      )}
+
       {/* Hero — animated gradient background with overlay content */}
       <section className="relative text-white min-h-screen flex items-center justify-center pb-0">
         <div className="absolute inset-0">
