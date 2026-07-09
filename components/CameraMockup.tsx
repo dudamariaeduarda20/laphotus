@@ -14,6 +14,17 @@ const CAMERA_ASSET = "/images/camera-mockup.png";
 const CAMERA_NATURAL_WIDTH = 1280;
 const CAMERA_NATURAL_HEIGHT = 1169;
 
+/**
+ * Sourcing Brief — Hero Viewfinder Default Photo
+ * Subject: crowd of Brazil football fans celebrating, front three in focus
+ * (man with glasses, man with blue scarf, woman with raised hand), yellow
+ * CBF jerseys, face paint, green/yellow flag waving behind
+ * Lighting: bright stadium lighting, slightly warm
+ * Aspect ratio: landscape, roughly 3:2
+ * Special styling: none
+ */
+const DEFAULT_PHOTO = "/images/hero-photo-brasil-fans.png";
+
 // Viewfinder (transparent screen) bounding box, measured from the PNG's alpha
 // channel as % of the full image. Nudge these if the asset is swapped.
 const VIEWFINDER = {
@@ -115,6 +126,19 @@ export default function CameraMockup({ className, eventId, isAdmin = false, last
     },
     [vfBoxPx.w, vfBoxPx.h]
   );
+
+  // Load the default hero photo once the viewfinder has a known size.
+  useEffect(() => {
+    if (photoSrc || !containerWidth) return;
+    const img = new Image();
+    img.onload = () => {
+      setNaturalSize({ w: img.naturalWidth, h: img.naturalHeight });
+      const min = minScaleFor(img.naturalWidth, img.naturalHeight);
+      setTransform(centerTransform(min, img.naturalWidth, img.naturalHeight));
+      setPhotoSrc(DEFAULT_PHOTO);
+    };
+    img.src = DEFAULT_PHOTO;
+  }, [containerWidth, photoSrc, minScaleFor, centerTransform]);
 
   const handleFile = (file: File) => {
     if (!isAdmin) return;
