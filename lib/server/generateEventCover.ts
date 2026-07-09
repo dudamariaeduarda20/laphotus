@@ -21,16 +21,16 @@ export async function generateEventCover(params: EventCoverParams): Promise<stri
     const canvas = createCanvas(1200, 400);
     const ctx = canvas.getContext("2d");
 
-    // Gradient background: light blue → dark blue
+    // Gradient background: purple → white → yellow
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, "#a6b8d8"); // Light blue (top)
-    gradient.addColorStop(0.5, "#6b8fc7"); // Medium blue
-    gradient.addColorStop(1, "#1e3a70"); // Dark blue (bottom)
+    gradient.addColorStop(0, "#8b7bb8"); // Purple (top)
+    gradient.addColorStop(0.5, "#ffffff"); // White (middle)
+    gradient.addColorStop(1, "#f0e6b3"); // Yellow (bottom)
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 1200, 400);
 
     // Draw LAPHOTUS logo + text
-    const logoColor = "#364a7d";
+    const logoColor = "#6b5a8f";
 
     // Camera icon (SVG-like, hand-drawn)
     const drawCameraIcon = (x: number, y: number, size: number) => {
