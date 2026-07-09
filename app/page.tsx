@@ -41,7 +41,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: Interactive camera mockup — upload + drag + zoom your photo */}
           <div>
-            <CameraMockup />
+            <CameraMockup isAdmin={isAdmin} />
           </div>
 
           {/* Right: Content */}

@@ -37,11 +37,13 @@ interface CameraMockupProps {
   className?: string;
   /** Event ID — if provided, mockup will be uploaded to API. If not, only downloads locally. */
   eventId?: string;
+  /** Only admins can upload/drag/zoom/save. Everyone else sees a read-only camera. */
+  isAdmin?: boolean;
   /** Called with the final composited PNG data URL when the user saves. */
   onSave?: (dataUrl: string) => void;
 }
 
-export default function CameraMockup({ className, eventId, onSave }: CameraMockupProps) {
+export default function CameraMockup({ className, eventId, isAdmin = false, onSave }: CameraMockupProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewfinderRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -108,6 +110,7 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
   );
 
   const handleFile = (file: File) => {
+    if (!isAdmin) return;
     if (!file.type.startsWith("image/")) return;
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -134,7 +137,7 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
 
   // ---- Drag (pan) ----
   const onPointerDown = (e: React.PointerEvent) => {
-    if (!photoSrc) return;
+    if (!isAdmin || !photoSrc) return;
     setIsDragging(true);
     dragStateRef.current = {
       startX: e.clientX,
@@ -162,7 +165,7 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
 
   // ---- Zoom (wheel) ----
   const onWheel = (e: React.WheelEvent) => {
-    if (!photoSrc) return;
+    if (!isAdmin || !photoSrc) return;
     e.preventDefault();
     const delta = -e.deltaY * 0.0015;
     setTransform((prev) => {
@@ -179,6 +182,7 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
 
   // ---- Pinch zoom (touch) ----
   const onTouchStart = (e: React.TouchEvent) => {
+    if (!isAdmin) return;
     if (e.touches.length === 2) {
       const [a, b] = [e.touches[0], e.touches[1]];
       const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
@@ -187,7 +191,7 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
-    if (e.touches.length === 2 && photoSrc) {
+    if (isAdmin && e.touches.length === 2 && photoSrc) {
       const [a, b] = [e.touches[0], e.touches[1]];
       const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
       const ratio = dist / (pinchStateRef.current.startDist || dist);
@@ -197,18 +201,19 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
   };
 
   const handleCenter = () => {
-    if (!photoSrc) return;
+    if (!isAdmin || !photoSrc) return;
     setTransform((prev) => centerTransform(prev.scale, naturalSize.w, naturalSize.h));
   };
 
   const handleClear = () => {
+    if (!isAdmin) return;
     setPhotoSrc(null);
     setNaturalSize({ w: 0, h: 0 });
     setTransform({ scale: 1, x: 0, y: 0 });
   };
 
   const handleSave = async () => {
-    if (!photoSrc || !containerWidth) return;
+    if (!isAdmin || !photoSrc || !containerWidth) return;
     setIsSaving(true);
     try {
       // Export at native camera-asset resolution for crisp output.
@@ -305,14 +310,14 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
           onTouchMove={onTouchMove}
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
-          onClick={() => !photoSrc && fileInputRef.current?.click()}
+          onClick={() => isAdmin && !photoSrc && fileInputRef.current?.click()}
           className="absolute overflow-hidden bg-[#0a0a0a] touch-none"
           style={{
             left: `${VIEWFINDER.left * 100}%`,
             top: `${VIEWFINDER.top * 100}%`,
             width: `${VF_WIDTH_PCT * 100}%`,
             height: `${VF_HEIGHT_PCT * 100}%`,
-            cursor: photoSrc ? (isDragging ? "grabbing" : "grab") : "pointer",
+            cursor: !isAdmin ? "default" : photoSrc ? (isDragging ? "grabbing" : "grab") : "pointer",
           }}
         >
           {photoSrc ? (
@@ -346,47 +351,51 @@ export default function CameraMockup({ className, eventId, onSave }: CameraMocku
         />
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileInput}
-        className="hidden"
-      />
+      {isAdmin && (
+        <>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInput}
+            className="hidden"
+          />
 
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="rounded-full bg-[#ff2f92] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
-        >
-          {photoSrc ? "Trocar foto" : "Enviar foto"}
-        </button>
-        <button
-          type="button"
-          onClick={handleCenter}
-          disabled={!photoSrc}
-          className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          Centralizar
-        </button>
-        <button
-          type="button"
-          onClick={handleClear}
-          disabled={!photoSrc}
-          className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          Limpar
-        </button>
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={!photoSrc || isSaving}
-          className="rounded-full bg-[#f0bf38] px-5 py-2 text-sm font-semibold text-[#1a1a1a] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {isSaving ? "A gerar..." : "Salvar mockup"}
-        </button>
-      </div>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="rounded-full bg-[#ff2f92] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              {photoSrc ? "Trocar foto" : "Enviar foto"}
+            </button>
+            <button
+              type="button"
+              onClick={handleCenter}
+              disabled={!photoSrc}
+              className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Centralizar
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={!photoSrc}
+              className="rounded-full border border-white/30 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Limpar
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={!photoSrc || isSaving}
+              className="rounded-full bg-[#f0bf38] px-5 py-2 text-sm font-semibold text-[#1a1a1a] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {isSaving ? "A gerar..." : "Salvar mockup"}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

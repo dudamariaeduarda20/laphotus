@@ -1,40 +1,26 @@
-import { auth } from "@/lib/auth";
 import prisma from "@/lib/db/prisma";
 import { uploadToStorage } from "@/lib/services/supabaseStorage";
+import { requireRole } from "@/lib/utils/auth";
+import { UserRole } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { eventId: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const user = await requireRole(req, [UserRole.ADMIN]);
 
-    const eventId = params.eventId;
+    const eventId = params.id;
     const { dataUrl } = await req.json();
 
     if (!dataUrl) {
-      return NextResponse.json(
-        { error: "Missing dataUrl" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing dataUrl" }, { status: 400 });
     }
 
-    // Verify user owns this event's organizer account
-    const event = await prisma.event.findFirst({
-      where: { id: eventId },
-      include: { organizer: { include: { user: true } } },
-    });
-
+    const event = await prisma.event.findUnique({ where: { id: eventId } });
     if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
-    }
-
-    if (event.organizer.user.id !== session.user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Convert data URL to buffer
@@ -51,16 +37,26 @@ export async function POST(
       data: { mockupImageUrl: publicUrl },
     });
 
+    // Audit trail: who edited the mockup and when
+    await prisma.auditLog.create({
+      data: {
+        userId: user.id,
+        action: "mockup_updated",
+        resource: "event",
+        resourceId: eventId,
+        changes: { mockupImageUrl: publicUrl },
+      },
+    });
+
     return NextResponse.json({
       success: true,
       mockupImageUrl: publicUrl,
-      event: updated,
+      editedBy: user.name,
+      editedAt: updated.updatedAt,
     });
   } catch (error) {
-    console.error("Mockup upload error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : "Internal server error";
+    const status = message === "Unauthorized" ? 401 : message === "Forbidden" ? 403 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }
