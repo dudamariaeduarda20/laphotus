@@ -38,25 +38,25 @@ enum NotificationType {
 
 // ==================== USERS ====================
 model User {
-  id                String   @id @default(cuid())
-  email             String   @unique
-  name              String
-  avatar            String?
-  role              UserRole @default(CLIENT)
-  emailVerified     DateTime?
-  passwordHash      String?
-  language          String   @default("pt")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  avatar        String?
+  role          UserRole  @default(CLIENT)
+  emailVerified DateTime?
+  passwordHash  String?
+  language      String    @default("pt")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations
-  photographer      Photographer?
-  organizer         Organizer?
-  orders            Order[]
-  favorites         Favorite[]
-  faceIndexes       FaceIndex[]
-  notifications     Notification[]
-  auditLogs         AuditLog[]
+  photographer  Photographer?
+  organizer     Organizer?
+  orders        Order[]
+  favorites     Favorite[]
+  faceIndexes   FaceIndex[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
 
   @@index([email])
   @@index([role])
@@ -64,24 +64,24 @@ model User {
 
 // ==================== PHOTOGRAPHER ====================
 model Photographer {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bio               String?
-  portfolio         String?
-  profileImage      String?
-  rating            Float    @default(0)
-  totalSales        Int      @default(0)
-  totalRevenue      Float    @default(0)
-  bankAccount       String?  // Encrypted in production
-  active            Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  bio          String?
+  portfolio    String?
+  profileImage String?
+  rating       Float    @default(0)
+  totalSales   Int      @default(0)
+  totalRevenue Float    @default(0)
+  bankAccount  String? // Encrypted in production
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Relations
-  photos            Photo[]
-  transactions      Transaction[]
+  photos       Photo[]
+  transactions Transaction[]
 
   @@index([userId])
   @@index([rating])
@@ -90,43 +90,44 @@ model Photographer {
 
 // ==================== ORGANIZER ====================
 model Organizer {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  organizationName  String
-  website           String?
-  phone             String?
-  commissionRate    Float    @default(0.2) // 20% default
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  organizationName String
+  website          String?
+  phone            String?
+  commissionRate   Float    @default(0.2) // 20% default
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   // Relations
-  events            Event[]
-  auditLogs         AuditLog[]
+  events    Event[]
+  auditLogs AuditLog[]
 
   @@index([userId])
 }
 
 // ==================== EVENTS ====================
 model Event {
-  id                String   @id @default(cuid())
-  organizerId       String
-  organizer         Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  organizerId String
+  organizer   Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
 
-  title             String
-  description       String?
-  banner            String?
-  location          String?
-  date              DateTime
-  sport             String    // Ex: "Futebol", "Vôlei"
-  status            String    @default("active") // active, finished, archived
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  title          String
+  description    String?
+  banner         String?
+  mockupImageUrl String?
+  location       String?
+  date           DateTime
+  sport          String // Ex: "Futebol", "Vôlei"
+  status         String   @default("active") // active, finished, archived
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Relations
-  photos            Photo[]
-  bibNumbers        BibNumber[]
+  photos     Photo[]
+  bibNumbers BibNumber[]
 
   @@index([organizerId])
   @@index([date])
@@ -135,44 +136,44 @@ model Event {
 
 // ==================== PHOTOS ====================
 model Photo {
-  id                String   @id @default(cuid())
-  eventId           String
-  event             Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  photographerId    String
-  photographer      Photographer @relation(fields: [photographerId], references: [id], onDelete: Cascade)
+  photographerId String
+  photographer   Photographer @relation(fields: [photographerId], references: [id], onDelete: Cascade)
 
-  key               String    @unique // S3 path
-  thumbnailKey      String?   // S3 thumbnail
-  name              String
-  status            PhotoStatus @default(AVAILABLE)
+  key          String      @unique // S3 path
+  thumbnailKey String? // S3 thumbnail
+  name         String
+  status       PhotoStatus @default(AVAILABLE)
 
   // Metadata
-  width             Int?
-  height            Int?
-  fileSize          Int?
-  mimeType          String    @default("image/jpeg")
+  width    Int?
+  height   Int?
+  fileSize Int?
+  mimeType String @default("image/jpeg")
 
   // AI Preparation (Phase 2+)
-  faceEmbedding     String?   // JSON stored as string (Phase 2: Rekognition vector)
-  faceConfidence    Float?    // 0-1 confidence score
-  detectedBibNumbers String?  // JSON array of detected numbers [{"number": "23", "confidence": 0.95}]
-  bibMetadata       Json?     // {"extracted_numbers": [...], "positions": [...]}
+  faceEmbedding      String? // JSON stored as string (Phase 2: Rekognition vector)
+  faceConfidence     Float? // 0-1 confidence score
+  detectedBibNumbers String? // JSON array of detected numbers [{"number": "23", "confidence": 0.95}]
+  bibMetadata        Json? // {"extracted_numbers": [...], "positions": [...]}
 
   // Pricing & Commerce
-  price             Float     @default(0)
-  discountedPrice   Float?
-  isPremium         Boolean   @default(false)
-  isWatermarked     Boolean   @default(true)
+  price           Float   @default(0)
+  discountedPrice Float?
+  isPremium       Boolean @default(false)
+  isWatermarked   Boolean @default(true)
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  orderItems        OrderItem[]
-  favorites         Favorite[]
-  faceMatches       FaceIndex[]
-  photoBibs         PhotoBib[]
+  orderItems  OrderItem[]
+  favorites   Favorite[]
+  faceMatches FaceIndex[]
+  photoBibs   PhotoBib[]
 
   @@index([eventId])
   @@index([photographerId])
@@ -182,17 +183,17 @@ model Photo {
 
 // ==================== PHOTO <-> BIB JOIN (real OCR link) ====================
 model PhotoBib {
-  id                String   @id @default(cuid())
-  photoId           String
-  photo             Photo     @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  photoId String
+  photo   Photo  @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
-  bibNumberId       String
-  bibNumber         BibNumber @relation(fields: [bibNumberId], references: [id], onDelete: Cascade)
+  bibNumberId String
+  bibNumber   BibNumber @relation(fields: [bibNumberId], references: [id], onDelete: Cascade)
 
-  number            String    // denormalized for fast exact search
-  confidence        Float     @default(1)
+  number     String // denormalized for fast exact search
+  confidence Float  @default(1)
 
-  createdAt         DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([photoId, bibNumberId])
   @@index([photoId])
@@ -202,27 +203,27 @@ model PhotoBib {
 
 // ==================== PLATFORM SETTINGS (real persistence) ====================
 model Setting {
-  key               String   @id
-  value             String
-  updatedAt         DateTime @updatedAt
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }
 
 // ==================== FACIAL RECOGNITION INDEX ====================
 model FaceIndex {
-  id                String   @id @default(cuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  photoId           String
-  photo             Photo     @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  photoId String
+  photo   Photo  @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
-  faceVector        String?   // JSON stored as string (face-api.js 128-D fallback)
-  embedding         Unsupported("vector(512)")? // InsightFace ArcFace 512-D (pgvector)
-  confidence        Float     @default(0) // 0-1
-  faceData          Json?     // {"age": 25, "gender": "M", "emotions": {...}}
+  faceVector String? // JSON stored as string (face-api.js 128-D fallback)
+  embedding  Unsupported("vector(512)")? // InsightFace ArcFace 512-D (pgvector)
+  confidence Float                       @default(0) // 0-1
+  faceData   Json? // {"age": 25, "gender": "M", "emotions": {...}}
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, photoId])
   @@index([userId])
@@ -232,20 +233,20 @@ model FaceIndex {
 
 // ==================== BIB NUMBERS (OCR) ====================
 model BibNumber {
-  id                String   @id @default(cuid())
-  eventId           String
-  event             Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  number            String    // Athlete bib number
-  athleteName       String?
-  athleteEmail      String?
-  metadata          Json?     // {"team": "A", "category": "senior", "position": "forward"}
+  number       String // Athlete bib number
+  athleteName  String?
+  athleteEmail String?
+  metadata     Json? // {"team": "A", "category": "senior", "position": "forward"}
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  photoBibs         PhotoBib[]
+  photoBibs PhotoBib[]
 
   @@unique([eventId, number])
   @@index([eventId])
@@ -254,14 +255,14 @@ model BibNumber {
 
 // ==================== FAVORITES ====================
 model Favorite {
-  id                String   @id @default(cuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  photoId           String
-  photo             Photo     @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  photoId String
+  photo   Photo  @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
-  createdAt         DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([userId, photoId])
   @@index([userId])
@@ -270,32 +271,32 @@ model Favorite {
 
 // ==================== ORDERS ====================
 model Order {
-  id                String   @id @default(cuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  status            OrderStatus @default(PENDING)
-  total             Float
-  subtotal          Float
-  tax               Float     @default(0)
-  discount          Float     @default(0)
+  status   OrderStatus @default(PENDING)
+  total    Float
+  subtotal Float
+  tax      Float       @default(0)
+  discount Float       @default(0)
 
-  couponId          String?
-  coupon            Coupon?   @relation(fields: [couponId], references: [id])
+  couponId String?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
 
-  stripePaymentId   String?   @unique
-  stripeSessionId   String?   @unique
+  stripePaymentId String? @unique
+  stripeSessionId String? @unique
 
-  paidAt            DateTime?
-  downloadedAt      DateTime?
-  expiresAt         DateTime?
+  paidAt       DateTime?
+  downloadedAt DateTime?
+  expiresAt    DateTime?
 
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  items             OrderItem[]
-  transactions      Transaction[]
+  items        OrderItem[]
+  transactions Transaction[]
 
   @@index([userId])
   @@index([status])
@@ -305,17 +306,17 @@ model Order {
 
 // ==================== ORDER ITEMS ====================
 model OrderItem {
-  id                String   @id @default(cuid())
-  orderId           String
-  order             Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  photoId           String
-  photo             Photo     @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  photoId String
+  photo   Photo  @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
-  price             Float     // Price at time of purchase
-  quantity          Int       @default(1)
+  price    Float // Price at time of purchase
+  quantity Int   @default(1)
 
-  createdAt         DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([orderId, photoId])
   @@index([orderId])
@@ -324,24 +325,24 @@ model OrderItem {
 
 // ==================== COUPONS ====================
 model Coupon {
-  id                String   @id @default(cuid())
-  code              String    @unique
+  id   String @id @default(cuid())
+  code String @unique
 
-  discountType      String    @default("percentage") // percentage or fixed
-  discountValue     Float
-  maxUses           Int?
-  currentUses       Int       @default(0)
+  discountType  String @default("percentage") // percentage or fixed
+  discountValue Float
+  maxUses       Int?
+  currentUses   Int    @default(0)
 
-  validFrom         DateTime
-  validUntil        DateTime
-  minOrderValue     Float     @default(0)
+  validFrom     DateTime
+  validUntil    DateTime
+  minOrderValue Float    @default(0)
 
-  isActive          Boolean   @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  orders            Order[]
+  orders Order[]
 
   @@index([code])
   @@index([isActive])
@@ -349,22 +350,22 @@ model Coupon {
 
 // ==================== TRANSACTIONS ====================
 model Transaction {
-  id                String   @id @default(cuid())
-  orderId           String
-  order             Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  photographerId    String
-  photographer      Photographer @relation(fields: [photographerId], references: [id], onDelete: Cascade)
+  photographerId String
+  photographer   Photographer @relation(fields: [photographerId], references: [id], onDelete: Cascade)
 
-  amount            Float
-  commission        Float     // Platform commission
-  photographerPayout Float    // Amount to photographer
+  amount             Float
+  commission         Float // Platform commission
+  photographerPayout Float // Amount to photographer
 
-  status            String    @default("pending") // pending, completed, failed
-  stripeTransferId  String?
+  status           String  @default("pending") // pending, completed, failed
+  stripeTransferId String?
 
-  createdAt         DateTime @default(now())
-  completedAt       DateTime?
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
 
   @@unique([orderId, photographerId])
   @@index([orderId])
@@ -375,19 +376,19 @@ model Transaction {
 
 // ==================== NOTIFICATIONS ====================
 model Notification {
-  id                String   @id @default(cuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  type              NotificationType
-  title             String
-  message           String
-  data              Json?     // Extra context
+  type    NotificationType
+  title   String
+  message String
+  data    Json? // Extra context
 
-  read              Boolean   @default(false)
-  readAt            DateTime?
+  read   Boolean   @default(false)
+  readAt DateTime?
 
-  createdAt         DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([read])
@@ -396,22 +397,22 @@ model Notification {
 
 // ==================== AUDIT LOGS ====================
 model AuditLog {
-  id                String   @id @default(cuid())
-  userId            String?
-  user              User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  id     String  @id @default(cuid())
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  organizerId       String?
-  organizer         Organizer? @relation(fields: [organizerId], references: [id], onDelete: SetNull)
+  organizerId String?
+  organizer   Organizer? @relation(fields: [organizerId], references: [id], onDelete: SetNull)
 
-  action            String    // "photo_upload", "order_created", "event_deleted"
-  resource          String    // "photo", "order", "event"
-  resourceId        String
+  action     String // "photo_upload", "order_created", "event_deleted"
+  resource   String // "photo", "order", "event"
+  resourceId String
 
-  changes           Json?     // { "before": {...}, "after": {...} }
-  ipAddress         String?
-  userAgent         String?
+  changes   Json? // { "before": {...}, "after": {...} }
+  ipAddress String?
+  userAgent String?
 
-  createdAt         DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([organizerId])

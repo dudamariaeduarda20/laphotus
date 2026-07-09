@@ -4,6 +4,7 @@ import Link from "next/link";
 import SearchEventBar from "@/components/SearchEventBar";
 import RecentEvents from "@/components/RecentEvents";
 import Grainient from "@/components/Grainient";
+import CameraMockup from "@/components/CameraMockup";
 import { EVENT_CATEGORIES } from "@/lib/categories";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -37,16 +38,10 @@ export default function Home() {
 
       {/* HERO — Dark section (solid color, no gradient) */}
       <section className="bg-[#1a1a1a] text-white py-24 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Phone mockup placeholder */}
-          <div className="flex justify-center">
-            <div className="w-64 h-96 bg-[#ff2f92] rounded-3xl shadow-2xl flex items-center justify-center border-8 border-[#333]">
-              <div className="text-center">
-                <div className="text-4xl mb-2">📸</div>
-                <div className="text-white font-bold">LAPHOTUS</div>
-                <div className="text-xs text-white/80 mt-2">Fotos de Desportos</div>
-              </div>
-            </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          {/* Left: Interactive camera mockup — upload + drag + zoom your photo */}
+          <div>
+            <CameraMockup />
           </div>
 
           {/* Right: Content */}
