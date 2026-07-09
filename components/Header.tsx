@@ -8,7 +8,6 @@ import { useRouter, usePathname } from "next/navigation";
 import Cart from "./Cart";
 import NotificationBell from "./NotificationBell";
 import LanguageSelector from "./LanguageSelector";
-import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -72,7 +71,6 @@ export default function Header() {
               </Link>
               <Cart />
               <NotificationBell />
-              <ThemeToggle isHome={isHome} />
               <LanguageSelector isHome={isHome} />
               <div className="relative group">
                 <button
@@ -119,7 +117,6 @@ export default function Header() {
             </>
           ) : (
             <>
-              <ThemeToggle isHome={isHome} />
               <LanguageSelector isHome={isHome} />
               <Link href="/auth/login" className={navLink}>
                 {t("nav.login")}
@@ -134,7 +131,6 @@ export default function Header() {
         {/* Mobile controls */}
         <div className="flex md:hidden items-center gap-2">
           {isAuthenticated && <Cart />}
-          <ThemeToggle isHome={isHome} />
           <button
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
