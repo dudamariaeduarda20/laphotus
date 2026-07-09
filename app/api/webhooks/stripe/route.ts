@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { confirmPayment } from "@/lib/services/orderService";
 import { generateInvoice } from "@/lib/services/invoiceService";
+import { sendOrderConfirmationEmail } from "@/lib/services/emailService";
 import prisma from "@/lib/db/prisma";
 import Stripe from "stripe";
 
@@ -98,6 +99,16 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // Send order confirmation email (no-op if RESEND_API_KEY isn't set)
+      await sendOrderConfirmationEmail({
+        to: order.user.email,
+        customerName: order.user.name,
+        invoiceNumber: invoice.invoiceNumber,
+        items: invoice.items,
+        total: invoice.total,
+        currency: invoice.currency,
+      });
+
       // Log action
       await prisma.auditLog.create({
         data: {
@@ -174,6 +185,15 @@ export async function POST(request: NextRequest) {
           message: `Sua encomenda #${orderId} foi paga com sucesso. As fotos estão prontas para download.`,
           data: { orderId, invoiceNumber: invoice.invoiceNumber },
         },
+      });
+
+      await sendOrderConfirmationEmail({
+        to: order.user.email,
+        customerName: order.user.name,
+        invoiceNumber: invoice.invoiceNumber,
+        items: invoice.items,
+        total: invoice.total,
+        currency: invoice.currency,
       });
 
       await prisma.auditLog.create({
