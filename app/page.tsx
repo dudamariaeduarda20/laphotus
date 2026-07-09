@@ -7,25 +7,27 @@ import Grainient from "@/components/Grainient";
 import { EVENT_CATEGORIES } from "@/lib/categories";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useState } from "react";
 
 export default function Home() {
   const { t } = useTranslation();
   const { user, isAuthenticated, isPhotographer, isOrganizer, isAdmin } = useAuth();
   const isClient = isAuthenticated && !isPhotographer && !isOrganizer && !isAdmin;
+  const [openFaq, setOpenFaq] = useState<string | null>(null);
 
-  const sellFeatures = [
-    { icon: "📸", titleKey: "home.sell.noFee.title", descKey: "home.sell.noFee.desc" },
-    { icon: "💰", titleKey: "home.sell.control.title", descKey: "home.sell.control.desc" },
-    { icon: "🌐", titleKey: "home.sell.site.title", descKey: "home.sell.site.desc" },
-    { icon: "⚡", titleKey: "home.sell.speed.title", descKey: "home.sell.speed.desc" },
+  const faqItems = [
+    { id: "1", q: "Como funciona a Laphotus?", a: "A Laphotus conecta fotógrafos de desportos com clientes que buscam fotos de alta qualidade dos seus eventos favoritos." },
+    { id: "2", q: "Como vendo as minhas fotos?", a: "Faça upload das suas fotos após um evento, defina seus preços, e venda direto para os clientes. Receba 70% do valor de cada venda." },
+    { id: "3", q: "Qual é a comissão?", a: "Laphotus cobra apenas 30% por venda. Sem mensalidade, sem taxa de foto não vendida. Pague só quando vende." },
+    { id: "4", q: "Posso vender fotos de eventos passados?", a: "Sim! Se o evento está no catálogo da Laphotus, você pode fazer upload e vender fotos de qualquer momento." },
   ];
 
   return (
     <div>
-      {/* Welcome banner for logged-in clients */}
+      {/* Welcome banner */}
       {isAuthenticated && isClient && (
         <div className="bg-[#f0bf38]/10 border-b-2 border-[#f0bf38] px-6 py-4">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <p className="text-lg font-semibold text-[#09419b]">
               {t("home.welcome", "Olá")}, {user?.name}! {t("home.welcomeBack", "Bem-vindo de volta.")}
             </p>
@@ -33,66 +35,59 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero — animated gradient with white text */}
-      <section className="relative text-white min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0">
-          <Grainient
-            color1="#051f3d"
-            color2="#09419b"
-            color3="#1a5fa0"
-            timeSpeed={0.8}
-            colorBalance={0.1}
-            warpStrength={0.8}
-            warpFrequency={3.5}
-            warpSpeed={1.5}
-            warpAmplitude={40.0}
-            blendAngle={-15}
-            blendSoftness={0.08}
-            rotationAmount={300.0}
-            noiseScale={1.8}
-            grainAmount={0.08}
-            grainScale={1.5}
-            grainAnimated={false}
-            contrast={1.3}
-            gamma={1.0}
-            saturation={0.95}
-            centerX={0.0}
-            centerY={-0.1}
-            zoom={1.2}
-          />
-        </div>
-        <div className="relative w-full max-w-6xl mx-auto px-6 py-24 text-center space-y-8">
-          <div className="space-y-4">
-            <h1 className="font-serif font-bold text-5xl sm:text-6xl lg:text-7xl tracking-tight leading-tight">
-              {t("home.hero.title")}
-            </h1>
-            <p className="font-sans text-lg text-white/85 max-w-3xl mx-auto leading-relaxed">
-              {t("home.hero.subtitle")}
-            </p>
+      {/* HERO — Dark section */}
+      <section className="bg-[#1a1a1a] text-white py-20 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left: Phone mockup placeholder */}
+          <div className="flex justify-center">
+            <div className="w-64 h-96 bg-gradient-to-br from-[#ff2f92] to-[#f0bf38] rounded-3xl shadow-2xl flex items-center justify-center border-8 border-[#333]">
+              <div className="text-center">
+                <div className="text-4xl mb-2">📸</div>
+                <div className="text-white font-bold">LAPHOTUS</div>
+                <div className="text-xs text-white/80 mt-2">Fotos de Desportos</div>
+              </div>
+            </div>
           </div>
-          <div className="pt-8">
-            <SearchEventBar />
+
+          {/* Right: Content */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-5xl lg:text-6xl font-serif font-bold mb-4 leading-tight">
+                Encontre as suas fotos
+              </h1>
+              <p className="text-xl text-white/80 leading-relaxed">
+                Procure por nome do evento ou pelo seu rosto e leve as suas melhores fotos desportivas em alta qualidade.
+              </p>
+            </div>
+
+            <div className="pt-4">
+              <SearchEventBar />
+            </div>
+
+            <div className="flex flex-wrap gap-3 pt-4">
+              {EVENT_CATEGORIES.slice(0, 4).map((c) => (
+                <Link
+                  key={c.value}
+                  href={`/photos?sport=${encodeURIComponent(c.value)}`}
+                  className="px-4 py-2 bg-[#f0bf38] text-[#09419b] rounded-full text-sm font-semibold hover:bg-[#f7d15f] transition"
+                >
+                  {t(c.labelKey)}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Categories — clean light section */}
-      <section className="bg-[#f5f5f5] py-20 px-6">
-        <div className="max-w-6xl mx-auto text-center space-y-12">
-          <div>
-            <h2 className="font-serif font-bold text-4xl text-[#09419b] mb-3">
-              {t("home.categories.title")}
-            </h2>
-            <p className="text-[#666] text-lg max-w-2xl mx-auto">
-              {t("home.categories.subtitle", "Encontre fotos dos seus desportos favoritos")}
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3">
+      {/* CATEGORIES — Light section full-width banner */}
+      <section className="bg-[#f5f1e8] py-12 px-6 border-y-4 border-[#f0bf38]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-wrap gap-2 justify-center">
             {EVENT_CATEGORIES.map((c) => (
               <Link
                 key={c.value}
                 href={`/photos?sport=${encodeURIComponent(c.value)}`}
-                className="px-6 py-3 bg-[#f0bf38] text-[#09419b] rounded-lg text-sm font-semibold font-sans hover:bg-[#f7d15f] hover:shadow-lg transition-all duration-200"
+                className="px-4 py-2 bg-white text-[#09419b] rounded-lg text-xs font-semibold border border-[#f0bf38] hover:bg-[#f0bf38] hover:text-white transition"
               >
                 {t(c.labelKey)}
               </Link>
@@ -101,98 +96,170 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Recent events — RecentEvents component */}
-      <section className="bg-white py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <RecentEvents />
-        </div>
-      </section>
+      {/* RECENT EVENTS — Light section with sidebar layout (podcast style) */}
+      <section className="bg-[#f5f1e8] py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Sidebar — Left */}
+            <div className="lg:col-span-1">
+              <div className="bg-gradient-to-b from-[#ff2f92] to-[#f0bf38] text-white p-6 rounded-lg">
+                <h3 className="text-2xl font-serif font-bold mb-8 text-center">Eventos Recentes</h3>
+                <div className="space-y-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="text-sm opacity-90">
+                      <div className="font-semibold mb-1">Evento {i}</div>
+                      <div className="text-xs opacity-75">Desporto • Data</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-      {/* Stats — highlighted section with color accent */}
-      <section className="bg-[#09419b] text-white py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="font-serif font-bold text-4xl text-center mb-16">
-            {t("home.stats.title", "Números que falam por si")}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            <div className="text-center space-y-3">
-              <div className="text-5xl font-bold text-[#f0bf38]">+5 mil</div>
-              <p className="text-lg text-white/90 font-sans">{t("home.stats.photographers")}</p>
-            </div>
-            <div className="text-center space-y-3 border-l border-r border-white/20">
-              <div className="text-5xl font-bold text-[#f0bf38]">+12 mil</div>
-              <p className="text-lg text-white/90 font-sans">{t("home.stats.events")}</p>
-            </div>
-            <div className="text-center space-y-3">
-              <div className="text-5xl font-bold text-[#f0bf38]">+8 M</div>
-              <p className="text-lg text-white/90 font-sans">{t("home.stats.photos")}</p>
+            {/* Main content — Right */}
+            <div className="lg:col-span-3">
+              <RecentEvents />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Sell Features — light section with cards */}
-      <section className="bg-[#f5f5f5] py-20 px-6">
-        <div className="max-w-6xl mx-auto space-y-16">
-          <div className="text-center">
-            <h2 className="font-serif font-bold text-4xl text-[#09419b] mb-4">
-              {t("home.sell.title")}
-            </h2>
-            <p className="text-[#666] text-lg max-w-2xl mx-auto">
-              {t("home.sell.subtitle", "Comece a vender e ganhe com suas melhores fotos")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            {sellFeatures.map((f) => (
-              <div
-                key={f.titleKey}
-                className="bg-white rounded-xl p-8 shadow-soft hover:shadow-soft-hover transition-shadow duration-300 border-t-4 border-[#f0bf38]"
-              >
-                <div className="text-5xl mb-6">{f.icon}</div>
-                <h3 className="font-sans font-bold text-xl text-[#333] mb-3">
-                  {t(f.titleKey)}
-                </h3>
-                <p className="text-[#666] text-base leading-relaxed">
-                  {t(f.descKey)}
-                </p>
+      {/* TESTIMONIALS — Dark section */}
+      <section className="bg-[#1a1a1a] text-white py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-serif font-bold text-center mb-12">Histórias de Sucesso</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { name: "João Silva", role: "Fotógrafo", quote: "Comecei com a Laphotus e em 3 meses já vendi 500 fotos." },
+              { name: "Maria Santos", role: "Organizadora", quote: "Meus clientes adoram encontrar fotos do evento na Laphotus." },
+              { name: "Pedro Costa", role: "Fotógrafo", quote: "A melhor plataforma para monetizar minhas fotos de desportos." },
+            ].map((t, i) => (
+              <div key={i} className="border-l-4 border-[#f0bf38] pl-6 py-4">
+                <div className="text-lg font-serif mb-3">"{t.quote}"</div>
+                <div className="text-sm">
+                  <div className="font-semibold text-[#f0bf38]">{t.name}</div>
+                  <div className="text-white/60">{t.role}</div>
+                </div>
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center pt-8">
-            <Link
-              href="/auth/register"
-              className="inline-block px-8 py-4 bg-[#ff2f92] text-white rounded-lg font-semibold font-sans hover:opacity-90 hover:shadow-lg transition-all duration-200 text-lg"
-            >
-              {t("home.sell.cta")}
-            </Link>
+      {/* PHOTOGRAPHERS — Light section with overlay style cards */}
+      <section className="bg-[#f5f1e8] py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-4xl font-serif font-bold text-center mb-12 text-[#09419b]">
+            Fotógrafos Destacados
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="relative group overflow-hidden rounded-lg">
+                <div className="w-full h-80 bg-gradient-to-br from-[#09419b] to-[#f0bf38] flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <div className="text-5xl mb-2">📸</div>
+                    <div className="font-bold">Fotógrafo {i}</div>
+                  </div>
+                </div>
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-[#f0bf38]/90 opacity-0 group-hover:opacity-100 transition flex items-end p-6 cursor-pointer">
+                  <div className="text-[#1a1a1a]">
+                    <div className="font-bold text-lg">Fotógrafo {i}</div>
+                    <div className="text-sm opacity-80">Especializado em fotografia desportiva</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA section — dark blue with pink button */}
-      <section className="bg-[#09419b] text-white py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="font-serif font-bold text-4xl leading-tight">
-            {t("home.cta.title", "Pronto para começar?")}
-          </h2>
-          <p className="text-lg text-white/90 max-w-2xl mx-auto">
-            {t("home.cta.desc", "Junte-se a milhares de fotógrafos que já estão a ganhar dinheiro com a Laphotus")}
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-            <Link
-              href="/auth/register"
-              className="px-8 py-4 bg-[#ff2f92] text-white rounded-lg font-semibold font-sans hover:opacity-90 hover:shadow-lg transition-all duration-200"
-            >
-              {t("auth.register")}
-            </Link>
-            <Link
-              href="/photos"
-              className="px-8 py-4 bg-white/10 text-white border-2 border-white rounded-lg font-semibold font-sans hover:bg-white/20 transition-all duration-200"
-            >
-              {t("home.cta.browse", "Explorar fotos")}
-            </Link>
+      {/* FAQ — Light section */}
+      <section className="bg-[#f5f1e8] py-16 px-6">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-serif font-bold text-center mb-12 text-[#09419b]">Perguntas Frequentes</h2>
+          <div className="space-y-4">
+            {faqItems.map((item) => (
+              <div key={item.id} className="bg-white rounded-lg border border-[#f0bf38]">
+                <button
+                  onClick={() => setOpenFaq(openFaq === item.id ? null : item.id)}
+                  className="w-full flex items-center justify-between p-6 hover:bg-[#f0bf38]/10 transition"
+                >
+                  <span className="font-semibold text-[#09419b] text-left">{item.q}</span>
+                  <svg
+                    className={`w-5 h-5 text-[#f0bf38] transition ${openFaq === item.id ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </button>
+                {openFaq === item.id && (
+                  <div className="px-6 pb-6 text-[#666] border-t border-[#f0bf38]/20">
+                    {item.a}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA — Pink/Magenta section */}
+      <section className="bg-gradient-to-r from-[#ff2f92] to-[#f0bf38] text-white py-16 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-4xl lg:text-5xl font-serif font-bold mb-6">
+              Pronto para ganhar com as suas fotos?
+            </h2>
+            <p className="text-lg text-white/90 mb-8 leading-relaxed">
+              Junte-se a milhares de fotógrafos que já estão a monetizar suas fotos de desportos com a Laphotus.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                href="/auth/register"
+                className="px-8 py-4 bg-[#1a1a1a] text-white rounded-lg font-semibold hover:bg-[#333] transition inline-block text-center"
+              >
+                Começar Agora
+              </Link>
+              <Link
+                href="/photos"
+                className="px-8 py-4 bg-white/20 text-white border-2 border-white rounded-lg font-semibold hover:bg-white/30 transition inline-block text-center"
+              >
+                Explorar Fotos
+              </Link>
+            </div>
+          </div>
+
+          {/* Right: Phone mockup */}
+          <div className="flex justify-center">
+            <div className="w-64 h-96 bg-gradient-to-br from-[#09419b] to-[#1a1a1a] rounded-3xl shadow-2xl flex items-center justify-center border-8 border-white/20">
+              <div className="text-center">
+                <div className="text-5xl mb-2">📱</div>
+                <div className="text-white font-bold text-lg">Venda em Qualquer Lugar</div>
+                <div className="text-xs text-white/60 mt-2">App Mobile</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STATS — Dark section */}
+      <section className="bg-[#1a1a1a] text-white py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-5xl font-bold text-[#f0bf38] mb-2">+5 mil</div>
+              <div className="text-lg">Fotógrafos Ativos</div>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-[#f0bf38] mb-2">+12 mil</div>
+              <div className="text-lg">Eventos Cobertos</div>
+            </div>
+            <div>
+              <div className="text-5xl font-bold text-[#f0bf38] mb-2">+8 M</div>
+              <div className="text-lg">Fotos Entregues</div>
+            </div>
           </div>
         </div>
       </section>
