@@ -302,7 +302,7 @@ export default function CameraMockup({ className, eventId, isAdmin = false, last
     <div className={className}>
       <div
         ref={containerRef}
-        className="relative mx-auto w-full max-w-md select-none"
+        className="relative mx-auto w-full max-w-2xl select-none"
         style={{ aspectRatio: `${CAMERA_NATURAL_WIDTH} / ${CAMERA_NATURAL_HEIGHT}` }}
       >
         {/* Viewfinder layer (photo) — sits beneath the camera frame, clipped */}
