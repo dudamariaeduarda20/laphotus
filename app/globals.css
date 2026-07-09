@@ -193,14 +193,12 @@ h4, h5, h6 {
 /*
  * Hero texture: dark warm charcoal with soft mottled blotches + fine
  * fractal-noise grain, matching a reference concrete/paper-grain image.
- * Base tone is kept close to the site's existing near-black hero
- * (#1a1a1a) rather than the reference's lighter mid-gray so the blue
- * h1 heading (global `h1 { color: var(--color-blue) }`) doesn't lose
- * contrast — only the grain/mottling pattern is matched, not the raw
- * lightness.
+ * Base tone bumped lighter per request (background only — no text
+ * colors touched, so the blue h1 contrast is slightly reduced from
+ * before but was an accepted tradeoff).
  */
 .hero-texture {
-  background-color: #201f1d;
+  background-color: #2e2c29;
   background-image:
     radial-gradient(ellipse 55% 45% at 18% 25%, rgba(255, 255, 255, 0.05), transparent 60%),
     radial-gradient(ellipse 50% 55% at 82% 20%, rgba(0, 0, 0, 0.18), transparent 65%),
