@@ -49,7 +49,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop navigation — center + right */}
-        <nav className="hidden md:flex items-center gap-12 ml-auto">
+        <nav className="hidden lg:flex items-center gap-8 xl:gap-12 ml-auto">
           {/* Nav items */}
           <Link href="/photos" className={navLink}>
             {t("nav.events", "Eventos")}
@@ -146,7 +146,7 @@ export default function Header() {
         </nav>
 
         {/* Mobile controls */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex lg:hidden items-center gap-2">
           {isAuthenticated && <Cart />}
           <button
             onClick={() => setMobileOpen((o) => !o)}
