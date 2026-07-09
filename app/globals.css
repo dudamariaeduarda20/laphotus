@@ -190,6 +190,28 @@ h4, h5, h6 {
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.12);
 }
 
+/*
+ * Hero texture: dark warm charcoal with soft mottled blotches + fine
+ * fractal-noise grain, matching a reference concrete/paper-grain image.
+ * Base tone is kept close to the site's existing near-black hero
+ * (#1a1a1a) rather than the reference's lighter mid-gray so the blue
+ * h1 heading (global `h1 { color: var(--color-blue) }`) doesn't lose
+ * contrast — only the grain/mottling pattern is matched, not the raw
+ * lightness.
+ */
+.hero-texture {
+  background-color: #201f1d;
+  background-image:
+    radial-gradient(ellipse 55% 45% at 18% 25%, rgba(255, 255, 255, 0.05), transparent 60%),
+    radial-gradient(ellipse 50% 55% at 82% 20%, rgba(0, 0, 0, 0.18), transparent 65%),
+    radial-gradient(ellipse 60% 50% at 30% 85%, rgba(255, 255, 255, 0.04), transparent 70%),
+    radial-gradient(ellipse 45% 60% at 90% 90%, rgba(0, 0, 0, 0.15), transparent 65%),
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC44NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDEgIDAgMCAwIDAgMSAgMCAwIDAgMCAxICAwIDAgMCAwLjA2IDAiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbikiLz48L3N2Zz4=");
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+  background-size: cover, cover, cover, cover, 180px 180px;
+  background-blend-mode: normal, normal, normal, normal, overlay;
+}
+
 /* Grid Layouts */
 .grid-2col {
   display: grid;
