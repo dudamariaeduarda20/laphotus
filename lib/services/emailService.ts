@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 
-const FROM = "Laphotus <pedidos@laphotus.com>";
+// TODO: laphotus.com ainda não verificado no Resend (resend.com/domains).
+// Até lá, usa o domínio sandbox deles — troca pro seu assim que verificar.
+const FROM = "Laphotus <onboarding@resend.dev>";
 
 let _resend: Resend | null = null;
 function resend(): Resend | null {
