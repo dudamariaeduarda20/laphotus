@@ -59,6 +59,15 @@ h1 {
   margin: 2rem 0 1rem;
 }
 
+/* Hero h1 sits on the dark textured background — needs white, not the
+   default brand blue. Tailwind's `text-white` utility can't win this
+   fight: it's a Tailwind CSS layer, and unlayered rules (like the
+   plain `h1` selector above) always beat layered ones regardless of
+   specificity, so the override has to be unlayered too. */
+.hero-texture h1 {
+  color: #ffffff;
+}
+
 h2 {
   font-family: var(--font-serif);
   font-size: 36px;
