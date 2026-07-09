@@ -65,7 +65,9 @@ h1 {
    breakpoint, the same issue fixed earlier for hero h1 color. Class
    selector here wins on specificity over the bare `h1` type selector. */
 .hero-heading {
-  font-size: clamp(2.5rem, 1rem + 3.5vw, 6rem);
+  color: #ffffff;
+  white-space: nowrap;
+  font-size: clamp(1.75rem, 4.55vw - 0.41rem, 3.25rem);
 }
 
 h2 {
