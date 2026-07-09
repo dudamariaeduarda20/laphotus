@@ -52,7 +52,7 @@ export default function Home() {
       )}
 
       {/* HERO — Dark section (solid color, no gradient) */}
-      <section className="hero-texture text-white py-24 px-6">
+      <section className="bg-[#1a1a1a] text-white py-24 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: Interactive camera mockup — upload + drag + zoom your photo */}
           <div>
@@ -74,17 +74,6 @@ export default function Home() {
               <SearchEventBar />
             </div>
 
-            <div className="flex flex-wrap gap-3 pt-4">
-              {EVENT_CATEGORIES.slice(0, 4).map((c) => (
-                <Link
-                  key={c.value}
-                  href={`/photos?sport=${encodeURIComponent(c.value)}`}
-                  className="px-4 py-2 bg-[#f0bf38] text-[#09419b] rounded-full text-sm font-semibold hover:bg-[#f7d15f] transition"
-                >
-                  {t(c.labelKey)}
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       </section>
