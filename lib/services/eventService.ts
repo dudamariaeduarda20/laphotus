@@ -1,5 +1,6 @@
 import prisma from "@/lib/db/prisma";
 import { UserRole } from "@/lib/types";
+import { generateEventCover } from "@/lib/server/generateEventCover";
 
 /**
  * Create event (ORGANIZER, PHOTOGRAPHER, ADMIN only)
@@ -13,6 +14,22 @@ export async function createEvent(
   sport: string,
   banner?: string | null
 ) {
+  // Generate default cover if none provided
+  let coverUrl = banner || null;
+  if (!banner) {
+    try {
+      coverUrl = await generateEventCover({
+        eventName: title,
+        date,
+        location: location || "Local não especificado",
+      });
+    } catch (error) {
+      console.error("Failed to generate event cover:", error);
+      // Fallback to static default
+      coverUrl = "/images/default-event-cover.jpg";
+    }
+  }
+
   const event = await prisma.event.create({
     data: {
       organizerId,
@@ -21,7 +38,7 @@ export async function createEvent(
       date,
       location,
       sport,
-      banner,
+      banner: coverUrl,
       status: "active",
     },
     include: { organizer: true },
