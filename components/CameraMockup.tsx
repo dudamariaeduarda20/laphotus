@@ -33,17 +33,24 @@ interface Transform {
   y: number; // translateY in px, relative to viewfinder box top-left
 }
 
+interface LastEdit {
+  adminName: string;
+  updatedAt: string;
+}
+
 interface CameraMockupProps {
   className?: string;
   /** Event ID — if provided, mockup will be uploaded to API. If not, only downloads locally. */
   eventId?: string;
   /** Only admins can upload/drag/zoom/save. Everyone else sees a read-only camera. */
   isAdmin?: boolean;
+  /** Who last saved the mockup and when — rendered as a badge below the camera. */
+  lastEdit?: LastEdit | null;
   /** Called with the final composited PNG data URL when the user saves. */
   onSave?: (dataUrl: string) => void;
 }
 
-export default function CameraMockup({ className, eventId, isAdmin = false, onSave }: CameraMockupProps) {
+export default function CameraMockup({ className, eventId, isAdmin = false, lastEdit, onSave }: CameraMockupProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewfinderRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -395,6 +402,16 @@ export default function CameraMockup({ className, eventId, isAdmin = false, onSa
             </button>
           </div>
         </>
+      )}
+
+      {lastEdit && (
+        <p className="mt-4 text-center text-xs text-white/40">
+          Moldura atualizada por {lastEdit.adminName} em{" "}
+          {new Intl.DateTimeFormat("pt-PT", {
+            dateStyle: "short",
+            timeStyle: "short",
+          }).format(new Date(lastEdit.updatedAt))}
+        </p>
       )}
     </div>
   );

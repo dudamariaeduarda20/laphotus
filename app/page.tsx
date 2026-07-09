@@ -8,13 +8,28 @@ import CameraMockup from "@/components/CameraMockup";
 import { EVENT_CATEGORIES } from "@/lib/categories";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface MockupLastEdit {
+  adminName: string;
+  updatedAt: string;
+}
 
 export default function Home() {
   const { t } = useTranslation();
   const { user, isAuthenticated, isPhotographer, isOrganizer, isAdmin } = useAuth();
   const isClient = isAuthenticated && !isPhotographer && !isOrganizer && !isAdmin;
   const [openFaq, setOpenFaq] = useState<string | null>(null);
+  const [mockupLastEdit, setMockupLastEdit] = useState<MockupLastEdit | null>(null);
+
+  useEffect(() => {
+    fetch("/api/mockup/last-edit")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.adminName) setMockupLastEdit(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const faqItems = [
     { id: "1", q: "Como funciona a Laphotus?", a: "A Laphotus conecta fotógrafos de desportos com clientes que buscam fotos de alta qualidade dos seus eventos favoritos." },
@@ -41,7 +56,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left: Interactive camera mockup — upload + drag + zoom your photo */}
           <div>
-            <CameraMockup isAdmin={isAdmin} />
+            <CameraMockup isAdmin={isAdmin} lastEdit={mockupLastEdit} />
           </div>
 
           {/* Right: Content */}
