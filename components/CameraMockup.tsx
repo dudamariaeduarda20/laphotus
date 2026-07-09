@@ -35,11 +35,13 @@ interface Transform {
 
 interface CameraMockupProps {
   className?: string;
+  /** Event ID — if provided, mockup will be uploaded to API. If not, only downloads locally. */
+  eventId?: string;
   /** Called with the final composited PNG data URL when the user saves. */
   onSave?: (dataUrl: string) => void;
 }
 
-export default function CameraMockup({ className, onSave }: CameraMockupProps) {
+export default function CameraMockup({ className, eventId, onSave }: CameraMockupProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewfinderRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -256,13 +258,29 @@ export default function CameraMockup({ className, onSave }: CameraMockupProps) {
 
       const dataUrl = canvas.toDataURL("image/png");
 
-      // Trigger download
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = "laphotus-camera-mockup.png";
-      link.click();
+      // If eventId provided, upload to API; otherwise, download locally
+      if (eventId) {
+        const response = await fetch(`/api/events/${eventId}/mockup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ dataUrl }),
+        });
 
-      onSave?.(dataUrl);
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error || "Upload failed");
+        }
+
+        const result = await response.json();
+        onSave?.(result.mockupImageUrl);
+      } else {
+        // Download locally (demo mode)
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = "laphotus-camera-mockup.png";
+        link.click();
+        onSave?.(dataUrl);
+      }
     } finally {
       setIsSaving(false);
     }
