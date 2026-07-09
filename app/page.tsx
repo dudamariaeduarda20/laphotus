@@ -35,12 +35,12 @@ export default function Home() {
         </div>
       )}
 
-      {/* HERO — Dark section */}
-      <section className="bg-[#1a1a1a] text-white py-20 px-6">
+      {/* HERO — Dark section (solid color, no gradient) */}
+      <section className="bg-[#1a1a1a] text-white py-24 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left: Phone mockup placeholder */}
           <div className="flex justify-center">
-            <div className="w-64 h-96 bg-gradient-to-br from-[#ff2f92] to-[#f0bf38] rounded-3xl shadow-2xl flex items-center justify-center border-8 border-[#333]">
+            <div className="w-64 h-96 bg-[#ff2f92] rounded-3xl shadow-2xl flex items-center justify-center border-8 border-[#333]">
               <div className="text-center">
                 <div className="text-4xl mb-2">📸</div>
                 <div className="text-white font-bold">LAPHOTUS</div>
@@ -205,8 +205,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA — Pink/Magenta section */}
-      <section className="bg-gradient-to-r from-[#ff2f92] to-[#f0bf38] text-white py-16 px-6">
+      {/* CTA — Pink section */}
+      <section className="bg-[#ff2f92] text-white py-16 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-4xl lg:text-5xl font-serif font-bold mb-6">
@@ -233,7 +233,7 @@ export default function Home() {
 
           {/* Right: Phone mockup */}
           <div className="flex justify-center">
-            <div className="w-64 h-96 bg-gradient-to-br from-[#09419b] to-[#1a1a1a] rounded-3xl shadow-2xl flex items-center justify-center border-8 border-white/20">
+            <div className="w-64 h-96 bg-[#09419b] rounded-3xl shadow-2xl flex items-center justify-center border-8 border-white/20">
               <div className="text-center">
                 <div className="text-5xl mb-2">📱</div>
                 <div className="text-white font-bold text-lg">Venda em Qualquer Lugar</div>

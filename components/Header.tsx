@@ -38,18 +38,18 @@ export default function Header() {
           : "sticky top-0 z-50 bg-white border-b border-[#dddddd] shadow-sm"
       }
     >
-      <div className="container-editorial py-4 px-6 flex items-center justify-between">
+      <div className="container-editorial py-6 px-6 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center" onClick={() => setMobileOpen(false)}>
           <img
             src={isHome ? "/logo-text-white.svg" : "/logo-text.svg"}
             alt="LAPHOTUS"
-            className="h-10"
+            className="h-8"
           />
         </Link>
 
         {/* Desktop navigation */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-10">
           <Link href="/photos" className={navLink}>
             {t("nav.events")}
           </Link>
