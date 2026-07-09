@@ -59,6 +59,15 @@ h1 {
   margin: 2rem 0 1rem;
 }
 
+/* Hero heading scales fluidly with viewport width instead of the fixed
+   48px from the base `h1` rule above — that rule is unlayered CSS, so
+   it beats any Tailwind text-size utility (layered) regardless of
+   breakpoint, the same issue fixed earlier for hero h1 color. Class
+   selector here wins on specificity over the bare `h1` type selector. */
+.hero-heading {
+  font-size: clamp(2.5rem, 1rem + 3.5vw, 6rem);
+}
+
 h2 {
   font-family: var(--font-serif);
   font-size: 36px;

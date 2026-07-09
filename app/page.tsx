@@ -57,10 +57,10 @@ export default function Home() {
           {/* Left: Content */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-5xl lg:text-6xl font-serif font-bold mb-4 leading-tight">
+              <h1 className="hero-heading font-serif font-bold mb-6 leading-tight">
                 Encontre as suas fotos
               </h1>
-              <p className="text-xl text-white/80 leading-relaxed">
+              <p className="text-2xl xl:text-3xl text-white/80 leading-relaxed">
                 Procure por nome do evento ou pelo seu rosto e leve as suas melhores fotos desportivas em alta qualidade.
               </p>
             </div>
