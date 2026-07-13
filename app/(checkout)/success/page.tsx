@@ -148,7 +148,7 @@ function SuccessContent() {
       {/* Action Buttons */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
-          href="/downloads"
+          href={`/download/${orderId}`}
           className="inline-block px-6 py-3 bg-[#f0bf38] text-white font-semibold rounded-lg hover:bg-[#f0bf38] text-center"
         >
           ⬇ {t("success.downloads")}
