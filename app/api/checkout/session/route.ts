@@ -4,6 +4,7 @@ import { createOrder } from "@/lib/services/orderService";
 import prisma from "@/lib/db/prisma";
 import { rateLimits } from "@/lib/middleware/rateLimit";
 import { z } from "zod";
+import Stripe from "stripe";
 
 const sessionSchema = z.object({
   items: z.array(
@@ -59,22 +60,45 @@ export async function POST(request: NextRequest) {
       couponId
     );
 
-    // Simulate Stripe Session creation
-    const stripeSessionId = `cs_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    // Initialize Stripe
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
-    // Update order with session ID
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      customer_email: (await prisma.user.findUnique({ where: { id: userId } }))
+        ?.email,
+      success_url: `${process.env.NEXT_PUBLIC_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}/carrinho`,
+      line_items: validated.items.map((item) => ({
+        price_data: {
+          currency: "eur",
+          product_data: {
+            name: `Photo - Order ${order.id}`,
+          },
+          unit_amount: Math.round(item.price * 100),
+        },
+        quantity: 1,
+      })),
+      metadata: {
+        orderId: order.id,
+        userId: userId,
+      },
+    });
+
+    // Update order with Stripe session ID
     const updatedOrder = await prisma.order.update({
       where: { id: order.id },
-      data: { stripeSessionId },
+      data: { stripeSessionId: session.id },
     });
 
     return NextResponse.json(
       {
-        sessionId: stripeSessionId,
+        sessionId: session.id,
         orderId: updatedOrder.id,
         total: updatedOrder.total,
-        // Route group (checkout) não aparece no URL -> página está em /success
-        checkoutUrl: `/success?session=${stripeSessionId}&order=${updatedOrder.id}`,
+        checkoutUrl: session.url,
       },
       { status: 201 }
     );
