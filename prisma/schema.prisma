@@ -58,6 +58,7 @@ model User {
   notifications Notification[]
   auditLogs     AuditLog[]
   cartItems     Cart[]
+  downloads     Download[]
 
   @@index([email])
   @@index([role])
@@ -317,6 +318,7 @@ model Order {
   // Relations
   items        OrderItem[]
   transactions Transaction[]
+  downloads    Download[]
 
   @@index([userId])
   @@index([status])
@@ -341,6 +343,23 @@ model OrderItem {
   @@unique([orderId, photoId])
   @@index([orderId])
   @@index([photoId])
+}
+
+// ==================== DOWNLOADS ====================
+model Download {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+
+  @@index([userId])
+  @@index([orderId])
+  @@index([createdAt])
 }
 
 // ==================== COUPONS ====================
