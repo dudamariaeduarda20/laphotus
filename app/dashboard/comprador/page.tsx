@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { Suspense } from "react";
 import { getUserIdFromRequest } from "@/lib/utils/auth";
 import prisma from "@/lib/db/prisma";
 import StatCard from "./StatCard";
-import PurchaseHistoryTable from "./PurchaseHistoryTable";
+import DashboardClient from "./DashboardClient";
 
 export const metadata = {
   title: "Meu Dashboard - Laphotus",
@@ -108,7 +109,9 @@ export default async function BuyerDashboardPage() {
           <h2 className="mb-6 text-2xl font-bold text-slate-900">
             Histórico de Compras
           </h2>
-          <PurchaseHistoryTable orders={orders} />
+          <Suspense fallback={<div className="text-center py-8">Carregando...</div>}>
+            <DashboardClient orders={orders} />
+          </Suspense>
         </div>
       </div>
     </div>
