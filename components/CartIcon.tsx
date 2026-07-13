@@ -1,16 +1,23 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCart } from '@/lib/contexts/CartContext';
 
 export default function CartIcon() {
   const { items } = useCart();
   const itemCount = items.length;
+  const pathname = usePathname();
+  const isHome = pathname === "/";
 
   return (
     <Link href="/carrinho" className="relative flex items-center justify-center">
       <svg
-        className="w-6 h-6 text-[#333] hover:text-[#ff2f92] transition"
+        className={`w-6 h-6 transition ${
+          isHome
+            ? "text-white hover:text-[#f0bf38]"
+            : "text-[#333] hover:text-[#ff2f92]"
+        }`}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
