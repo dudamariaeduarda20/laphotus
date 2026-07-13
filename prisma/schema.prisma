@@ -57,6 +57,7 @@ model User {
   faceIndexes   FaceIndex[]
   notifications Notification[]
   auditLogs     AuditLog[]
+  cartItems     Cart[]
 
   @@index([email])
   @@index([role])
@@ -174,11 +175,30 @@ model Photo {
   favorites   Favorite[]
   faceMatches FaceIndex[]
   photoBibs   PhotoBib[]
+  cartItems   Cart[]
 
   @@index([eventId])
   @@index([photographerId])
   @@index([status])
   @@index([createdAt])
+}
+
+// ==================== SHOPPING CART ====================
+model Cart {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  photoId String
+  photo   Photo  @relation(fields: [photoId], references: [id], onDelete: Cascade)
+
+  quantity Int @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, photoId])
+  @@index([userId])
 }
 
 // ==================== PHOTO <-> BIB JOIN (real OCR link) ====================
