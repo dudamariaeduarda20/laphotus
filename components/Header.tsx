@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import Cart from "./Cart";
+import CartIcon from "./CartIcon";
 import NotificationBell from "./NotificationBell";
 import LanguageSelector from "./LanguageSelector";
 
@@ -77,7 +77,7 @@ export default function Header() {
               <Link href={dashboardHref} className={navLink}>
                 {t("nav.dashboard", "Painel")}
               </Link>
-              <Cart />
+              <CartIcon />
               <NotificationBell />
               <div className="relative group">
                 <button
@@ -147,7 +147,7 @@ export default function Header() {
 
         {/* Mobile controls */}
         <div className="flex lg:hidden items-center gap-2">
-          {isAuthenticated && <Cart />}
+          {isAuthenticated && <CartIcon />}
           <button
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
