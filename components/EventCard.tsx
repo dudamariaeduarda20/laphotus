@@ -45,41 +45,50 @@ export default function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/photos/${event.id}`}>
-      <div className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden cursor-pointer">
-        {/* Banner */}
-        <div className="relative h-40 bg-gradient-to-r from-blue-400 to-blue-600">
+      <div className="group bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden cursor-pointer">
+        {/* Image Container — Hover Effect */}
+        <div className="relative h-48 bg-gradient-to-r from-[#09419b] to-[#ff2f92] overflow-hidden">
           {coverUrl ? (
             <Image
               src={coverUrl}
               alt={event.title}
               fill
-              className="object-cover"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               unoptimized
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-white text-4xl">
+            <div className="flex items-center justify-center h-full text-white text-5xl">
               📸
             </div>
           )}
-          <div className="absolute top-2 right-2">
-            <span className="px-3 py-1 bg-white/90 text-xs font-bold text-[#09419b] rounded-full">
+
+          {/* Sport Badge */}
+          <div className="absolute top-3 right-3">
+            <span className="px-4 py-2 bg-white/95 text-xs font-bold text-[#09419b] rounded-full shadow-sm">
               {sportLabel ? t(sportLabel.labelKey) : event.sport}
             </span>
+          </div>
+
+          {/* Hover Overlay */}
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+            <div className="text-white font-semibold text-sm">
+              Ver galeria →
+            </div>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <h3 className="font-bold text-lg text-gray-900 line-clamp-2 mb-2">
+        <div className="p-6 space-y-4">
+          <h3 className="font-serif font-bold text-xl text-[#09419b] line-clamp-2 leading-tight">
             {event.title}
           </h3>
 
           {/* Details */}
-          <div className="space-y-2 text-sm text-gray-600 mb-4">
+          <div className="space-y-3 text-sm text-[#666]">
             <div className="flex items-center gap-2">
-              <span>📅</span>
-              <span>
+              <span className="text-base">📅</span>
+              <span className="font-medium">
                 {eventDate.toLocaleDateString(LOCALE_MAP[locale] || "pt-PT", {
                   month: "short",
                   day: "numeric",
@@ -87,7 +96,7 @@ export default function EventCard({ event }: EventCardProps) {
                 })}
               </span>
               {isUpcoming && (
-                <span className="text-xs bg-[#fef7e8] text-green-800 px-2 py-1 rounded">
+                <span className="text-xs font-semibold bg-green-100 text-green-700 px-2 py-1 rounded">
                   {t("eventCard.upcoming")}
                 </span>
               )}
@@ -95,21 +104,21 @@ export default function EventCard({ event }: EventCardProps) {
 
             {event.location && (
               <div className="flex items-center gap-2">
-                <span>📍</span>
-                <span className="line-clamp-1">{event.location}</span>
+                <span className="text-base">📍</span>
+                <span className="line-clamp-1 font-medium">{event.location}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2">
-              <span>📸</span>
-              <span>{photoCount} {t("eventCard.photos")}</span>
+              <span className="text-base">📸</span>
+              <span className="font-medium">{photoCount} {t("eventCard.photos")}</span>
             </div>
           </div>
 
-          {/* CTA */}
-          <div className="pt-4 border-t border-gray-200">
-            <button className="w-full text-center text-[#09419b] font-semibold hover:text-[#09419b]">
-              {t("eventCard.viewGallery")}
+          {/* CTA Button */}
+          <div className="pt-2 border-t border-[#f0bf38]">
+            <button className="w-full text-center py-2 text-[#09419b] font-semibold hover:text-[#ff2f92] hover:bg-[#f0bf38]/10 rounded transition">
+              {t("eventCard.viewGallery", "Ver galeria")}
             </button>
           </div>
         </div>
