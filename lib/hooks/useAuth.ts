@@ -12,7 +12,9 @@ export function useAuth() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/me");
+        const response = await fetch("/api/auth/me", {
+          credentials: "include",
+        });
 
         if (response.ok) {
           const { user } = await response.json();
@@ -39,6 +41,7 @@ export function useAuth() {
         const response = await fetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ email, password, name, role }),
         });
 
@@ -70,6 +73,7 @@ export function useAuth() {
         const response = await fetch("/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ email, password }),
         });
 
@@ -97,7 +101,10 @@ export function useAuth() {
     setError(null);
 
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
       setUser(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Logout failed";
