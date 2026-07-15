@@ -102,6 +102,10 @@ export async function POST(request: NextRequest) {
       throw new Error("Invalid role for event creation");
     }
 
+    // Admin is site owner → event goes live immediately.
+    // Organizer/photographer events wait for admin approval.
+    const status = user.role === UserRole.ADMIN ? "active" : "pending";
+
     const event = await createEvent(
       organizerId,
       validated.title,
@@ -109,7 +113,8 @@ export async function POST(request: NextRequest) {
       new Date(validated.date),
       validated.location || null,
       validated.sport,
-      validated.banner || DEFAULT_EVENT_COVER
+      validated.banner || DEFAULT_EVENT_COVER,
+      status
     );
 
     return NextResponse.json(event, { status: 201 });

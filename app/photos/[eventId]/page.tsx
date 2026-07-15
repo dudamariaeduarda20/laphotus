@@ -115,6 +115,11 @@ export default function EventGalleryPage({
         if (!res.ok) throw new Error("Event not found");
 
         const { event, stats } = await res.json();
+        // Public gallery only shows approved events. Pending/rejected/archived
+        // stay invisible to the public (owner/admin manage them via dashboard).
+        if (!event || event.status !== "active") {
+          throw new Error("Event not found");
+        }
         setEvent(event);
         setStats(stats);
         setError(null);

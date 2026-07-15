@@ -12,7 +12,8 @@ export async function createEvent(
   date: Date,
   location: string | null,
   sport: string,
-  banner?: string | null
+  banner?: string | null,
+  status: string = "active"
 ) {
   // Generate default cover if none provided
   let coverUrl = banner || null;
@@ -39,7 +40,7 @@ export async function createEvent(
       location,
       sport,
       banner: coverUrl,
-      status: "active",
+      status,
     },
     include: { organizer: true },
   });

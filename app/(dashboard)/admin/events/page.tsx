@@ -16,6 +16,7 @@ interface EventRow {
 }
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
+  pending: { label: "Pendente", color: "bg-[#fef7e8] text-[#a37a00]" },
   active: { label: "Aprovado", color: "bg-[#e8f0ff] text-blue-800" },
   finished: { label: "Encerrado", color: "bg-gray-100 text-gray-700" },
   archived: { label: "Rejeitado", color: "bg-red-100 text-red-800" },
@@ -25,7 +26,7 @@ export default function AdminEventsPage() {
   const { isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const [events, setEvents] = useState<EventRow[]>([]);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("pending");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -63,7 +64,9 @@ export default function AdminEventsPage() {
       const res = await fetch(`/api/admin/events/${id}/approve`, { method: "PUT" });
       if (!res.ok) throw new Error("Falha ao aprovar");
       setEvents((prev) =>
-        prev.map((e) => (e.id === id ? { ...e, status: "active" } : e))
+        statusFilter && statusFilter !== "active"
+          ? prev.filter((e) => e.id !== id)
+          : prev.map((e) => (e.id === id ? { ...e, status: "active" } : e))
       );
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erro");
@@ -86,7 +89,9 @@ export default function AdminEventsPage() {
         throw new Error(err.error || "Falha ao rejeitar");
       }
       setEvents((prev) =>
-        prev.map((e) => (e.id === rejectingId ? { ...e, status: "archived" } : e))
+        statusFilter && statusFilter !== "archived"
+          ? prev.filter((e) => e.id !== rejectingId)
+          : prev.map((e) => (e.id === rejectingId ? { ...e, status: "archived" } : e))
       );
       setRejectingId(null);
     } catch (err) {
@@ -107,9 +112,10 @@ export default function AdminEventsPage() {
 
       <div className="flex gap-2">
         {[
-          { value: "", label: "Todos" },
+          { value: "pending", label: "Pendentes" },
           { value: "active", label: "Aprovados" },
           { value: "archived", label: "Rejeitados" },
+          { value: "", label: "Todos" },
         ].map((opt) => (
           <button
             key={opt.value}

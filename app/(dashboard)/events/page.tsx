@@ -20,6 +20,7 @@ interface EventRow {
 }
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
+  pending: { label: "Pendente (a aguardar aprovação)", color: "bg-[#fef7e8] text-[#a37a00]" },
   active: { label: "Ativo", color: "bg-[#e8f0ff] text-blue-800" },
   finished: { label: "Encerrado", color: "bg-gray-100 text-gray-700" },
   archived: { label: "Arquivado", color: "bg-red-50 text-red-700" },
