@@ -138,7 +138,7 @@ model Event {
   photos        Photo[]
   bibNumbers    BibNumber[]
   conversations Conversation[]
-  packages      Package[]
+  photoBundles  PhotoBundle[]
 
   @@index([organizerId])
   @@index([date])
@@ -189,7 +189,7 @@ model Photo {
   reports       Report[]
   reviews       Review[]
   conversations Conversation[]
-  photoPackages PhotoPackage[]
+  bundlePhotos  BundlePhoto[]
 
   @@index([eventId])
   @@index([photographerId])
@@ -495,8 +495,8 @@ model MessageReport {
   @@index([status])
 }
 
-// ==================== PACKAGES (Bundle discount offers) ====================
-model Package {
+// ==================== PHOTO PACKAGES (Bundle discount offers) ====================
+model PhotoBundle {
   id String @id @default(cuid())
   eventId String
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -506,31 +506,31 @@ model Package {
 
   // Pricing
   originalPrice Float // Sum of individual photo prices
-  packagePrice  Float // Discounted price
+  bundlePrice   Float // Discounted price
   discount      Float // Amount saved
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  photos PhotoPackage[]
+  photos BundlePhoto[]
 
   @@index([eventId])
   @@index([createdAt])
 }
 
-model PhotoPackage {
+model BundlePhoto {
   id String @id @default(cuid())
-  packageId String
-  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  bundleId String
+  bundle   PhotoBundle @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
   photoId String
   photo   Photo   @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
-  @@unique([packageId, photoId])
-  @@index([packageId])
+  @@unique([bundleId, photoId])
+  @@index([bundleId])
   @@index([photoId])
 }
 
