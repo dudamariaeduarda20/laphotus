@@ -77,6 +77,20 @@ export async function POST(request: NextRequest) {
       });
       if (!organizer) throw new Error("Organizer profile not found");
       organizerId = organizer.id;
+    } else if (user.role === UserRole.ADMIN) {
+      // Admin: auto-create Organizer if needed
+      let organizer = await prisma.organizer.findUnique({
+        where: { userId: user.id },
+      });
+      if (!organizer) {
+        organizer = await prisma.organizer.create({
+          data: {
+            userId: user.id,
+            organizationName: `${user.name} (Admin)`,
+          },
+        });
+      }
+      organizerId = organizer.id;
     } else if (user.role === UserRole.PHOTOGRAPHER) {
       // Photographers need to associate with organizer
       const organizer = await prisma.organizer.findFirst({
@@ -85,12 +99,7 @@ export async function POST(request: NextRequest) {
       if (!organizer) throw new Error("No organizers in system");
       organizerId = organizer.id;
     } else {
-      // Admin can create events for any organizer
-      const organizer = await prisma.organizer.findFirst({
-        take: 1,
-      });
-      if (!organizer) throw new Error("No organizers in system");
-      organizerId = organizer.id;
+      throw new Error("Invalid role for event creation");
     }
 
     const event = await createEvent(

@@ -13,7 +13,7 @@ async function getPhoto(photoId: string) {
   return prisma.photo.findUnique({
     where: { id: photoId },
     include: {
-      event: { select: { id: true, title: true } },
+      event: { select: { id: true, title: true, priceEUR: true } },
       photographer: { include: { user: { select: { name: true } } } },
     },
   });
@@ -28,9 +28,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = `${photo.name} — ${photo.event?.title || "Laphotus"}`;
+  const price = photo.event?.priceEUR || 0;
   const description = `Foto de ${photo.event?.title || "evento desportivo"} por ${
     photo.photographer?.user?.name || "fotógrafo Laphotus"
-  }. € ${photo.price.toFixed(2)} — compre em alta resolução sem marca d'água.`;
+  }. € ${price.toFixed(2)} — compre em alta resolução sem marca d'água.`;
   const shareUrl = `${SITE_URL}/photos/${photo.eventId}/${photo.id}`;
   // Watermark real, gerado no servidor — nunca a foto paga (ver /api/photos/[id]/og-image).
   const ogImageUrl = `${SITE_URL}/api/photos/${photo.id}/og-image`;

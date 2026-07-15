@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /organizer/
+Disallow: /photographer/
+Disallow: /*.json$
+Disallow: /?*sort=
+Disallow: /auth/
+Disallow: /cart
+Disallow: /checkout
+
+# Sitemap
+Sitemap: https://laphotus.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

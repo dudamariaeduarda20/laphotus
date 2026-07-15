@@ -123,6 +123,17 @@ export default function AdminDashboard() {
       {/* Admin Links */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link
+          href="/events/new"
+          className="bg-gradient-to-br from-[#09419b] to-[#0a2d6b] rounded-lg shadow p-6 hover:shadow-lg transition text-white"
+        >
+          <div className="text-2xl mb-3">➕</div>
+          <h3 className="font-bold">Criar Novo Evento</h3>
+          <p className="text-sm text-white/80 mt-1">
+            Registar evento desportivo
+          </p>
+        </Link>
+
+        <Link
           href="/admin/analytics"
           className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
         >

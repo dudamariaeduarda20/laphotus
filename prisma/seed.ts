@@ -139,7 +139,6 @@ async function main() {
             thumbnailKey: `seed/events/${event.id}/thumb-${i}.jpg`,
             name: `${event.title} — Foto ${i}`,
             status: PhotoStatus.AVAILABLE,
-            price: 5.0,
             isPremium: false,
             isWatermarked: true,
             mimeType: "image/jpeg",
@@ -177,7 +176,12 @@ async function main() {
     });
 
     if (!existingOrder) {
-      const subtotal = photo.price;
+      // Fetch event to get price
+      const event = await prisma.event.findUnique({
+        where: { id: photo.eventId },
+        select: { priceEUR: true },
+      });
+      const subtotal = event?.priceEUR || 5.0;
       const tax = subtotal * 0.23;
 
       const order = await prisma.order.create({
@@ -190,7 +194,7 @@ async function main() {
           discount: 0,
           paidAt: new Date(),
           items: {
-            create: { photoId: photo.id, price: photo.price, quantity: 1 },
+            create: { photoId: photo.id, price: subtotal, quantity: 1 },
           },
           transactions: {
             create: {

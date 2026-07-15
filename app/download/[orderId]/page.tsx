@@ -31,7 +31,6 @@ export default async function DownloadPage({ params }: Props) {
               name: true,
               key: true,
               thumbnailKey: true,
-              price: true,
               width: true,
               height: true,
             },

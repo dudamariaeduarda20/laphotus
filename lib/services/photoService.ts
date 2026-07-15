@@ -11,7 +11,6 @@ export async function uploadPhoto(
   eventId: string,
   photographerId: string,
   fileName: string,
-  price: number = 0,
   isPremium: boolean = false,
   userId?: string
 ) {
@@ -38,7 +37,6 @@ export async function uploadPhoto(
       thumbnailKey,
       name: fileName.replace(/\.[^.]+$/, ""), // Remove extension
       status: PhotoStatus.AVAILABLE,
-      price,
       isPremium,
       isWatermarked: true,
       width: 4000,
@@ -71,7 +69,6 @@ export async function uploadPhoto(
         changes: {
           fileName,
           eventId,
-          price,
           isPremium,
         },
       },
@@ -98,13 +95,35 @@ export async function getPhotoById(photoId: string) {
 }
 
 /**
- * Get photos by event
+ * Get photos by event with optional price + sort filters
  */
-export async function getPhotosByEvent(eventId: string, limit: number = 100) {
+export async function getPhotosByEvent(
+  eventId: string,
+  limit: number = 100,
+  minPrice?: number,
+  maxPrice?: number,
+  sortBy: "newest" | "price-asc" | "price-desc" = "newest"
+) {
+  const where: any = { eventId, status: PhotoStatus.AVAILABLE };
+
+  if (minPrice !== undefined) {
+    where.price = { ...where.price, gte: minPrice };
+  }
+  if (maxPrice !== undefined) {
+    where.price = { ...where.price, lte: maxPrice };
+  }
+
+  const orderBy: any =
+    sortBy === "price-asc"
+      ? { price: "asc" }
+      : sortBy === "price-desc"
+        ? { price: "desc" }
+        : { createdAt: "desc" };
+
   const photos = await prisma.photo.findMany({
-    where: { eventId, status: PhotoStatus.AVAILABLE },
+    where,
     include: { photographer: true },
-    orderBy: { createdAt: "desc" },
+    orderBy,
     take: limit,
   });
 

@@ -14,13 +14,12 @@ interface PhotoDetailData {
   id: string;
   name: string;
   key: string;
-  price: number;
   isPremium: boolean;
   width: number | null;
   height: number | null;
   mimeType: string | null;
   detectedBibNumbers: string | null;
-  event?: { id: string; title: string } | null;
+  event?: { id: string; title: string; priceEUR: number } | null;
   photographer?: { id: string; user?: { name: string } | null } | null;
 }
 
@@ -43,7 +42,7 @@ export default function PhotoDetailClient({ eventId, photoId, photo, shareUrl }:
       id: photo.id,
       photoId: photo.id,
       name: photo.name,
-      price: photo.price,
+      price: photo.event?.priceEUR || 0,
       eventId,
       eventTitle: photo.event?.title || "Evento",
       photographerId: photo.photographer?.id || "",
@@ -117,9 +116,9 @@ export default function PhotoDetailClient({ eventId, photoId, photo, shareUrl }:
 
           {/* Preço */}
           <div className="mb-6">
-            {photo.price > 0 ? (
+            {(photo.event?.priceEUR || 0) > 0 ? (
               <span className="text-4xl font-bold text-[#f0bf38]">
-                € {photo.price.toFixed(2)}
+                € {(photo.event?.priceEUR || 0).toFixed(2)}
               </span>
             ) : (
               <span className="text-2xl font-semibold text-gray-500">

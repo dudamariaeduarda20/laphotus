@@ -155,8 +155,8 @@ export async function searchFacesByBytes(
             select: {
               id: true,
               name: true,
-              price: true,
               isPremium: true,
+              event: { select: { priceEUR: true } },
               photographer: { select: { user: { select: { name: true } } } },
             },
           },
@@ -170,7 +170,7 @@ export async function searchFacesByBytes(
         matchPercent: Math.round(similarity * 100),
         similarity,
         confidence: similarity,
-        price: faceIndex.photo.price,
+        price: faceIndex.photo.event?.priceEUR || 0,
         isPremium: faceIndex.photo.isPremium,
         photographerName: faceIndex.photo.photographer?.user.name || "Fotógrafo",
       };
@@ -230,8 +230,8 @@ export async function searchFacesByAWSRekognition(
             select: {
               id: true,
               name: true,
-              price: true,
               isPremium: true,
+              event: { select: { priceEUR: true } },
               photographer: { select: { user: { select: { name: true } } } },
             },
           },
@@ -245,7 +245,7 @@ export async function searchFacesByAWSRekognition(
         matchPercent: Math.round(similarity * 100),
         similarity,
         confidence: similarity,
-        price: faceIndex.photo.price,
+        price: faceIndex.photo.event?.priceEUR || 0,
         isPremium: faceIndex.photo.isPremium,
         photographerName: faceIndex.photo.photographer?.user.name || "Fotógrafo",
       };
@@ -425,9 +425,9 @@ export async function matchFaceInEvent(
             select: {
               id: true,
               name: true,
-              price: true,
               isPremium: true,
               photographerId: true,
+              event: { select: { priceEUR: true } },
               photographer: { select: { user: { select: { name: true } } } },
             },
           },
@@ -442,7 +442,7 @@ export async function matchFaceInEvent(
           matchPercent: Math.floor(85 + Math.random() * 15),
           similarity: 0.85 + Math.random() * 0.15,
           confidence: idx.confidence,
-          price: idx.photo.price,
+          price: idx.photo.event?.priceEUR || 0,
           isPremium: idx.photo.isPremium,
           photographerName: idx.photo.photographer?.user.name || "Unknown",
         }));
@@ -487,9 +487,9 @@ export async function matchFaceInEvent(
               select: {
                 id: true,
                 name: true,
-                price: true,
                 isPremium: true,
                 photographerId: true,
+                event: { select: { priceEUR: true } },
                 photographer: { select: { user: { select: { name: true } } } },
               },
             },
@@ -507,7 +507,7 @@ export async function matchFaceInEvent(
           matchPercent: Math.round(similarity * 100),
           similarity,
           confidence: faceIndex.confidence,
-          price: faceIndex.photo.price,
+          price: faceIndex.photo.event?.priceEUR || 0,
           isPremium: faceIndex.photo.isPremium,
           photographerName:
             faceIndex.photo.photographer?.user.name || "Unknown",
@@ -589,9 +589,9 @@ export async function matchFaceByDescriptor(
         select: {
           id: true,
           name: true,
-          price: true,
           isPremium: true,
           photographerId: true,
+          event: { select: { priceEUR: true } },
           photographer: { select: { user: { select: { name: true } } } },
         },
       },
@@ -625,7 +625,7 @@ export async function matchFaceByDescriptor(
         matchPercent,
         similarity: 1 - distance,
         confidence: idx.confidence,
-        price: idx.photo.price,
+        price: idx.photo.event?.priceEUR || 0,
         isPremium: idx.photo.isPremium,
         photographerName: idx.photo.photographer?.user.name || "Unknown",
       };

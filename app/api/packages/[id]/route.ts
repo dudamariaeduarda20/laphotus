@@ -21,21 +21,39 @@ export async function PATCH(
 
   try {
     let originalPrice: number = 0;
+    let eventId: string | null = null;
 
-    if (photoIds && photoIds.length > 0) {
-      const photos = await prisma.photo.findMany({
-        where: { id: { in: photoIds } },
-      });
-      originalPrice = photos.reduce((sum, p) => sum + (p.price || 0), 0);
+    // Get the bundle's event
+    const existingBundle = await prisma.photoBundle.findUnique({
+      where: { id },
+      select: { eventId: true },
+    });
+
+    if (!existingBundle) {
+      return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
+    }
+
+    eventId = existingBundle.eventId;
+
+    // Get event price
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { priceEUR: true },
+    });
+
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    const photoCount = photoIds?.length || 0;
+    if (photoCount > 0) {
+      originalPrice = event.priceEUR * photoCount;
     } else {
       const existing = await prisma.photoBundle.findUnique({
         where: { id },
-        include: { photos: { include: { photo: true } } },
+        include: { photos: { select: { id: true } } },
       });
-      originalPrice = existing?.photos.reduce(
-        (sum, bp) => sum + (bp.photo.price || 0),
-        0
-      ) || 0;
+      originalPrice = event.priceEUR * (existing?.photos.length || 0);
     }
 
     const discount = originalPrice - (bundlePrice || 0);

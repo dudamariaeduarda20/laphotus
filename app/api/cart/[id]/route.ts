@@ -48,7 +48,6 @@ export async function PUT(
           select: {
             id: true,
             name: true,
-            price: true,
             thumbnailKey: true,
           },
         },

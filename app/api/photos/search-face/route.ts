@@ -50,8 +50,8 @@ async function searchPgvector(
       select: {
         id: true,
         name: true,
-        price: true,
         isPremium: true,
+        event: { select: { priceEUR: true } },
         photographer: { select: { user: { select: { name: true } } } },
       },
     });
@@ -68,7 +68,7 @@ async function searchPgvector(
           similarity: h.similarity,
           distance: h.distance,
           confidence: h.similarity,
-          price: p.price,
+          price: p.event?.priceEUR || 0,
           isPremium: p.isPremium,
           photographerName: p.photographer?.user.name || "Fotógrafo",
           engine: "pgvector",

@@ -18,9 +18,10 @@ type Event = {
   photos: Array<{ id: string }>;
 };
 
-export default function EventsPage() {
+export default function DiscoverEventsContent() {
   const searchParams = useSearchParams();
   const [events, setEvents] = useState<Event[]>([]);
+  const [search, setSearch] = useState(searchParams.get("search") || "");
   const [location, setLocation] = useState(searchParams.get("location") || "");
   const [sport, setSport] = useState(searchParams.get("sport") || "");
   const [dateFrom, setDateFrom] = useState<string | undefined>();
@@ -30,12 +31,13 @@ export default function EventsPage() {
 
   useEffect(() => {
     fetchEvents();
-  }, [location, sport, dateFrom, dateTo]);
+  }, [search, location, sport, dateFrom, dateTo]);
 
   const fetchEvents = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
+      if (search) params.append("search", search);
       if (location) params.append("location", location);
       if (sport) params.append("sport", sport);
       if (dateFrom) params.append("from", dateFrom);
@@ -69,6 +71,14 @@ export default function EventsPage() {
 
           {/* Filters */}
           <div className="space-y-6">
+            <input
+              type="text"
+              placeholder="Procurar por nome do evento..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#09419b] outline-none"
+            />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <LocationFilter value={location} onChange={setLocation} />
 

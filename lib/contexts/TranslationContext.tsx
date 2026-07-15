@@ -35,7 +35,10 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   const [translations, setTranslations] = useState<Translations>(ptDefault as Translations);
 
   useEffect(() => {
-    // Read stored locale — localStorage first, then cookie
+    // Detect locale: stored user choice → browser language → fallback to PT
+    let init: Locale = "pt";
+
+    // 1. Check stored preference (localStorage or cookie)
     let stored: string | null = null;
     try {
       stored = localStorage.getItem("locale");
@@ -44,7 +47,17 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
       const match = document.cookie.match(/NEXT_LOCALE=([^;]+)/);
       if (match) stored = match[1];
     }
-    const init = SUPPORTED_LOCALES.includes(stored as Locale) ? (stored as Locale) : "pt";
+
+    if (stored && SUPPORTED_LOCALES.includes(stored as Locale)) {
+      init = stored as Locale;
+    } else {
+      // 2. Detect browser language
+      const browserLang = navigator.language?.split("-")[0].toLowerCase() || "";
+      if (SUPPORTED_LOCALES.includes(browserLang as Locale)) {
+        init = browserLang as Locale;
+      }
+    }
+
     setLocaleState(init);
 
     // If logged in, sync with DB preference

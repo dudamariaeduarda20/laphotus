@@ -26,7 +26,7 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
 };
 
 export default function EventsPage() {
-  const { isOrganizer, loading: authLoading } = useAuth();
+  const { isOrganizer, isAdmin, loading: authLoading } = useAuth();
   const router = useRouter();
   const [events, setEvents] = useState<EventRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function EventsPage() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!isOrganizer) {
+    if (!isOrganizer && !isAdmin) {
       router.push("/dashboard");
       return;
     }
@@ -119,12 +119,6 @@ export default function EventsPage() {
           <h1 className="text-3xl font-bold text-gray-900">Eventos</h1>
           <p className="text-gray-600 mt-1">Gerencie seus eventos desportivos</p>
         </div>
-        <Link
-          href="/events/new"
-          className="px-6 py-2 bg-[#09419b] text-white rounded-lg hover:bg-[#09419b] transition"
-        >
-          + Criar Evento
-        </Link>
       </div>
 
       {error && (

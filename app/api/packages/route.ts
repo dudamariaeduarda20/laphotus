@@ -58,11 +58,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const photos = await prisma.photo.findMany({
-      where: { id: { in: photoIds } },
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { priceEUR: true },
     });
 
-    const originalPrice = photos.reduce((sum, p) => sum + (p.price || 0), 0);
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    const originalPrice = event.priceEUR * photoIds.length;
     const discount = originalPrice - bundlePrice;
 
     const bundle = await prisma.photoBundle.create({

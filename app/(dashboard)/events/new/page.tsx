@@ -1,12 +1,20 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import EventForm from "@/components/EventForm";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function NewEventPage() {
   const router = useRouter();
-  const { isOrganizer } = useAuth();
+  const { isOrganizer, isAdmin, loading } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isOrganizer && !isAdmin) {
+      router.push("/dashboard");
+    }
+  }, [isOrganizer, isAdmin, loading, router]);
 
   const handleSubmit = async (data: any) => {
     const res = await fetch("/api/events", {

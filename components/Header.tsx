@@ -5,17 +5,31 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { Search } from "lucide-react";
 import CartIcon from "./CartIcon";
 import NotificationBell from "./NotificationBell";
 import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, loading } = useAuth();
   const { t } = useTranslation();
   const router = useRouter();
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  console.log(`[Header] auth: isAuth=${isAuthenticated} loading=${loading} name=${user?.name}`);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/discover-events?search=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
+      setSearchOpen(false);
+    }
+  };
 
   const navLink = isHome
     ? "text-base font-sans text-white hover:text-[#f0bf38] transition"
@@ -63,11 +77,8 @@ export default function Header() {
           <Link href="/photos" className={navLink}>
             {t("nav.events", "Eventos")}
           </Link>
-          <Link href="/discover-events" className={navLink}>
-            {t("nav.browseEvents", "Procurar Eventos")}
-          </Link>
 
-          {!isAuthenticated && (
+          {!loading && !isAuthenticated && (
             <>
               <Link href="/fotografo" className={navLink}>
                 {t("nav.photographer", "Sou fotógrafo")}
@@ -78,13 +89,35 @@ export default function Header() {
             </>
           )}
 
+          {/* Search bar */}
+          <form onSubmit={handleSearch} className="flex items-center">
+            <input
+              type="text"
+              placeholder={t("nav.searchEvents", "Procurar eventos...")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`px-4 py-2 rounded-l-lg border-none focus:outline-none text-sm ${
+                isHome ? "bg-white/20 text-white placeholder:text-white/60" : "bg-[#f5f5f5] text-[#333]"
+              }`}
+            />
+            <button
+              type="submit"
+              className={`px-4 py-2 rounded-r-lg border-none cursor-pointer transition ${
+                isHome ? "bg-white/20 text-white hover:bg-white/30" : "bg-[#f5f5f5] text-[#333] hover:bg-[#eeeeee]"
+              }`}
+              aria-label="Search"
+            >
+              <Search size={18} />
+            </button>
+          </form>
+
           {/* Language selector */}
           <div className={navLink + " !hover:text-inherit cursor-pointer"}>
             <LanguageSelector isHome={isHome} />
           </div>
 
           {/* Auth section */}
-          {isAuthenticated ? (
+          {!loading && (isAuthenticated ? (
             <>
               <Link href={dashboardHref} className={navLink}>
                 {t("nav.dashboard", "Painel")}
@@ -160,12 +193,19 @@ export default function Header() {
                 {t("nav.register", "Cadastro")}
               </Link>
             </>
-          )}
+          ))}
         </nav>
 
         {/* Mobile controls */}
         <div className="flex lg:hidden items-center gap-2">
           {isAuthenticated && <CartIcon />}
+          <button
+            onClick={() => setSearchOpen((o) => !o)}
+            aria-label="Search"
+            className={isHome ? "p-2 text-white" : "p-2 text-[#333]"}
+          >
+            <Search size={20} />
+          </button>
           <button
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
@@ -185,6 +225,33 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Mobile search panel */}
+      {searchOpen && (
+        <div className={`${isHome ? "bg-[#0d2d6f]" : "bg-white border-t border-[#ddd]"} px-6 py-3`}>
+          <form onSubmit={handleSearch} className="flex items-center gap-2">
+            <input
+              type="text"
+              placeholder={t("nav.searchEvents", "Procurar eventos...")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+              className={`flex-1 px-4 py-2 rounded-lg border-none focus:outline-none text-sm ${
+                isHome ? "bg-white/20 text-white placeholder:text-white/60" : "bg-[#f5f5f5] text-[#333]"
+              }`}
+            />
+            <button
+              type="submit"
+              className={`p-2 rounded-lg cursor-pointer transition ${
+                isHome ? "bg-white/20 text-white hover:bg-white/30" : "bg-[#f5f5f5] text-[#333] hover:bg-[#eeeeee]"
+              }`}
+              aria-label="Search"
+            >
+              <Search size={18} />
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Mobile menu panel */}
       {mobileOpen && (
         <div className={isHome ? "bg-[#0d2d6f]" : "bg-white border-t border-[#ddd] shadow-lg"}>
@@ -196,15 +263,8 @@ export default function Header() {
             >
               {t("nav.events", "Eventos")}
             </Link>
-            <Link
-              href="/events"
-              className={`py-3 text-base border-b ${isHome ? "text-white hover:text-[#f0bf38]" : "text-[#333] hover:text-[#ff2f92]"} border-[#eee]`}
-              onClick={() => setMobileOpen(false)}
-            >
-              {t("nav.browseEvents", "Procurar Eventos")}
-            </Link>
 
-            {!isAuthenticated ? (
+            {!loading && (!isAuthenticated ? (
               <>
                 <Link
                   href="/fotografo"
@@ -319,7 +379,7 @@ export default function Header() {
                   {t("nav.logout", "Sair")}
                 </button>
               </>
-            )}
+            ))}
           </nav>
         </div>
       )}

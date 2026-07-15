@@ -136,8 +136,8 @@ export async function getUserEvents(userId: string) {
 
   if (!user) throw new Error("User not found");
 
-  // If organizer, get organized events
-  if (user.role === UserRole.ORGANIZER) {
+  // If organizer or admin, get organized events
+  if (user.role === UserRole.ORGANIZER || user.role === UserRole.ADMIN) {
     const organizer = await prisma.organizer.findUnique({
       where: { userId },
     });

@@ -131,6 +131,12 @@ model Event {
   date           DateTime
   sport          String // Ex: "Futebol", "Vôlei"
   status         String   @default("active") // active, finished, archived
+
+  // Pricing (set by organizer, applies to all photos in event)
+  priceEUR           Float   @default(0)
+  priceUSD           Float   @default(0)
+  exchangeRateUSDtoEUR Float @default(1)
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -171,9 +177,7 @@ model Photo {
   detectedBibNumbers String? // JSON array of detected numbers [{"number": "23", "confidence": 0.95}]
   bibMetadata        Json? // {"extracted_numbers": [...], "positions": [...]}
 
-  // Pricing & Commerce
-  price           Float   @default(0)
-  discountedPrice Float?
+  // Commerce
   isPremium       Boolean @default(false)
   isWatermarked   Boolean @default(true)
 
@@ -210,6 +214,7 @@ model Cart {
   bundle   PhotoBundle? @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
   quantity Int @default(1)
+  price    Float? // Captured at time of adding to cart (from event)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

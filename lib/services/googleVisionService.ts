@@ -140,8 +140,8 @@ export async function searchFacesByImage(
         select: {
           id: true,
           name: true,
-          price: true,
           isPremium: true,
+          event: { select: { priceEUR: true } },
           photographer: { select: { user: { select: { name: true } } } },
         },
       },
@@ -165,7 +165,7 @@ export async function searchFacesByImage(
         matchPercent: Math.round(Math.min(100, similarityScore)),
         similarity: similarityScore / 100,
         confidence: similarityScore / 100,
-        price: fi.photo.price,
+        price: fi.photo.event?.priceEUR || 0,
         isPremium: fi.photo.isPremium,
         photographerName: fi.photo.photographer?.user.name || "Fotógrafo",
       };

@@ -12,7 +12,6 @@ import { getReviewSummaries } from "@/lib/services/reviewService";
 const uploadSchema = z.object({
   eventId: z.string().min(1),
   fileName: z.string().min(3),
-  price: z.number().min(0).optional(),
   isPremium: z.boolean().optional(),
 });
 
@@ -25,6 +24,16 @@ export async function GET(request: NextRequest) {
     const eventId = searchParams.get("eventId");
     const bibNumber = searchParams.get("bibNumber");
     const own = searchParams.get("own");
+    const minPrice = searchParams.get("minPrice")
+      ? parseFloat(searchParams.get("minPrice")!)
+      : undefined;
+    const maxPrice = searchParams.get("maxPrice")
+      ? parseFloat(searchParams.get("maxPrice")!)
+      : undefined;
+    const sortBy = (searchParams.get("sortBy") || "newest") as
+      | "newest"
+      | "price-asc"
+      | "price-desc";
 
     let photos;
 
@@ -67,8 +76,14 @@ export async function GET(request: NextRequest) {
         // Search by bib number — exact match via real PhotoBib join
         photos = await searchPhotosByBibNumber(eventId, bibNumber);
       } else {
-        // Get all photos from event
-        photos = await getPhotosByEvent(eventId);
+        // Get photos from event with price + sort filters
+        photos = await getPhotosByEvent(
+          eventId,
+          100,
+          minPrice,
+          maxPrice,
+          sortBy
+        );
       }
 
       // One grouped query for the whole grid's review averages — not one
@@ -190,7 +205,6 @@ export async function POST(request: NextRequest) {
         thumbnailKey: s3Result.key + "-thumb",
         name: fileName.replace(/\.[^.]+$/, ""),
         status: "AVAILABLE",
-        price,
         isPremium,
         isWatermarked: true,
         width: 4000,

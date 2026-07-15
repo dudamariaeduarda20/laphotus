@@ -28,30 +28,33 @@ export async function POST(req: NextRequest) {
     if (photoId) {
       const photo = await prisma.photo.findUnique({
         where: { id: photoId },
-        select: { id: true, price: true },
+        include: { event: { select: { priceEUR: true } } },
       });
 
       if (!photo) {
         return NextResponse.json({ error: "Photo not found" }, { status: 404 });
       }
 
+      // Capture event price at time of adding to cart
+      const price = photo.event.priceEUR;
+
       const cartItem = await prisma.cart.upsert({
         where: { userId_photoId: { userId: userId, photoId } },
         update: { quantity: { increment: quantity } },
-        create: { userId: userId, photoId, quantity },
+        create: { userId: userId, photoId, quantity, price },
         include: {
           photo: {
             select: {
               id: true,
               name: true,
-              price: true,
               thumbnailKey: true,
+              eventId: true,
             },
           },
         },
       });
 
-      return NextResponse.json({ success: true, cartItem });
+      return NextResponse.json({ success: true, cartItem, price });
     }
 
     if (bundleId) {

@@ -6,13 +6,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PhotoBibNumbers from "@/components/PhotoBibNumbers";
 import { getPhotoImageUrl } from "@/lib/photoUrl";
-import EditPriceModal from "./EditPriceModal";
-import BulkPriceToolbar from "./BulkPriceToolbar";
 
 interface PhotoRow {
   id: string;
   name: string;
-  price: number;
   status: "AVAILABLE" | "ARCHIVED" | "UPLOADING" | "PROCESSING";
   key: string;
   thumbnailKey: string | null;
@@ -29,10 +26,7 @@ export default function MyPhotosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingBibsId, setEditingBibsId] = useState<string | null>(null);
-  const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [bulkSaving, setBulkSaving] = useState(false);
 
   const fetchPhotos = async () => {
     setLoading(true);
@@ -96,26 +90,6 @@ export default function MyPhotosPage() {
     }
   };
 
-  const handleSavePrice = async (photoId: string, price: number) => {
-    setSavingId(photoId);
-    try {
-      const res = await fetch(`/api/photos/${photoId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ price }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Falha ao atualizar preço");
-      }
-      setPhotos(photos.map((p) => (p.id === photoId ? { ...p, price } : p)));
-      setEditingPriceId(null);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erro ao salvar preço");
-    } finally {
-      setSavingId(null);
-    }
-  };
 
   const handleToggleStatus = async (photo: PhotoRow) => {
     const nextStatus = photo.status === "AVAILABLE" ? "ARCHIVED" : "AVAILABLE";
@@ -172,37 +146,6 @@ export default function MyPhotosPage() {
     }
   };
 
-  const toggleSelected = (photoId: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(photoId)) next.delete(photoId);
-      else next.add(photoId);
-      return next;
-    });
-  };
-
-  const handleBulkApply = async (price: number) => {
-    setBulkSaving(true);
-    try {
-      const res = await fetch("/api/photos/bulk-price", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ photoIds: Array.from(selectedIds), price }),
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Falha ao atualizar preços");
-      }
-      setPhotos(
-        photos.map((p) => (selectedIds.has(p.id) ? { ...p, price } : p))
-      );
-      setSelectedIds(new Set());
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erro ao atualizar preços em massa");
-    } finally {
-      setBulkSaving(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -212,13 +155,11 @@ export default function MyPhotosPage() {
     );
   }
 
-  const editingPricePhoto = photos.find((p) => p.id === editingPriceId);
-
   return (
     <div>
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Gerenciar Fotos</h1>
       <p className="text-gray-600 mb-8">
-        Preço, visibilidade, dorsais e vendas de cada foto
+        Visibilidade, dorsais e vendas de cada foto
       </p>
 
       {error && (
@@ -226,13 +167,6 @@ export default function MyPhotosPage() {
           {error}
         </div>
       )}
-
-      <BulkPriceToolbar
-        selectedCount={selectedIds.size}
-        saving={bulkSaving}
-        onApply={handleBulkApply}
-        onClear={() => setSelectedIds(new Set())}
-      />
 
       {photos.length === 0 ? (
         <div className="bg-white rounded-lg shadow p-12 text-center">
@@ -283,14 +217,6 @@ export default function MyPhotosPage() {
                     alt={photo.name}
                     className="h-full w-full object-cover"
                   />
-                  <label className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded bg-white/90 shadow">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(photo.id)}
-                      onChange={() => toggleSelected(photo.id)}
-                      className="h-4 w-4 accent-[#09419b]"
-                    />
-                  </label>
                   {soldCount > 0 && (
                     <span className="absolute right-2 top-2 rounded-full bg-[#ff2f92] px-2 py-0.5 text-xs font-bold text-white">
                       {soldCount} vendida{soldCount === 1 ? "" : "s"}
@@ -326,30 +252,16 @@ export default function MyPhotosPage() {
                     />
                   )}
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="bg-[#e8f0ff] rounded p-2">
-                      <span className="text-gray-600">Preço:</span>
-                      <p className="font-bold text-[#09419b]">
-                        € {photo.price.toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="bg-[#fef7e8] rounded p-2">
-                      <span className="text-gray-600">Estado:</span>
-                      <p className="font-bold text-[#f0bf38]">
-                        {isArchived ? "Oculta" : "Visível"}
-                      </p>
-                    </div>
+                  {/* State Badge */}
+                  <div className="bg-[#fef7e8] rounded p-2 text-xs">
+                    <span className="text-gray-600">Estado:</span>
+                    <p className="font-bold text-[#f0bf38]">
+                      {isArchived ? "Oculta" : "Visível"}
+                    </p>
                   </div>
 
                   {/* Actions */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setEditingPriceId(photo.id)}
-                      className="rounded-lg bg-[#09419b] px-3 py-2 text-xs font-semibold text-white hover:bg-[#09419b]/90"
-                    >
-                      ✎ Preço
-                    </button>
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => setEditingBibsId(photo.id)}
                       disabled={editingBibsId === photo.id}
@@ -362,7 +274,7 @@ export default function MyPhotosPage() {
                       disabled={isBusy}
                       className="rounded-lg bg-[#fef7e8] px-3 py-2 text-xs font-semibold text-[#f0bf38] hover:bg-[#fef7e8]/70 disabled:opacity-50"
                     >
-                      {isArchived ? "👁 Mostrar" : "🚫 Ocultar"}
+                      {isArchived ? "👁 Ver" : "🚫 Ocultar"}
                     </button>
                     <button
                       onClick={() => handleDelete(photo)}
@@ -379,15 +291,6 @@ export default function MyPhotosPage() {
         </div>
       )}
 
-      {editingPricePhoto && (
-        <EditPriceModal
-          photoName={editingPricePhoto.name}
-          currentPrice={editingPricePhoto.price}
-          saving={savingId === editingPricePhoto.id}
-          onSave={(price) => handleSavePrice(editingPricePhoto.id, price)}
-          onClose={() => setEditingPriceId(null)}
-        />
-      )}
     </div>
   );
 }

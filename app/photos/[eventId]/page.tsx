@@ -8,6 +8,7 @@ import PhotoGrid from "@/components/PhotoGrid";
 import BibNumberSearch from "@/components/BibNumberSearch";
 import SelfieUpload from "@/components/SelfieUpload";
 import FaceCameraSearch from "@/components/FaceCameraSearch";
+import PriceFilter from "@/components/PriceFilter";
 import { useCart } from "@/lib/contexts/CartContext";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { EVENT_CATEGORIES } from "@/lib/categories";
@@ -37,10 +38,14 @@ export default function EventGalleryPage({
     "camera"
   );
   const [faceMatches, setFaceMatches] = useState<any[]>([]);
-  // Fotos completas correspondentes ao rosto (null = ainda não pesquisou)
   const [facePhotos, setFacePhotos] = useState<any[] | null>(null);
   const [isLoadingFace, setIsLoadingFace] = useState(false);
   const [buyingAll, setBuyingAll] = useState(false);
+  const [minPrice, setMinPrice] = useState<number | undefined>();
+  const [maxPrice, setMaxPrice] = useState<number | undefined>();
+  const [sortBy, setSortBy] = useState<"newest" | "price-asc" | "price-desc">(
+    "newest"
+  );
 
   const router = useRouter();
   const { addItems, applyCoupon } = useCart();
@@ -128,25 +133,42 @@ export default function EventGalleryPage({
   useEffect(() => {
     if (!event?.photos) return;
 
-    if (!bibNumberFilter) {
-      setFilteredPhotos(event.photos);
-      return;
+    let filtered = [...event.photos];
+
+    // Bib number filter
+    if (bibNumberFilter) {
+      filtered = filtered.filter((photo: any) => {
+        if (!photo.detectedBibNumbers) return false;
+        try {
+          const numbers = JSON.parse(photo.detectedBibNumbers);
+          return numbers.some((n: any) =>
+            n.number.includes(bibNumberFilter)
+          );
+        } catch {
+          return photo.detectedBibNumbers.includes(bibNumberFilter);
+        }
+      });
     }
 
-    const filtered = event.photos.filter((photo: any) => {
-      if (!photo.detectedBibNumbers) return false;
-      try {
-        const numbers = JSON.parse(photo.detectedBibNumbers);
-        return numbers.some((n: any) =>
-          n.number.includes(bibNumberFilter)
-        );
-      } catch {
-        return photo.detectedBibNumbers.includes(bibNumberFilter);
+    // Price filter (all photos in event have same price, so filter by event price)
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const eventPrice = event?.priceEUR || 0;
+      if (
+        (minPrice !== undefined && eventPrice < minPrice) ||
+        (maxPrice !== undefined && eventPrice > maxPrice)
+      ) {
+        filtered = [];
       }
-    });
+    }
+
+    // Sort by price (note: all photos in event have same price, so order doesn't change)
+    if (sortBy === "price-asc" || sortBy === "price-desc") {
+      // Price is uniform within event, so sort is a no-op
+      // Keep for UX consistency but doesn't affect results
+    }
 
     setFilteredPhotos(filtered);
-  }, [bibNumberFilter, event?.photos]);
+  }, [bibNumberFilter, minPrice, maxPrice, sortBy, event?.photos]);
 
   if (loading) {
     return (
@@ -427,6 +449,40 @@ export default function EventGalleryPage({
             </p>
             <button
               onClick={() => setBibNumberFilter("")}
+              className="text-sm text-[#09419b] underline hover:text-blue-900"
+            >
+              {t("bib.clear")}
+            </button>
+          </div>
+        )}
+
+        {/* Filtros de preço */}
+        <div className="mb-8">
+          <PriceFilter
+            onPriceChange={(min, max) => {
+              setMinPrice(min);
+              setMaxPrice(max);
+            }}
+            onSortChange={setSortBy}
+          />
+        </div>
+
+        {/* Resultado da filtragem */}
+        {(minPrice !== undefined || maxPrice !== undefined) && (
+          <div className="mb-4 p-3 bg-[#fef7e8] rounded-lg flex items-center justify-between">
+            <p className="text-sm text-gray-800">
+              {t("grid.showing")} {filteredPhotos.length} {t("grid.photos")}
+              {minPrice !== undefined && maxPrice !== undefined
+                ? ` entre €${minPrice} e €${maxPrice}`
+                : minPrice !== undefined
+                  ? ` a partir de €${minPrice}`
+                  : ` até €${maxPrice}`}
+            </p>
+            <button
+              onClick={() => {
+                setMinPrice(undefined);
+                setMaxPrice(undefined);
+              }}
               className="text-sm text-[#09419b] underline hover:text-blue-900"
             >
               {t("bib.clear")}

@@ -16,9 +16,14 @@ export async function GET(req: NextRequest) {
           select: {
             id: true,
             name: true,
-            price: true,
             thumbnailKey: true,
             key: true,
+            event: {
+              select: {
+                id: true,
+                priceEUR: true,
+              },
+            },
           },
         },
         bundle: {
@@ -43,10 +48,11 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    // Calculate totals
+    // Calculate totals (use captured price or fetch from event)
     const total = cartItems.reduce((sum, item) => {
       if (item.photoId && item.photo) {
-        return sum + (item.photo.price || 0) * item.quantity;
+        const price = item.price ?? item.photo.event.priceEUR ?? 0;
+        return sum + price * item.quantity;
       }
       if (item.bundleId && item.bundle) {
         return sum + item.bundle.bundlePrice * item.quantity;
