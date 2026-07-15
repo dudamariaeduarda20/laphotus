@@ -13,7 +13,9 @@ const createEventSchema = z.object({
   date: z.string().datetime(),
   location: z.string().optional(),
   sport: z.string().min(2),
-  banner: z.string().url().optional(),
+  banner: z.string().url().optional().or(z.literal("")),
+  priceEUR: z.number().min(0).optional(),
+  priceUSD: z.number().min(0).optional(),
 });
 
 /**
@@ -114,7 +116,9 @@ export async function POST(request: NextRequest) {
       validated.location || null,
       validated.sport,
       validated.banner || DEFAULT_EVENT_COVER,
-      status
+      status,
+      validated.priceEUR ?? 0,
+      validated.priceUSD ?? 0
     );
 
     return NextResponse.json(event, { status: 201 });

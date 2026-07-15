@@ -23,6 +23,8 @@ export default function NewEventPage() {
       body: JSON.stringify({
         ...data,
         date: new Date(data.date).toISOString(),
+        priceEUR: parseFloat(data.priceEUR) || 0,
+        priceUSD: parseFloat(data.priceUSD) || 0,
       }),
     });
 

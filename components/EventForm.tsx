@@ -26,6 +26,8 @@ export default function EventForm({
     location: initialData?.location || "",
     sport: initialData?.sport || "",
     banner: initialData?.banner || "",
+    priceEUR: initialData?.priceEUR?.toString() || "",
+    priceUSD: initialData?.priceUSD?.toString() || "",
   });
 
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +46,8 @@ export default function EventForm({
 
   const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    // Reset value so selecting the same file again re-fires onChange
+    e.target.value = "";
     if (!file) return;
 
     setError(null);
@@ -163,6 +167,39 @@ export default function EventForm({
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           placeholder="Estádio Municipal, Lisboa"
         />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Preço por Foto (€)
+          </label>
+          <input
+            type="number"
+            name="priceEUR"
+            value={formData.priceEUR}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            placeholder="0.00"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Preço por Foto ($)
+          </label>
+          <input
+            type="number"
+            name="priceUSD"
+            value={formData.priceUSD}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            placeholder="0.00"
+          />
+        </div>
       </div>
 
       <div>
