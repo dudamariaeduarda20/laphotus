@@ -29,7 +29,8 @@ export default function EventForm({
 
   const [error, setError] = useState<string | null>(null);
   const [bannerUploading, setBannerUploading] = useState(false);
-  const displayBanner = formData.banner || DEFAULT_EVENT_COVER;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const displayBanner = formData.banner || previewUrl || DEFAULT_EVENT_COVER;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -42,14 +43,20 @@ export default function EventForm({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setBannerUploading(true);
     setError(null);
+
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+    setBannerUploading(true);
 
     try {
       const url = await uploadEventBanner(file);
       setFormData((prev) => ({ ...prev, banner: url }));
+      URL.revokeObjectURL(localPreview);
+      setPreviewUrl(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao fazer upload da imagem");
+      setPreviewUrl(null);
     } finally {
       setBannerUploading(false);
     }
