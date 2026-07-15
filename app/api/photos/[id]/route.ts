@@ -7,12 +7,16 @@ import {
   removeFavorite,
 } from "@/lib/services/photoService";
 import { getUserIdFromRequest } from "@/lib/utils/auth";
+import { PhotoStatus } from "@/lib/types";
 import { z } from "zod";
 
+// Photographers can only toggle visibility (AVAILABLE/ARCHIVED) — UPLOADING and
+// PROCESSING are internal pipeline states, not settable through this endpoint.
 const updateSchema = z.object({
   name: z.string().optional(),
   price: z.number().min(0).optional(),
   isPremium: z.boolean().optional(),
+  status: z.enum([PhotoStatus.AVAILABLE, PhotoStatus.ARCHIVED]).optional(),
 });
 
 /**
@@ -98,9 +102,9 @@ export async function DELETE(
       );
     }
 
-    await deletePhoto((await params).id, userId);
+    const result = await deletePhoto((await params).id, userId);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Delete failed";
 

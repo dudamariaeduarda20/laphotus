@@ -1,10 +1,10 @@
 import { notFound, redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { getUserIdFromRequest } from "@/lib/utils/auth";
+import { getUserIdFromCookies } from "@/lib/utils/auth";
 import prisma from "@/lib/db/prisma";
 import Link from "next/link";
 import OrderStatusBadge from "./OrderStatusBadge";
 import PhotoGridClient from "./PhotoGridClient";
+import RecomprarButton from "./RecomprarButton";
 
 export const metadata = {
   title: "Detalhes da Compra - Laphotus",
@@ -17,15 +17,7 @@ interface Props {
 export default async function OrderDetailPage({ params }: Props) {
   const { orderId } = await params;
 
-  // Auth check
-  const cookieStore = await cookies();
-  const req = {
-    headers: {
-      cookie: cookieStore.toString(),
-    },
-  } as any;
-
-  const userId = getUserIdFromRequest(req);
+  const userId = await getUserIdFromCookies();
   if (!userId) {
     redirect("/auth/login");
   }
@@ -166,12 +158,7 @@ export default async function OrderDetailPage({ params }: Props) {
             >
               ⬇ Baixar Fotos
             </Link>
-            <button
-              onClick={() => alert("Adicionar ao carrinho - em desenvolvimento")}
-              className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700"
-            >
-              🛍️ Recomprar
-            </button>
+            <RecomprarButton />
           </div>
         )}
 

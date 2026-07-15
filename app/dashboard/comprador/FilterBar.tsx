@@ -6,16 +6,16 @@ import { X, Search } from "lucide-react";
 
 interface FilterBarProps {
   events: Set<string>;
-  statuses: string[];
+  photographers: Set<string>;
 }
 
-export default function FilterBar({ events, statuses }: FilterBarProps) {
+export default function FilterBar({ events, photographers }: FilterBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState("");
   const [eventFilter, setEventFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [photographerFilter, setPhotographerFilter] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
@@ -23,7 +23,7 @@ export default function FilterBar({ events, statuses }: FilterBarProps) {
   useEffect(() => {
     setSearch(searchParams.get("search") || "");
     setEventFilter(searchParams.get("event") || "");
-    setStatusFilter(searchParams.get("status") || "");
+    setPhotographerFilter(searchParams.get("photographer") || "");
     setDateFrom(searchParams.get("dateFrom") || "");
     setDateTo(searchParams.get("dateTo") || "");
   }, [searchParams]);
@@ -32,7 +32,7 @@ export default function FilterBar({ events, statuses }: FilterBarProps) {
   const updateFilters = (
     newSearch?: string,
     newEvent?: string,
-    newStatus?: string,
+    newPhotographer?: string,
     newDateFrom?: string,
     newDateTo?: string
   ) => {
@@ -40,13 +40,13 @@ export default function FilterBar({ events, statuses }: FilterBarProps) {
 
     const s = newSearch !== undefined ? newSearch : search;
     const e = newEvent !== undefined ? newEvent : eventFilter;
-    const st = newStatus !== undefined ? newStatus : statusFilter;
+    const p = newPhotographer !== undefined ? newPhotographer : photographerFilter;
     const df = newDateFrom !== undefined ? newDateFrom : dateFrom;
     const dt = newDateTo !== undefined ? newDateTo : dateTo;
 
     if (s) params.set("search", s);
     if (e) params.set("event", e);
-    if (st) params.set("status", st);
+    if (p) params.set("photographer", p);
     if (df) params.set("dateFrom", df);
     if (dt) params.set("dateTo", dt);
 
@@ -63,8 +63,8 @@ export default function FilterBar({ events, statuses }: FilterBarProps) {
     updateFilters(undefined, value);
   };
 
-  const handleStatusChange = (value: string) => {
-    setStatusFilter(value);
+  const handlePhotographerChange = (value: string) => {
+    setPhotographerFilter(value);
     updateFilters(undefined, undefined, value);
   };
 
@@ -79,12 +79,12 @@ export default function FilterBar({ events, statuses }: FilterBarProps) {
   };
 
   const hasActiveFilters =
-    search || eventFilter || statusFilter || dateFrom || dateTo;
+    search || eventFilter || photographerFilter || dateFrom || dateTo;
 
   const handleReset = () => {
     setSearch("");
     setEventFilter("");
-    setStatusFilter("");
+    setPhotographerFilter("");
     setDateFrom("");
     setDateTo("");
     router.push("");
@@ -131,28 +131,20 @@ export default function FilterBar({ events, statuses }: FilterBarProps) {
             </select>
           </div>
 
-          {/* Status Filter */}
+          {/* Photographer Filter */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-900">
-              Status
+              Fotógrafo
             </label>
             <select
-              value={statusFilter}
-              onChange={(e) => handleStatusChange(e.target.value)}
+              value={photographerFilter}
+              onChange={(e) => handlePhotographerChange(e.target.value)}
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-blue-500 focus:outline-none"
             >
-              <option value="">Todos os status</option>
-              {statuses.map((status) => (
-                <option key={status} value={status}>
-                  {status === "PENDING"
-                    ? "Pendente"
-                    : status === "COMPLETED"
-                      ? "Pago"
-                      : status === "PROCESSING"
-                        ? "Processando"
-                        : status === "FAILED"
-                          ? "Falhou"
-                          : "Reembolsado"}
+              <option value="">Todos os fotógrafos</option>
+              {Array.from(photographers).sort().map((photographer) => (
+                <option key={photographer} value={photographer}>
+                  {photographer}
                 </option>
               ))}
             </select>

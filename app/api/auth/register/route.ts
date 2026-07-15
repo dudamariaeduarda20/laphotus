@@ -9,11 +9,12 @@ const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().min(2),
+  // ADMIN nunca é aceite no registo público — só CLIENT/PHOTOGRAPHER/ORGANIZER
+  // fazem sentido como autoatendimento. Contas admin exigem rota protegida à parte.
   role: z.enum([
     UserRole.CLIENT,
     UserRole.PHOTOGRAPHER,
     UserRole.ORGANIZER,
-    UserRole.ADMIN,
   ]).optional(),
 });
 

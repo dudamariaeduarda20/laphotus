@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 
 const SECRET =
   process.env.AUTH_SECRET || "laphotus-dev-insecure-secret-change-in-production";
@@ -58,6 +59,15 @@ export function getUserFromRequest(request: NextRequest) {
 
 export function getUserIdFromRequest(request: NextRequest): string | null {
   const token = request.cookies.get("auth-token")?.value;
+  if (!token) return null;
+  const payload = verifyToken(token);
+  return (payload?.id as string) || null;
+}
+
+// For Server Components (no NextRequest available) — reads via next/headers instead
+export async function getUserIdFromCookies(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth-token")?.value;
   if (!token) return null;
   const payload = verifyToken(token);
   return (payload?.id as string) || null;

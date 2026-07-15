@@ -55,7 +55,68 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create download record
+    // Generate ZIP stream
+    const archive = new ZipArchive({ zlib: { level: 6 } });
+
+    // Collect photos and generate presigned URLs
+    const photos = order.items.map((item) => item.photo);
+
+    let addedCount = 0;
+    const failures: string[] = [];
+
+    for (const photo of photos) {
+      if (!photo.key) {
+        failures.push(`${photo.id}: sem key`);
+        continue;
+      }
+
+      try {
+        // Photos live in Supabase Storage (public URL saved as key) or,
+        // for older/seed data, a raw S3 object key — resolve accordingly.
+        const isPublicUrl = photo.key.startsWith("http://") || photo.key.startsWith("https://");
+
+        const fetchUrl = isPublicUrl
+          ? photo.key
+          : await getSignedUrl(
+              s3Client,
+              new GetObjectCommand({
+                Bucket: process.env.AWS_S3_BUCKET || "laphotus-dev",
+                Key: photo.key,
+              }),
+              { expiresIn: 3600 }
+            );
+
+        const response = await fetch(fetchUrl);
+        if (!response.ok) {
+          failures.push(`${photo.id}: storage respondeu ${response.status}`);
+          continue;
+        }
+
+        const buffer = await response.arrayBuffer();
+        const filename = `${photo.name || photo.id}.jpg`;
+
+        archive.append(Buffer.from(buffer), { name: filename });
+        addedCount++;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "erro desconhecido";
+        failures.push(`${photo.id}: ${message}`);
+        console.error(`Failed to add photo ${photo.id} to ZIP:`, error);
+      }
+    }
+
+    // Never hand back a ZIP with nothing in it — surface the real failure instead
+    if (addedCount === 0) {
+      console.error("ZIP generation failed for all photos", { orderId, failures });
+      return NextResponse.json(
+        {
+          error:
+            "Não foi possível obter as fotos do armazenamento. Tente novamente mais tarde ou contacte o suporte.",
+        },
+        { status: 502 }
+      );
+    }
+
+    // Only record the download once we know the ZIP actually has content
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h expiry
     await prisma.download.create({
       data: {
@@ -64,39 +125,6 @@ export async function POST(request: NextRequest) {
         expiresAt,
       },
     });
-
-    // Generate ZIP stream
-    const archive = new ZipArchive({ zlib: { level: 6 } });
-
-    // Collect photos and generate presigned URLs
-    const photos = order.items.map((item) => item.photo);
-
-    for (const photo of photos) {
-      if (!photo.key) continue;
-
-      try {
-        const signedUrl = await getSignedUrl(
-          s3Client,
-          new GetObjectCommand({
-            Bucket: process.env.AWS_S3_BUCKET || "laphotus-dev",
-            Key: photo.key,
-          }),
-          { expiresIn: 3600 }
-        );
-
-        // Fetch from S3 and add to archive
-        const response = await fetch(signedUrl);
-        if (!response.ok) continue;
-
-        const buffer = await response.arrayBuffer();
-        const filename = `${photo.name || photo.id}.jpg`;
-
-        archive.append(Buffer.from(buffer), { name: filename });
-      } catch (error) {
-        console.error(`Failed to add photo ${photo.id} to ZIP:`, error);
-        continue;
-      }
-    }
 
     await archive.finalize();
 

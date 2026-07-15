@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getEventById,
   updateEvent,
+  deleteEvent,
   getEventStats,
 } from "@/lib/services/eventService";
 import { getUserIdFromRequest, requireRole } from "@/lib/utils/auth";
@@ -103,14 +104,13 @@ export async function DELETE(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // Arquivar em vez de apagar hard (preserva fotos + encomendas)
-    const updated = await updateEvent((await params).id, userId, {
-      status: "archived",
-    });
+    // Apaga de verdade só se o evento nunca teve fotos; senão arquiva
+    // (preserva fotos + encomendas já pagas — ver deleteEvent).
+    const result = await deleteEvent((await params).id, userId);
 
-    return NextResponse.json({ ok: true, event: updated });
+    return NextResponse.json({ ok: true, ...result });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Archive failed";
+    const message = error instanceof Error ? error.message : "Delete failed";
 
     if (message === "Not authorized") {
       return NextResponse.json({ error: message }, { status: 403 });

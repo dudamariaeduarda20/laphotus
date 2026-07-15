@@ -12,6 +12,7 @@ export interface PhotographerStats {
   photosForSale: number; // fotos AVAILABLE do fotógrafo
   pendingPayout: number; // disponível para saque (sem trilho de pagamento real)
   thisMonth: number;
+  eventsCount: number; // eventos distintos onde o fotógrafo tem fotos
   salesByDay: SalesByDay[]; // últimos 30 dias
 }
 
@@ -27,7 +28,7 @@ export async function getPhotographerStats(
   });
   if (!photographer) return null;
 
-  const [transactions, photosForSale] = await Promise.all([
+  const [transactions, photosForSale, eventGroups] = await Promise.all([
     prisma.transaction.findMany({
       where: { photographerId: photographer.id, status: "completed" },
       orderBy: { createdAt: "asc" },
@@ -36,7 +37,12 @@ export async function getPhotographerStats(
     prisma.photo.count({
       where: { photographerId: photographer.id, status: "AVAILABLE" },
     }),
+    prisma.photo.groupBy({
+      by: ["eventId"],
+      where: { photographerId: photographer.id },
+    }),
   ]);
+  const eventsCount = eventGroups.length;
 
   const totalRevenue = transactions.reduce(
     (s, t) => s + t.photographerPayout,
@@ -73,6 +79,7 @@ export async function getPhotographerStats(
     photosForSale,
     pendingPayout: totalRevenue, // sem registo de saques -> tudo disponível
     thisMonth,
+    eventsCount,
     salesByDay: days,
   };
 }
@@ -95,6 +102,7 @@ export interface SoldPhotoEntry {
   price: number;
   orderId: string;
   createdAt: string;
+  buyerName: string;
 }
 
 export interface PhotographerEventsResult {
@@ -159,6 +167,7 @@ export async function getPhotographerEvents(
           event: { select: { title: true } },
         },
       },
+      order: { select: { user: { select: { name: true } } } },
     },
   });
 
@@ -177,6 +186,7 @@ export async function getPhotographerEvents(
       price: item.price,
       orderId: item.orderId,
       createdAt: item.createdAt.toISOString(),
+      buyerName: item.order.user.name,
     });
   }
 

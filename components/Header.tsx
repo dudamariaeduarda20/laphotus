@@ -27,7 +27,16 @@ export default function Header() {
     router.push("/");
   };
 
-  const dashboardHref = user?.role === "ADMIN" ? "/admin/dashboard" : "/dashboard";
+  const dashboardHref =
+    user?.role === "ADMIN"
+      ? "/admin/dashboard"
+      : user?.role === "ORGANIZER"
+        ? "/organizer/dashboard"
+        : user?.role === "PHOTOGRAPHER"
+          ? "/photographer"
+          : user?.role === "CLIENT"
+            ? "/dashboard/comprador"
+            : "/dashboard";
 
   return (
     <header
@@ -100,6 +109,12 @@ export default function Header() {
                 <div className="absolute right-0 mt-2 w-48 bg-white border border-[#ddd] rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition">
                   <Link href="/profile" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                     {t("nav.profile", "Perfil")}
+                  </Link>
+                  <Link href="/favoritos" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                    {t("nav.favorites", "Meus Favoritos")}
+                  </Link>
+                  <Link href="/messages" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
+                    {t("nav.messages", "Mensagens")}
                   </Link>
                   <Link href="/settings" className="block px-4 py-2 text-sm text-[#333] hover:bg-[#f5f5f5] border-b">
                     {t("settings.title", "Configurações")}
@@ -228,6 +243,20 @@ export default function Header() {
                   onClick={() => setMobileOpen(false)}
                 >
                   {t("nav.profile", "Perfil")}
+                </Link>
+                <Link
+                  href="/favoritos"
+                  className={`py-3 text-base border-b ${isHome ? "text-white hover:text-[#f0bf38]" : "text-[#333] hover:text-[#ff2f92]"} border-[#eee]`}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("nav.favorites", "Meus Favoritos")}
+                </Link>
+                <Link
+                  href="/messages"
+                  className={`py-3 text-base border-b ${isHome ? "text-white hover:text-[#f0bf38]" : "text-[#333] hover:text-[#ff2f92]"} border-[#eee]`}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("nav.messages", "Mensagens")}
                 </Link>
                 <Link
                   href="/settings"

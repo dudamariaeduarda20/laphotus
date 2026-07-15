@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import Link from "next/link";
@@ -9,15 +7,8 @@ import PhotographerSalesDashboard from "@/components/PhotographerSalesDashboard"
 import PhotographerTabs from "@/components/PhotographerTabs";
 
 export default function DashboardPage() {
-  const router = useRouter();
   const { user, isPhotographer, isOrganizer, isClient, isAdmin } = useAuth();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (isClient && !isPhotographer && !isOrganizer && !isAdmin) {
-      router.push("/");
-    }
-  }, [isClient, isPhotographer, isOrganizer, isAdmin, router]);
 
   return (
     <div className="-mx-4 -my-8">

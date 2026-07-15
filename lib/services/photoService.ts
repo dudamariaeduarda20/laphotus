@@ -134,6 +134,7 @@ export async function updatePhoto(
     name?: string;
     price?: number;
     isPremium?: boolean;
+    status?: PhotoStatus;
   }
 ) {
   const photo = await prisma.photo.findUnique({
@@ -183,11 +184,23 @@ export async function deletePhoto(photoId: string, userId: string) {
     }
   }
 
+  // Never hard-delete a photo that's part of an order — that would cascade-delete
+  // the OrderItem (schema: onDelete Cascade) and silently corrupt a buyer's paid
+  // order history. Archive instead so it disappears from the shop but stays intact.
+  const orderItemCount = await prisma.orderItem.count({ where: { photoId } });
+  if (orderItemCount > 0) {
+    await prisma.photo.update({
+      where: { id: photoId },
+      data: { status: PhotoStatus.ARCHIVED },
+    });
+    return { success: true, archived: true };
+  }
+
   await prisma.photo.delete({
     where: { id: photoId },
   });
 
-  return { success: true };
+  return { success: true, archived: false };
 }
 
 /**

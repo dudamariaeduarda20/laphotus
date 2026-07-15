@@ -60,6 +60,58 @@ export async function sendOrderConfirmationEmail(data: OrderConfirmationData) {
   }
 }
 
+interface ModerationDecisionData {
+  to: string;
+  recipientName: string;
+  itemType: "evento" | "foto";
+  itemName: string;
+  approved: boolean;
+  reason?: string;
+}
+
+export async function sendModerationDecisionEmail(data: ModerationDecisionData) {
+  const client = resend();
+  if (!client) {
+    console.warn("[emailService] RESEND_API_KEY não configurada — email de moderação não enviado.");
+    return { sent: false, reason: "no_api_key" as const };
+  }
+
+  const verb = data.approved ? "aprovado" : "rejeitado";
+  const subject = `O seu ${data.itemType} "${data.itemName}" foi ${verb}`;
+  const html = `
+    <div style="font-family:-apple-system,sans-serif;max-width:480px;margin:0 auto;color:#1a1a1a;">
+      <h1 style="color:${data.approved ? "#09419b" : "#ff2f92"};font-size:22px;">
+        ${data.approved ? "✓" : "✕"} ${data.itemType === "evento" ? "Evento" : "Foto"} ${verb}
+      </h1>
+      <p style="color:#555;">Olá ${data.recipientName},</p>
+      <p style="color:#555;">
+        O seu ${data.itemType} <b>"${data.itemName}"</b> foi ${verb} pela equipa de moderação da Laphotus.
+      </p>
+      ${
+        !data.approved && data.reason
+          ? `<p style="color:#555;background:#fef7e8;border-left:3px solid #f0bf38;padding:12px;">
+               <b>Motivo:</b> ${data.reason}
+             </p>`
+          : ""
+      }
+      <p style="color:#999;font-size:13px;">Laphotus — Marketplace de fotografia desportiva</p>
+    </div>
+  `;
+
+  try {
+    const result = await client.emails.send({
+      from: FROM,
+      to: data.to,
+      subject,
+      html,
+    });
+    return { sent: true, id: result.data?.id };
+  } catch (err) {
+    console.error("[emailService] Falha ao enviar email de moderação:", err);
+    return { sent: false, reason: "send_error" as const };
+  }
+}
+
 function formatMoney(value: number, currency: string) {
   return new Intl.NumberFormat("pt-PT", { style: "currency", currency }).format(value);
 }

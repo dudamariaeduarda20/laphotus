@@ -6,49 +6,56 @@ import Link from "next/link";
 import { useCart } from "@/lib/contexts/CartContext";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 
+interface VerifyResult {
+  confirmed: boolean;
+  orderId: string;
+  total?: number;
+  status?: string;
+  paidAt?: string | null;
+  eventTitle?: string | null;
+  photoCount?: number;
+}
+
 function SuccessContent() {
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
   const { t, locale } = useTranslation();
-  const sessionId = searchParams.get("session");
-  const orderId = searchParams.get("order");
-  const [confirmed, setConfirmed] = useState(false);
+  const sessionId = searchParams.get("session_id");
+  const [result, setResult] = useState<VerifyResult | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const confirmPayment = async () => {
-      if (!orderId) {
+    const verify = async () => {
+      if (!sessionId) {
         setLoading(false);
         return;
       }
 
       try {
-        // Simulate webhook call
-        const res = await fetch("/api/webhooks/stripe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "charge.succeeded",
-            data: {
-              orderId,
-              stripePaymentId: sessionId,
-            },
-          }),
-        });
+        const res = await fetch(
+          `/api/checkout/verify?session_id=${encodeURIComponent(sessionId)}`,
+          { credentials: "include" }
+        );
 
         if (res.ok) {
-          setConfirmed(true);
-          clearCart(); // limpa estado + localStorage (carrinho e cupom)
+          const data: VerifyResult = await res.json();
+          setResult(data);
+          if (data.confirmed) {
+            clearCart(); // limpa estado + localStorage (carrinho e cupom)
+          }
         }
       } catch (err) {
-        console.error("Falha ao confirmar pagamento:", err);
+        console.error("Falha ao verificar pagamento:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    confirmPayment();
-  }, [orderId, sessionId, clearCart]);
+    verify();
+  }, [sessionId, clearCart]);
+
+  const confirmed = result?.confirmed ?? false;
+  const orderId = result?.orderId ?? null;
 
   if (loading) {
     return (
@@ -105,14 +112,32 @@ function SuccessContent() {
             <span className="text-gray-600">{t("success.order.number")}</span>
             <span className="font-semibold text-gray-900">#{orderId?.substring(0, 8)}</span>
           </div>
+          {result?.eventTitle && (
+            <div className="flex justify-between">
+              <span className="text-gray-600">Evento</span>
+              <span className="font-semibold text-gray-900">{result.eventTitle}</span>
+            </div>
+          )}
+          {typeof result?.photoCount === "number" && (
+            <div className="flex justify-between">
+              <span className="text-gray-600">Fotos</span>
+              <span className="font-semibold text-gray-900">{result.photoCount}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-gray-600">{t("success.order.date")}</span>
             <span className="font-semibold text-gray-900">
-              {new Date().toLocaleDateString(
+              {new Date(result?.paidAt || Date.now()).toLocaleDateString(
                 { pt: "pt-PT", en: "en-US", es: "es-ES", fr: "fr-FR", de: "de-DE" }[locale] || "pt-PT"
               )}
             </span>
           </div>
+          {typeof result?.total === "number" && (
+            <div className="flex justify-between">
+              <span className="text-gray-600">Total pago</span>
+              <span className="font-semibold text-gray-900">€ {result.total.toFixed(2)}</span>
+            </div>
+          )}
           <div className="flex justify-between">
             <span className="text-gray-600">{t("success.order.status")}</span>
             <span className="inline-block px-3 py-1 bg-[#fef7e8] text-green-800 text-sm font-semibold rounded-full">

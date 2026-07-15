@@ -43,17 +43,22 @@ export default function EditEventPage({
   };
 
   const handleArchive = async () => {
-    if (!confirm("Arquivar este evento? As fotos e encomendas são preservadas.")) return;
+    const photoCount = event?.photos?.length ?? 0;
+    const confirmMsg =
+      photoCount > 0
+        ? "Arquivar este evento? As fotos e encomendas são preservadas."
+        : "Este evento não tem fotos — vai ser apagado definitivamente. Continuar?";
+    if (!confirm(confirmMsg)) return;
     setArchiving(true);
     try {
       const res = await fetch(`/api/events/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || "Falha ao arquivar");
+        throw new Error(err.error || "Falha ao apagar");
       }
       router.push("/events");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Falha ao arquivar");
+      setError(e instanceof Error ? e.message : "Falha ao apagar");
     } finally {
       setArchiving(false);
     }

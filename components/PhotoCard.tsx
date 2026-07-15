@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useCart } from "@/lib/contexts/CartContext";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useState } from "react";
-import { getPhotoImageUrl } from "@/lib/photoUrl";
+import StarRating from "./StarRating";
+import FavoriteButton from "./FavoriteButton";
 
 interface PhotoCardProps {
   photo: {
@@ -14,6 +15,8 @@ interface PhotoCardProps {
     key: string;
     price: number;
     isPremium: boolean;
+    averageRating?: number;
+    reviewCount?: number;
     photographer?: {
       id: string;
       userId: string;
@@ -64,10 +67,11 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
             <div className="text-6xl opacity-20">📸</div>
           </div>
 
-          {/* Imagem real (upload local) ou placeholder */}
+          {/* Marca d'água real nos pixels, via /api/photos/[id]/preview — nunca
+              o arquivo original (mesmo endpoint usado na página de detalhe). */}
           {photo.key && (
             <Image
-              src={getPhotoImageUrl(photo.key, photo.name)}
+              src={`/api/photos/${photo.id}/preview?size=thumb`}
               alt={photo.name}
               fill
               className="object-cover group-hover:scale-105 transition"
@@ -83,8 +87,11 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
             </div>
           )}
 
-          {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center">
+          {/* Favoritar */}
+          <FavoriteButton photoId={photo.id} className="absolute top-2 left-2" />
+
+          {/* Overlay on hover — pointer-events-none pra não tapar o clique do coração */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition flex items-center justify-center pointer-events-none">
             <div className="opacity-0 group-hover:opacity-100 transition">
               <div className="text-white text-center">
                 <div className="text-2xl mb-2">👁️</div>
@@ -96,9 +103,16 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
 
         {/* Info */}
         <div className="p-4">
-          <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2 text-sm">
+          <h3 className="font-semibold text-gray-900 line-clamp-2 mb-1 text-sm">
             {photo.name}
           </h3>
+
+          {!!photo.reviewCount && (
+            <div className="mb-2 flex items-center gap-1">
+              <StarRating rating={photo.averageRating || 0} />
+              <span className="text-xs text-gray-500">({photo.reviewCount})</span>
+            </div>
+          )}
 
           {/* Price */}
           <div className="flex items-center justify-between">

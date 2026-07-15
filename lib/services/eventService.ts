@@ -141,6 +141,7 @@ export async function getUserEvents(userId: string) {
       include: {
         organizer: true,
         photos: { take: 1 },
+        _count: { select: { photos: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -251,11 +252,23 @@ export async function deleteEvent(eventId: string, userId: string) {
     throw new Error("Not authorized");
   }
 
+  // Never hard-delete an event that already has photos — Photo has
+  // onDelete: Cascade on Event, so a hard delete would wipe every photo
+  // (and, transitively, any paid OrderItem for them). Archive instead.
+  const photoCount = await prisma.photo.count({ where: { eventId } });
+  if (photoCount > 0) {
+    await prisma.event.update({
+      where: { id: eventId },
+      data: { status: "archived" },
+    });
+    return { success: true, archived: true };
+  }
+
   await prisma.event.delete({
     where: { id: eventId },
   });
 
-  return { success: true };
+  return { success: true, archived: false };
 }
 
 /**

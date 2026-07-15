@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       mode: "payment",
       customer_email: (await prisma.user.findUnique({ where: { id: userId } }))
         ?.email,
-      success_url: `${process.env.NEXT_PUBLIC_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_URL}/carrinho`,
       line_items: validated.items.map((item) => ({
         price_data: {

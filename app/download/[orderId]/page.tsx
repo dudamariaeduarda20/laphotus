@@ -1,7 +1,6 @@
 import { notFound, redirect } from "next/navigation";
-import { getUserIdFromRequest } from "@/lib/utils/auth";
+import { getUserIdFromCookies } from "@/lib/utils/auth";
 import prisma from "@/lib/db/prisma";
-import { cookies } from "next/headers";
 import DownloadClient from "./DownloadClient";
 
 export const metadata = {
@@ -15,15 +14,7 @@ interface Props {
 export default async function DownloadPage({ params }: Props) {
   const { orderId } = await params;
 
-  // Get user from auth
-  const cookieStore = await cookies();
-  const req = {
-    headers: {
-      cookie: cookieStore.toString(),
-    },
-  } as any;
-
-  const userId = getUserIdFromRequest(req);
+  const userId = await getUserIdFromCookies();
   if (!userId) {
     redirect("/auth/login");
   }

@@ -6,9 +6,12 @@ import { Order, OrderItem, Photo } from "@prisma/client";
 import FilterBar from "./FilterBar";
 import PurchaseHistoryTable from "./PurchaseHistoryTable";
 
-interface OrderWithItems extends Order {
+export interface OrderWithItems extends Order {
   items: (OrderItem & {
-    photo: Photo & { event: { title: string } };
+    photo: Photo & {
+      event: { id: string; title: string };
+      photographer: { user: { name: string } };
+    };
   })[];
 }
 
@@ -22,7 +25,7 @@ export default function DashboardClient({ orders }: DashboardClientProps) {
   // Get filter values from URL
   const search = searchParams.get("search") || "";
   const eventFilter = searchParams.get("event") || "";
-  const statusFilter = searchParams.get("status") || "";
+  const photographerFilter = searchParams.get("photographer") || "";
   const dateFrom = searchParams.get("dateFrom")
     ? new Date(searchParams.get("dateFrom")!)
     : null;
@@ -41,10 +44,15 @@ export default function DashboardClient({ orders }: DashboardClientProps) {
     return events;
   }, [orders]);
 
-  // Extract unique statuses
-  const uniqueStatuses = useMemo(() => {
-    const statuses = new Set(orders.map((o) => o.status));
-    return Array.from(statuses).sort();
+  // Extract unique photographers for filter dropdown
+  const uniquePhotographers = useMemo(() => {
+    const photographers = new Set<string>();
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        photographers.add(item.photo.photographer.user.name);
+      });
+    });
+    return photographers;
   }, [orders]);
 
   // Apply filters
@@ -70,9 +78,14 @@ export default function DashboardClient({ orders }: DashboardClientProps) {
         }
       }
 
-      // Status filter
-      if (statusFilter && order.status !== statusFilter) {
-        return false;
+      // Photographer filter
+      if (photographerFilter) {
+        const hasPhotographer = order.items.some(
+          (item) => item.photo.photographer.user.name === photographerFilter
+        );
+        if (!hasPhotographer) {
+          return false;
+        }
       }
 
       // Date range filter
@@ -90,11 +103,11 @@ export default function DashboardClient({ orders }: DashboardClientProps) {
 
       return true;
     });
-  }, [orders, search, eventFilter, statusFilter, dateFrom, dateTo]);
+  }, [orders, search, eventFilter, photographerFilter, dateFrom, dateTo]);
 
   return (
     <>
-      <FilterBar events={uniqueEvents} statuses={uniqueStatuses} />
+      <FilterBar events={uniqueEvents} photographers={uniquePhotographers} />
 
       {/* Results Count */}
       <div className="mb-6 text-sm text-slate-600">

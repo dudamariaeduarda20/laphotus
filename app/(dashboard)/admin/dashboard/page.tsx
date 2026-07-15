@@ -123,6 +123,17 @@ export default function AdminDashboard() {
       {/* Admin Links */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link
+          href="/admin/analytics"
+          className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
+        >
+          <div className="text-2xl mb-3">📊</div>
+          <h3 className="font-bold text-gray-900">Estatísticas Gerais</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Vendas, utilizadores e rankings
+          </p>
+        </Link>
+
+        <Link
           href="/admin/photographers"
           className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
         >
@@ -130,6 +141,50 @@ export default function AdminDashboard() {
           <h3 className="font-bold text-gray-900">Gestão de Fotógrafos</h3>
           <p className="text-sm text-gray-600 mt-1">
             Aprovar/bloquear fotógrafos
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/events"
+          className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
+        >
+          <div className="text-2xl mb-3">📅</div>
+          <h3 className="font-bold text-gray-900">Moderação de Eventos</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Aprovar/rejeitar eventos
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/photos"
+          className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
+        >
+          <div className="text-2xl mb-3">🖼️</div>
+          <h3 className="font-bold text-gray-900">Moderação de Fotos</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Aprovar/rejeitar fotos
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/reviews"
+          className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
+        >
+          <div className="text-2xl mb-3">⭐</div>
+          <h3 className="font-bold text-gray-900">Moderação de Avaliações</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Aprovar/rejeitar comentários
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/reports"
+          className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition"
+        >
+          <div className="text-2xl mb-3">🚩</div>
+          <h3 className="font-bold text-gray-900">Denúncias</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            Moderar denúncias e banir
           </p>
         </Link>
 

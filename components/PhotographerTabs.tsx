@@ -10,6 +10,7 @@ const TABS = [
   { href: "/photographer/opportunities", key: "photographer.tabs.opportunities" },
   { href: "/upload", key: "photographer.tabs.upload" },
   { href: "/earnings", key: "photographer.tabs.earnings" },
+  { href: "/photographer/sales", key: "photographer.tabs.sales" },
 ];
 
 export default function PhotographerTabs() {

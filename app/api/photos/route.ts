@@ -7,6 +7,7 @@ import { z } from "zod";
 import prisma from "@/lib/db/prisma";
 import { uploadToS3, isMockMode } from "@/lib/services/s3Service";
 import { storageEnabled, uploadToStorage } from "@/lib/services/supabaseStorage";
+import { getReviewSummaries } from "@/lib/services/reviewService";
 
 const uploadSchema = z.object({
   eventId: z.string().min(1),
@@ -50,7 +51,15 @@ export async function GET(request: NextRequest) {
 
       photos = await prisma.photo.findMany({
         where: { photographerId: photographer.id },
-        include: { photographer: true },
+        include: {
+          photographer: true,
+          event: { select: { id: true, title: true, sport: true } },
+          _count: {
+            select: {
+              orderItems: { where: { order: { status: "COMPLETED" } } },
+            },
+          },
+        },
         orderBy: { createdAt: "desc" },
       });
     } else if (eventId) {
@@ -61,6 +70,15 @@ export async function GET(request: NextRequest) {
         // Get all photos from event
         photos = await getPhotosByEvent(eventId);
       }
+
+      // One grouped query for the whole grid's review averages — not one
+      // fetch per card.
+      const summaries = await getReviewSummaries(photos.map((p) => p.id));
+      photos = photos.map((p) => ({
+        ...p,
+        averageRating: summaries.get(p.id)?.averageRating || 0,
+        reviewCount: summaries.get(p.id)?.reviewCount || 0,
+      }));
     } else {
       return NextResponse.json(
         { error: "eventId obrigatório" },

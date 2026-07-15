@@ -99,6 +99,10 @@ export async function loginUser(email: string, password: string) {
     throw new Error("Invalid email or password");
   }
 
+  if (user.banned) {
+    throw new Error("Conta suspensa. Contacte o suporte.");
+  }
+
   // Log auth attempt
   await prisma.auditLog.create({
     data: {

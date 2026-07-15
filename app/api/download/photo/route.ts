@@ -63,7 +63,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Generate signed URL
+    // Photos live in Supabase Storage (public URL saved as key) or,
+    // for older/seed data, a raw S3 object key — resolve accordingly.
+    if (photoKey.startsWith("http://") || photoKey.startsWith("https://")) {
+      return NextResponse.json({ url: photoKey });
+    }
+
     const signedUrl = await getSignedUrl(
       s3Client,
       new GetObjectCommand({

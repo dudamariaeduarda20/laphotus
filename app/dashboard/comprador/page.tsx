@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 import { Suspense } from "react";
-import { getUserIdFromRequest } from "@/lib/utils/auth";
+import { getUserIdFromCookies } from "@/lib/utils/auth";
 import prisma from "@/lib/db/prisma";
 import StatCard from "./StatCard";
 import DashboardClient from "./DashboardClient";
@@ -11,14 +10,7 @@ export const metadata = {
 };
 
 export default async function BuyerDashboardPage() {
-  const cookieStore = await cookies();
-  const req = {
-    headers: {
-      cookie: cookieStore.toString(),
-    },
-  } as any;
-
-  const userId = getUserIdFromRequest(req);
+  const userId = await getUserIdFromCookies();
   if (!userId) {
     redirect("/auth/login");
   }
@@ -33,15 +25,18 @@ export default async function BuyerDashboardPage() {
     redirect("/");
   }
 
-  // Fetch all orders for this user
+  // Fetch completed purchases for this user (a "compra" is a paid order)
   const orders = await prisma.order.findMany({
-    where: { userId },
+    where: { userId, status: "COMPLETED" },
     include: {
       items: {
         include: {
           photo: {
             include: {
-              event: { select: { title: true } },
+              event: { select: { id: true, title: true } },
+              photographer: {
+                include: { user: { select: { name: true } } },
+              },
             },
           },
         },
