@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { uploadEventBanner } from "@/lib/services/eventBannerUpload";
 
 interface EventFormProps {
   onSubmit: (data: any) => Promise<void>;
@@ -27,6 +28,7 @@ export default function EventForm({
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [bannerUploading, setBannerUploading] = useState(false);
   const displayBanner = formData.banner || DEFAULT_EVENT_COVER;
 
   const handleChange = (
@@ -34,6 +36,23 @@ export default function EventForm({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setBannerUploading(true);
+    setError(null);
+
+    try {
+      const url = await uploadEventBanner(file);
+      setFormData((prev) => ({ ...prev, banner: url }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao fazer upload da imagem");
+    } finally {
+      setBannerUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,18 +155,27 @@ export default function EventForm({
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          URL da Imagem do Banner
+          Imagem do Banner
         </label>
-        <input
-          type="url"
-          name="banner"
-          value={formData.banner}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-          placeholder="https://exemplo.com/banner.jpg"
-        />
+        <div className="flex items-center gap-4">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleBannerUpload}
+            disabled={bannerUploading}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          {bannerUploading && (
+            <div className="flex items-center gap-2">
+              <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-[#09419b]"></div>
+              <span className="text-sm text-gray-600">Enviando...</span>
+            </div>
+          )}
+        </div>
         <p className="text-xs text-gray-500 mt-2">
-          {formData.banner ? "Imagem customizada" : "Usando capa padrão"}
+          {formData.banner
+            ? "Imagem carregada"
+            : "Clique para escolher uma imagem (máx. 5MB)"}
         </p>
       </div>
 
