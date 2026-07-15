@@ -21,13 +21,37 @@ export async function GET(req: NextRequest) {
             key: true,
           },
         },
+        bundle: {
+          select: {
+            id: true,
+            title: true,
+            bundlePrice: true,
+            originalPrice: true,
+            discount: true,
+            photos: {
+              include: {
+                photo: {
+                  select: {
+                    thumbnailKey: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
 
     // Calculate totals
     const total = cartItems.reduce((sum, item) => {
-      return sum + (item.photo.price || 0) * item.quantity;
+      if (item.photoId && item.photo) {
+        return sum + (item.photo.price || 0) * item.quantity;
+      }
+      if (item.bundleId && item.bundle) {
+        return sum + item.bundle.bundlePrice * item.quantity;
+      }
+      return sum;
     }, 0);
 
     return NextResponse.json({

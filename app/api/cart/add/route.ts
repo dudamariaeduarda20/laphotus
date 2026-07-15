@@ -9,11 +9,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { photoId, quantity = 1 } = await req.json();
+    const { photoId, bundleId, quantity = 1 } = await req.json();
 
-    if (!photoId) {
+    if (!photoId && !bundleId) {
       return NextResponse.json(
-        { error: "photoId is required" },
+        { error: "photoId or bundleId is required" },
         { status: 400 }
       );
     }
@@ -25,37 +25,63 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify photo exists
-    const photo = await prisma.photo.findUnique({
-      where: { id: photoId },
-      select: { id: true, price: true },
-    });
+    if (photoId) {
+      const photo = await prisma.photo.findUnique({
+        where: { id: photoId },
+        select: { id: true, price: true },
+      });
 
-    if (!photo) {
-      return NextResponse.json({ error: "Photo not found" }, { status: 404 });
-    }
+      if (!photo) {
+        return NextResponse.json({ error: "Photo not found" }, { status: 404 });
+      }
 
-    // Upsert cart item (add or increase quantity)
-    const cartItem = await prisma.cart.upsert({
-      where: { userId_photoId: { userId: userId, photoId } },
-      update: { quantity: { increment: quantity } },
-      create: { userId: userId, photoId, quantity },
-      include: {
-        photo: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            thumbnailKey: true,
+      const cartItem = await prisma.cart.upsert({
+        where: { userId_photoId: { userId: userId, photoId } },
+        update: { quantity: { increment: quantity } },
+        create: { userId: userId, photoId, quantity },
+        include: {
+          photo: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              thumbnailKey: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    return NextResponse.json({
-      success: true,
-      cartItem,
-    });
+      return NextResponse.json({ success: true, cartItem });
+    }
+
+    if (bundleId) {
+      const bundle = await prisma.photoBundle.findUnique({
+        where: { id: bundleId },
+        select: { id: true, bundlePrice: true, title: true },
+      });
+
+      if (!bundle) {
+        return NextResponse.json({ error: "Bundle not found" }, { status: 404 });
+      }
+
+      const cartItem = await prisma.cart.upsert({
+        where: { userId_bundleId: { userId: userId, bundleId } },
+        update: { quantity: { increment: quantity } },
+        create: { userId: userId, bundleId, quantity },
+        include: {
+          bundle: {
+            select: {
+              id: true,
+              title: true,
+              bundlePrice: true,
+              discount: true,
+            },
+          },
+        },
+      });
+
+      return NextResponse.json({ success: true, cartItem });
+    }
   } catch (error) {
     console.error("[cart/add] error:", error);
     return NextResponse.json(

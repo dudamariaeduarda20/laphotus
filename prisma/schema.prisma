@@ -203,8 +203,11 @@ model Cart {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  photoId String
-  photo   Photo  @relation(fields: [photoId], references: [id], onDelete: Cascade)
+  photoId String?
+  photo   Photo?  @relation(fields: [photoId], references: [id], onDelete: Cascade)
+
+  bundleId String?
+  bundle   PhotoBundle? @relation(fields: [bundleId], references: [id], onDelete: Cascade)
 
   quantity Int @default(1)
 
@@ -212,7 +215,9 @@ model Cart {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, photoId])
+  @@unique([userId, bundleId])
   @@index([userId])
+  @@index([bundleId])
 }
 
 // ==================== PHOTO <-> BIB JOIN (real OCR link) ====================
@@ -514,6 +519,7 @@ model PhotoBundle {
 
   // Relations
   photos BundlePhoto[]
+  cartItems Cart[]
 
   @@index([eventId])
   @@index([createdAt])
