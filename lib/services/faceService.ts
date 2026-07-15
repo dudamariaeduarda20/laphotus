@@ -26,6 +26,10 @@ export const AWS_FACE_THRESHOLD = (() => {
   const v = Number(process.env.AWS_FACE_THRESHOLD);
   return Number.isFinite(v) && v > 0 && v <= 100 ? v : 80;
 })();
+
+// Máx. de fotos retornadas por busca (SearchFacesByImage). Limite AWS = 4096.
+// 100 cobre eventos onde a pessoa aparece em muitas fotos.
+export const AWS_SEARCH_MAX_FACES = 100;
 const PGVECTOR_THRESHOLD = 80; // 80% = pgvector (fallback tolerante)
 const MAX_FACES_PER_PHOTO = 15; // multi-face: fotos de grupo/prova indexam todos os rostos
 
@@ -201,7 +205,7 @@ export async function searchFacesByAWSRekognition(
   const cmd = new SearchFacesByImageCommand({
     CollectionId: COLLECTION_ID,
     Image: { Bytes: new Uint8Array(imageBytes) },
-    MaxFaces: 50,
+    MaxFaces: AWS_SEARCH_MAX_FACES,
     FaceMatchThreshold: AWS_FACE_THRESHOLD,
   });
 

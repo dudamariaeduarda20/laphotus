@@ -3,6 +3,7 @@ import {
   awsEnabled,
   isUsingAWSRekognition,
   AWS_FACE_THRESHOLD,
+  AWS_SEARCH_MAX_FACES,
 } from "@/lib/services/faceService";
 
 // Lê env em runtime (não no build) — senão o valor fica congelado no bundle.
@@ -32,6 +33,7 @@ export async function GET() {
     region: process.env.AWS_REGION ?? null,
     collectionId: process.env.AWS_REKOGNITION_COLLECTION_ID ?? null,
     faceMatchThreshold: AWS_FACE_THRESHOLD,
+    maxFaces: AWS_SEARCH_MAX_FACES,
 
     hint:
       "rekognitionActive precisa ser true. Se false: falta hasAccessKey/hasSecretKey (env não chegou ao runtime — reveja scope Production + redeploy) ou enabledFlagRaw='false'.",
