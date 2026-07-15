@@ -56,7 +56,6 @@ export default function EventForm({
       setPreviewUrl(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao fazer upload da imagem");
-      setPreviewUrl(null);
     } finally {
       setBannerUploading(false);
     }
