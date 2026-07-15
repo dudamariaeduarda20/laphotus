@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { uploadEventBanner } from "@/lib/services/eventBannerUpload";
+import ImageCropperModal from "@/components/ImageCropperModal";
 
 interface EventFormProps {
   onSubmit: (data: any) => Promise<void>;
@@ -30,6 +31,8 @@ export default function EventForm({
   const [error, setError] = useState<string | null>(null);
   const [bannerUploading, setBannerUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const displayBanner = formData.banner || previewUrl || DEFAULT_EVENT_COVER;
 
   const handleChange = (
@@ -39,26 +42,42 @@ export default function EventForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setError(null);
+    setSelectedFile(file);
+    setShowCropper(true);
+  };
 
-    const localPreview = URL.createObjectURL(file);
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    setShowCropper(false);
+
+    const localPreview = URL.createObjectURL(croppedBlob);
     setPreviewUrl(localPreview);
     setBannerUploading(true);
 
     try {
-      const url = await uploadEventBanner(file);
+      const croppedFile = new File([croppedBlob], selectedFile?.name || "banner.jpg", {
+        type: "image/jpeg",
+      });
+      const url = await uploadEventBanner(croppedFile);
       setFormData((prev) => ({ ...prev, banner: url }));
       URL.revokeObjectURL(localPreview);
       setPreviewUrl(null);
+      setSelectedFile(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao fazer upload da imagem");
+      setPreviewUrl(null);
     } finally {
       setBannerUploading(false);
     }
+  };
+
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setSelectedFile(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,6 +92,7 @@ export default function EventForm({
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow">
       {error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
@@ -216,5 +236,14 @@ export default function EventForm({
         </button>
       </div>
     </form>
+
+      {showCropper && selectedFile && (
+        <ImageCropperModal
+          file={selectedFile}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
+    </>
   );
 }
