@@ -4,7 +4,7 @@ export function useLocationAutocomplete() {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>();
 
   const fetchSuggestions = useCallback(async (query: string) => {
     if (!query.trim()) {
