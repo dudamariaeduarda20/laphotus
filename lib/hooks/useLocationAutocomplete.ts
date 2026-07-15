@@ -1,10 +1,9 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback } from "react";
 
 export function useLocationAutocomplete() {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>();
 
   const fetchSuggestions = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -26,8 +25,8 @@ export function useLocationAutocomplete() {
 
   const handleInputChange = (value: string) => {
     setInput(value);
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
+    // Debounced fetch via setTimeout in component
+    setTimeout(() => {
       fetchSuggestions(value);
     }, 300);
   };
@@ -36,10 +35,6 @@ export function useLocationAutocomplete() {
     setInput(location);
     setIsOpen(false);
   };
-
-  useEffect(() => {
-    return () => clearTimeout(timeoutRef.current);
-  }, []);
 
   return {
     input,
