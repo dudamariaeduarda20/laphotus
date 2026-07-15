@@ -75,7 +75,8 @@ export async function listEvents(
   limit: number = 20,
   offset: number = 0,
   from?: Date,
-  to?: Date
+  to?: Date,
+  location?: string
 ) {
   const where: any = {
     status: "active",
@@ -83,6 +84,13 @@ export async function listEvents(
 
   if (sport) {
     where.sport = sport;
+  }
+
+  if (location) {
+    where.location = {
+      equals: location,
+      mode: "insensitive",
+    };
   }
 
   if (search) {

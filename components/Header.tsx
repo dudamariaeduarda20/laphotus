@@ -63,6 +63,9 @@ export default function Header() {
           <Link href="/photos" className={navLink}>
             {t("nav.events", "Eventos")}
           </Link>
+          <Link href="/discover-events" className={navLink}>
+            {t("nav.browseEvents", "Procurar Eventos")}
+          </Link>
 
           {!isAuthenticated && (
             <>
@@ -192,6 +195,13 @@ export default function Header() {
               onClick={() => setMobileOpen(false)}
             >
               {t("nav.events", "Eventos")}
+            </Link>
+            <Link
+              href="/events"
+              className={`py-3 text-base border-b ${isHome ? "text-white hover:text-[#f0bf38]" : "text-[#333] hover:text-[#ff2f92]"} border-[#eee]`}
+              onClick={() => setMobileOpen(false)}
+            >
+              {t("nav.browseEvents", "Procurar Eventos")}
             </Link>
 
             {!isAuthenticated ? (

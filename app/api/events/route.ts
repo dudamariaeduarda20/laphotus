@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const sport = searchParams.get("sport") || undefined;
     const search = searchParams.get("search") || undefined;
+    const location = searchParams.get("location") || undefined;
     const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 100);
     const offset = parseInt(searchParams.get("offset") || "0");
     const fromRaw = searchParams.get("from");
@@ -37,7 +38,8 @@ export async function GET(request: NextRequest) {
       limit,
       offset,
       from && !isNaN(from.getTime()) ? from : undefined,
-      to && !isNaN(to.getTime()) ? to : undefined
+      to && !isNaN(to.getTime()) ? to : undefined,
+      location
     );
 
     return NextResponse.json({ events, total, limit, offset });
