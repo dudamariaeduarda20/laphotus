@@ -29,34 +29,42 @@ export default function ImageCropperModal({
   );
 
   const handleApply = async () => {
-    if (!croppedAreaPixels) return;
-
     setIsProcessing(true);
     try {
       const img = new Image();
       img.src = imageSrc;
 
-      await new Promise((resolve) => {
+      await new Promise((resolve, reject) => {
         img.onload = resolve;
+        img.onerror = reject;
       });
 
+      // Fall back to the full image if no crop area was registered yet
+      // (e.g. user clicked Apply before interacting with the cropper).
+      const area = croppedAreaPixels ?? {
+        x: 0,
+        y: 0,
+        width: img.naturalWidth,
+        height: img.naturalHeight,
+      };
+
       const canvas = document.createElement("canvas");
-      canvas.width = croppedAreaPixels.width;
-      canvas.height = croppedAreaPixels.height;
+      canvas.width = area.width;
+      canvas.height = area.height;
 
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("Canvas context not available");
 
       ctx.drawImage(
         img,
-        croppedAreaPixels.x,
-        croppedAreaPixels.y,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height,
+        area.x,
+        area.y,
+        area.width,
+        area.height,
         0,
         0,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height
+        area.width,
+        area.height
       );
 
       canvas.toBlob((blob) => {
