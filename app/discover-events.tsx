@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LocationFilter from "@/components/LocationFilter";
+import DateFilter from "@/components/DateFilter";
 import { Calendar, MapPin, Users } from "lucide-react";
 
 type Event = {
@@ -22,12 +23,14 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [location, setLocation] = useState(searchParams.get("location") || "");
   const [sport, setSport] = useState(searchParams.get("sport") || "");
+  const [dateFrom, setDateFrom] = useState<string | undefined>();
+  const [dateTo, setDateTo] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
     fetchEvents();
-  }, [location, sport]);
+  }, [location, sport, dateFrom, dateTo]);
 
   const fetchEvents = async () => {
     setLoading(true);
@@ -35,6 +38,8 @@ export default function EventsPage() {
       const params = new URLSearchParams();
       if (location) params.append("location", location);
       if (sport) params.append("sport", sport);
+      if (dateFrom) params.append("from", dateFrom);
+      if (dateTo) params.append("to", dateTo);
       params.append("limit", "20");
 
       const res = await fetch(`/api/events?${params.toString()}`);
@@ -48,6 +53,11 @@ export default function EventsPage() {
     }
   };
 
+  const handleDateChange = (from?: string, to?: string) => {
+    setDateFrom(from);
+    setDateTo(to);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -58,21 +68,25 @@ export default function EventsPage() {
           </h1>
 
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <LocationFilter value={location} onChange={setLocation} />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <LocationFilter value={location} onChange={setLocation} />
 
-            <select
-              value={sport}
-              onChange={(e) => setSport(e.target.value)}
-              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#09419b] outline-none"
-            >
-              <option value="">Todos os desportos</option>
-              <option value="Futebol">Futebol</option>
-              <option value="Vôlei">Vôlei</option>
-              <option value="Basquete">Basquete</option>
-              <option value="Ténis">Ténis</option>
-              <option value="Atletismo">Atletismo</option>
-            </select>
+              <select
+                value={sport}
+                onChange={(e) => setSport(e.target.value)}
+                className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#09419b] outline-none"
+              >
+                <option value="">Todos os desportos</option>
+                <option value="Futebol">Futebol</option>
+                <option value="Vôlei">Vôlei</option>
+                <option value="Basquete">Basquete</option>
+                <option value="Ténis">Ténis</option>
+                <option value="Atletismo">Atletismo</option>
+              </select>
+            </div>
+
+            <DateFilter onDateChange={handleDateChange} />
           </div>
         </div>
       </div>
