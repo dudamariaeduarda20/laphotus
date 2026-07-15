@@ -18,7 +18,10 @@ export default function PhotoGrid({
   isLoading = false,
 }: PhotoGridProps) {
   const { t } = useTranslation();
-  const [sortBy, setSortBy] = useState("newest");
+  // Modo busca facial: fotos vêm com matchPercent e já ordenadas por
+  // similaridade. Default = "match" para não perder essa ordem.
+  const isFaceMatch = photos.some((p) => typeof p.matchPercent === "number");
+  const [sortBy, setSortBy] = useState(isFaceMatch ? "match" : "newest");
   const [filterPremium, setFilterPremium] = useState(false);
 
   // Filter
@@ -28,7 +31,9 @@ export default function PhotoGrid({
   }
 
   // Sort
-  if (sortBy === "newest") {
+  if (sortBy === "match") {
+    filtered.sort((a, b) => (b.matchPercent ?? 0) - (a.matchPercent ?? 0));
+  } else if (sortBy === "newest") {
     filtered.sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -75,6 +80,7 @@ export default function PhotoGrid({
               onChange={(e) => setSortBy(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             >
+              {isFaceMatch && <option value="match">% match</option>}
               <option value="newest">{t("grid.sort.newest")}</option>
               <option value="price-low">{t("grid.sort.priceLow")}</option>
               <option value="price-high">{t("grid.sort.priceHigh")}</option>
