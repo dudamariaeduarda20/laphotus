@@ -138,6 +138,7 @@ model Event {
   photos        Photo[]
   bibNumbers    BibNumber[]
   conversations Conversation[]
+  packages      Package[]
 
   @@index([organizerId])
   @@index([date])
@@ -188,6 +189,7 @@ model Photo {
   reports       Report[]
   reviews       Review[]
   conversations Conversation[]
+  photoPackages PhotoPackage[]
 
   @@index([eventId])
   @@index([photographerId])
@@ -491,6 +493,45 @@ model MessageReport {
   @@index([messageId])
   @@index([reporterId])
   @@index([status])
+}
+
+// ==================== PACKAGES (Bundle discount offers) ====================
+model Package {
+  id String @id @default(cuid())
+  eventId String
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  title String
+  description String?
+
+  // Pricing
+  originalPrice Float // Sum of individual photo prices
+  packagePrice  Float // Discounted price
+  discount      Float // Amount saved
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  photos PhotoPackage[]
+
+  @@index([eventId])
+  @@index([createdAt])
+}
+
+model PhotoPackage {
+  id String @id @default(cuid())
+  packageId String
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  photoId String
+  photo   Photo   @relation(fields: [photoId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([packageId, photoId])
+  @@index([packageId])
+  @@index([photoId])
 }
 
 // ==================== COUPONS ====================
