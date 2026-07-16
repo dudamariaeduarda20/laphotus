@@ -258,6 +258,11 @@ export default function CheckoutPage() {
                 </label>
               )}
             </div>
+
+            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+              <p className="font-semibold mb-1">{t("checkout.demo.title")}</p>
+              <p>{t("checkout.demo.desc")}</p>
+            </div>
           </div>
 
           {/* PIX / MB Way — instruções pós-criação (QR/copia-e-cola ou entidade/referência) */}
@@ -374,6 +379,11 @@ export default function CheckoutPage() {
                     : t("checkout.generatePayment", "Gerar pagamento")}
               </button>
             )}
+
+            <div className="p-3 bg-[#fef7e8] border border-green-200 rounded-lg text-xs text-green-800">
+              <p className="font-semibold mb-1">{t("checkout.demo2.title")}</p>
+              <p>{t("checkout.demo2.desc")}</p>
+            </div>
 
             <div className="mt-4 pt-4 border-t border-gray-200">
               <Link
