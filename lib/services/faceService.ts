@@ -18,13 +18,13 @@ const rekognitionClient = new RekognitionClient({
 
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-faces-prod";
 
-// Threshold de match AWS (0-100). Default 80 = só matches de alta confiança,
-// evita falsos-positivos (comprador vê foto de estranho). Ajustável via
-// AWS_FACE_THRESHOLD — baixar tolera mais fotos espontâneas (suor/ângulo) mas
-// ↑ falsos-positivos; subir é mais estrito mas pode perder fotos válidas.
+// Threshold de match AWS (0-100). Default 70 = tolera ângulos/iluminação,
+// menos falsos-positivos que 80 (que era muito estrito). Ajustável via
+// AWS_FACE_THRESHOLD — baixar tolera mais fotos espontâneas mas ↑ falsos;
+// subir é mais rigoroso mas pode perder fotos válidas.
 export const AWS_FACE_THRESHOLD = (() => {
   const v = Number(process.env.AWS_FACE_THRESHOLD);
-  return Number.isFinite(v) && v > 0 && v <= 100 ? v : 80;
+  return Number.isFinite(v) && v > 0 && v <= 100 ? v : 70;
 })();
 
 // Máx. de fotos retornadas por busca (SearchFacesByImage). Limite AWS = 4096.
@@ -149,12 +149,15 @@ export async function indexFaceByBytes(
 
   if (awsFaceIds.length === 0) {
     console.log(
-      `[face] index photo=${photoId} no high-confidence faces (0/${records.length} passed threshold)`
+      `[face] index photo=${photoId} NO high-confidence faces (0/${records.length} passed ${CONFIDENCE_THRESHOLD}% threshold). ⚠️ Photo won't appear in searches.`
     );
     return null;
   }
 
   const bestConf = Math.max(0, ...highConfRecords.map((r) => r.Face?.Confidence ?? 0));
+  console.log(
+    `[face] index photo=${photoId} ✓ storing ${awsFaceIds.length} face(s) in collection`
+  );
 
   // Extract demographics from best/first face for filtering
   const bestFaceRecord = highConfRecords[0];
@@ -307,7 +310,12 @@ export async function searchFacesByAWSRekognition(
       `selfieFaceConf=${selfieConf} rawMatches=${faceMatches.length} ` +
       `scores=[${faceMatches.map((m) => (m.Similarity || 0).toFixed(1)).join(",")}]`
   );
-  if (faceMatches.length === 0) return [];
+  if (faceMatches.length === 0) {
+    console.log(
+      `[face] AWS search ZERO matches. Collection may be empty, or selfie face not similar enough.`
+    );
+    return [];
+  }
 
   // Helper: parse age range filter "20-35" → {min, max}
   function parseAgeRangeFilter(filter: string): { min: number; max: number } | null {
@@ -361,9 +369,15 @@ export async function searchFacesByAWSRekognition(
 
       // Apply demographic filters
       if (filters?.gender && faceIndex.gender !== filters.gender) {
+        console.log(
+          `[face] filtered out photo=${faceIndex.photoId}: gender=${faceIndex.gender} != filter=${filters.gender}`
+        );
         return null;
       }
       if (filters?.ageRange && !matchesAgeFilter(faceIndex.ageRange, filters.ageRange)) {
+        console.log(
+          `[face] filtered out photo=${faceIndex.photoId}: ageRange=${faceIndex.ageRange} doesn't match filter=${filters.ageRange}`
+        );
         return null;
       }
 
