@@ -5,8 +5,9 @@ import prisma from "@/lib/db/prisma";
 import { rateLimits } from "@/lib/middleware/rateLimit";
 import { z } from "zod";
 import Stripe from "stripe";
-import { isBrazil } from "@/lib/services/geolocationService";
+import { isBrazil, isPortugal } from "@/lib/services/geolocationService";
 import { createPixCharge, isPixEnabled } from "@/lib/services/pixPaymentService";
+import { createMbwayPayment, isMbwayEnabled } from "@/lib/services/mbwayPaymentService";
 
 const sessionSchema = z.object({
   items: z.array(
@@ -18,7 +19,7 @@ const sessionSchema = z.object({
   subtotal: z.number().min(0),
   discount: z.number().min(0).optional(),
   couponCode: z.string().optional(),
-  paymentMethod: z.enum(["stripe", "pix"]).optional().default("stripe"),
+  paymentMethod: z.enum(["stripe", "pix", "mbway"]).optional().default("stripe"),
 });
 
 export async function POST(request: NextRequest) {
@@ -67,6 +68,58 @@ export async function POST(request: NextRequest) {
       where: { id: userId },
       select: { email: true },
     });
+
+    // MB Way payment (Portugal only)
+    if (validated.paymentMethod === "mbway") {
+      if (!isPortugal(request)) {
+        return NextResponse.json(
+          { error: "MB Way apenas disponível em Portugal" },
+          { status: 400 }
+        );
+      }
+
+      if (!isMbwayEnabled()) {
+        return NextResponse.json(
+          { error: "MB Way não configurado" },
+          { status: 400 }
+        );
+      }
+
+      try {
+        const mbwayPayment = await createMbwayPayment(
+          order.id,
+          order.total,
+          user?.email || "customer@laphotus.com",
+          "+351 912345678" // Default phone for testing
+        );
+
+        const updatedOrder = await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            paymentMethod: "mbway",
+            mbwayReferenceId: mbwayPayment.referenceId,
+          },
+        });
+
+        return NextResponse.json(
+          {
+            orderId: updatedOrder.id,
+            total: updatedOrder.total,
+            paymentMethod: "mbway",
+            entityCode: mbwayPayment.entityCode,
+            reference: mbwayPayment.reference,
+            expiresAt: mbwayPayment.expiresAt,
+          },
+          { status: 201 }
+        );
+      } catch (error) {
+        console.error("[mbway] Payment creation error:", error);
+        return NextResponse.json(
+          { error: "Falha ao criar pagamento MB Way" },
+          { status: 500 }
+        );
+      }
+    }
 
     // PIX payment (Brazil only)
     if (validated.paymentMethod === "pix") {

@@ -338,10 +338,11 @@ model Order {
   coupon   Coupon? @relation(fields: [couponId], references: [id])
 
   // Payment methods
-  paymentMethod   String  @default("stripe") // stripe, pix, etc.
-  stripePaymentId String? @unique
-  stripeSessionId String? @unique
-  pixChargeId     String?
+  paymentMethod     String  @default("stripe") // stripe, pix, mbway, etc.
+  stripePaymentId   String? @unique
+  stripeSessionId   String? @unique
+  pixChargeId       String?
+  mbwayReferenceId  String?
 
   paidAt       DateTime?
   downloadedAt DateTime?
@@ -360,6 +361,7 @@ model Order {
   @@index([createdAt])
   @@index([stripePaymentId])
   @@index([pixChargeId])
+  @@index([mbwayReferenceId])
 }
 
 // ==================== ORDER ITEMS ====================
