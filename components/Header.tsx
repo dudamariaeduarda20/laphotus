@@ -52,6 +52,13 @@ export default function Header() {
             ? "/dashboard/comprador"
             : "/dashboard";
 
+  // Cliente (CLIENT) usa rótulo de "Minhas Compras" — "Painel" lê como termo
+  // de admin/organizador e não deixava claro que é a entrada do dashboard de compras.
+  const dashboardLabel =
+    user?.role === "CLIENT"
+      ? t("nav.myPurchases", "Minhas Compras")
+      : t("nav.dashboard", "Painel");
+
   return (
     <header
       className={
@@ -120,7 +127,7 @@ export default function Header() {
           {!loading && (isAuthenticated ? (
             <>
               <Link href={dashboardHref} className={navLink}>
-                {t("nav.dashboard", "Painel")}
+                {dashboardLabel}
               </Link>
               <CartIcon />
               <NotificationBell />
@@ -305,7 +312,7 @@ export default function Header() {
                   className={`py-3 text-base border-b ${isHome ? "text-white hover:text-[#f0bf38]" : "text-[#333] hover:text-[#ff2f92]"} border-[#eee]`}
                   onClick={() => setMobileOpen(false)}
                 >
-                  {t("nav.dashboard", "Painel")}
+                  {dashboardLabel}
                 </Link>
                 <Link
                   href="/profile"
