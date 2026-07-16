@@ -32,6 +32,43 @@ export const AWS_FACE_THRESHOLD = (() => {
 export const AWS_SEARCH_MAX_FACES = 100;
 const PGVECTOR_THRESHOLD = 80; // 80% = pgvector (fallback tolerante)
 const MAX_FACES_PER_PHOTO = 15; // multi-face: fotos de grupo/prova indexam todos os rostos
+const FACE_SEARCH_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min
+
+// In-memory cache: {cacheKey → {result, timestamp}}
+const faceSearchCache = new Map<
+  string,
+  { result: any[]; timestamp: number }
+>();
+
+// Cache key = hash(imageBytesHash + eventId + threshold + maxFaces)
+function hashImageBuffer(buf: Buffer): string {
+  const crypto = require("crypto");
+  return crypto.createHash("sha256").update(buf).digest("hex");
+}
+
+function getFaceSearchCacheKey(
+  imageHash: string,
+  eventId: string,
+  threshold: number,
+  maxFaces: number
+): string {
+  return `${imageHash}:${eventId}:${threshold}:${maxFaces}`;
+}
+
+function getFaceSearchFromCache(cacheKey: string): any[] | null {
+  const cached = faceSearchCache.get(cacheKey);
+  if (!cached) return null;
+  const age = Date.now() - cached.timestamp;
+  if (age > FACE_SEARCH_CACHE_TTL_MS) {
+    faceSearchCache.delete(cacheKey);
+    return null;
+  }
+  return cached.result;
+}
+
+function setFaceSearchInCache(cacheKey: string, result: any[]): void {
+  faceSearchCache.set(cacheKey, { result, timestamp: Date.now() });
+}
 
 /** Lê um flag booleano tolerante a aspas/espaços/caixa: "true", " True ", etc. */
 function envTrue(v?: string): boolean {
@@ -192,6 +229,8 @@ export async function searchFacesByBytes(
  *
  * Threshold estrito (AWS_FACE_THRESHOLD, default 80) — só matches de alta
  * confiança, evita falsos-positivos. Retorna array ordenado por match%.
+ *
+ * Cache: resultados guardados por 5min (key = hash(selfie + eventId + threshold + maxFaces)).
  */
 export async function searchFacesByAWSRekognition(
   eventId: string,
@@ -200,6 +239,20 @@ export async function searchFacesByAWSRekognition(
   if (!isUsingAWSRekognition()) {
     console.warn("[face] Rekognition off — a busca vai tentar pgvector.");
     return [];
+  }
+
+  // Check cache
+  const imageHash = hashImageBuffer(imageBytes);
+  const cacheKey = getFaceSearchCacheKey(
+    imageHash,
+    eventId,
+    AWS_FACE_THRESHOLD,
+    AWS_SEARCH_MAX_FACES
+  );
+  const cached = getFaceSearchFromCache(cacheKey);
+  if (cached) {
+    console.log(`[face] AWS search HIT cache (age < 5min) eventId=${eventId}`);
+    return cached;
   }
 
   const cmd = new SearchFacesByImageCommand({
@@ -264,6 +317,7 @@ export async function searchFacesByAWSRekognition(
     `[face] AWS resolved=${resolved.length}/${faceMatches.length} ` +
       `(matches sem FaceIndex no evento são descartados)`
   );
+  setFaceSearchInCache(cacheKey, resolved);
   return resolved;
 }
 
