@@ -15,7 +15,9 @@ export async function middleware(request: NextRequest) {
     "/photos",
   ];
 
-  const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
+  const isPublic = publicRoutes.some((route) =>
+    route === "/" ? pathname === "/" : pathname.startsWith(route)
+  );
   if (isPublic) {
     return NextResponse.next();
   }
