@@ -12,6 +12,7 @@ import PriceFilter from "@/components/PriceFilter";
 import { useCart } from "@/lib/contexts/CartContext";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import { EVENT_CATEGORIES } from "@/lib/categories";
+import { groupMatchesByCluster } from "@/lib/utils/faceMatchUtils";
 
 const LOCALE_MAP: Record<string, string> = {
   pt: "pt-PT",
@@ -39,6 +40,10 @@ export default function EventGalleryPage({
   );
   const [faceMatches, setFaceMatches] = useState<any[]>([]);
   const [facePhotos, setFacePhotos] = useState<any[] | null>(null);
+  const [groupedMatches, setGroupedMatches] = useState<any[]>([]);
+  const [expandedClusters, setExpandedClusters] = useState<Set<string>>(
+    new Set()
+  );
   const [isLoadingFace, setIsLoadingFace] = useState(false);
   const [buyingAll, setBuyingAll] = useState(false);
   const [minPrice, setMinPrice] = useState<number | undefined>();
@@ -88,29 +93,78 @@ export default function EventGalleryPage({
     }
   };
 
-  // Converte matches (shape leve do search-face) em objetos foto completos
-  // da galeria, preservando a ordem por similaridade. Calcula percentile ranking.
+  // Group matches by cluster, deduplicate, show best + count badge + expand
   const handleFaceMatch = (matches: any[]) => {
     setFaceMatches(matches);
+    setExpandedClusters(new Set()); // Reset expanded state
     if (!event?.photos) {
       setFacePhotos([]);
+      setGroupedMatches([]);
       return;
     }
     const byId = new Map(event.photos.map((p: any) => [p.id, p]));
-    const ordered = matches
-      .map((m, idx) => {
-        const photo = byId.get(m.photoId);
-        const percentile = ((matches.length - idx) / matches.length) * 100;
-        return photo
-          ? {
-              ...photo,
-              matchPercent: m.matchPercent,
-              matchPercentile: Math.round(percentile),
-            }
-          : null;
-      })
-      .filter(Boolean);
-    setFacePhotos(ordered);
+
+    // Enrich matches with photo data
+    const enriched = matches.map((m, idx) => {
+      const photo = byId.get(m.photoId);
+      const percentile = ((matches.length - idx) / matches.length) * 100;
+      return photo
+        ? {
+            ...photo,
+            matchPercent: m.matchPercent,
+            matchPercentile: Math.round(percentile),
+            faceClusterId: m.faceClusterId,
+          }
+        : null;
+    }).filter(Boolean);
+
+    // Group by cluster
+    const grouped = groupMatchesByCluster(enriched);
+    setGroupedMatches(grouped);
+
+    // Display only best match per group (unless expanded)
+    const displayed = grouped.map((g) => ({
+      ...g.bestMatch,
+      clusterCount: g.count,
+      clusterId: g.groupId,
+    }));
+    setFacePhotos(displayed);
+  };
+
+  // Toggle cluster expansion
+  const toggleClusterExpand = (clusterId: string) => {
+    const newExpanded = new Set(expandedClusters);
+    if (newExpanded.has(clusterId)) {
+      newExpanded.delete(clusterId);
+    } else {
+      newExpanded.add(clusterId);
+    }
+    setExpandedClusters(newExpanded);
+
+    // Rebuild display including expanded groups
+    if (!facePhotos) return;
+    const displayed: any[] = [];
+    for (const group of groupedMatches) {
+      if (newExpanded.has(group.groupId)) {
+        // Show all matches in this cluster
+        for (const m of group.allMatches) {
+          displayed.push({
+            ...m,
+            clusterCount: group.count,
+            clusterId: group.groupId,
+            isClusterVariation: true,
+          });
+        }
+      } else {
+        // Show best only
+        displayed.push({
+          ...group.bestMatch,
+          clusterCount: group.count,
+          clusterId: group.groupId,
+        });
+      }
+    }
+    setFacePhotos(displayed);
   };
 
   useEffect(() => {
@@ -412,6 +466,7 @@ export default function EventGalleryPage({
                   eventId={event.id}
                   event={event}
                   isLoading={false}
+                  onClusterClick={toggleClusterExpand}
                 />
               </>
             ) : (

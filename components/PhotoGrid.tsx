@@ -9,6 +9,7 @@ interface PhotoGridProps {
   eventId: string;
   event?: any;
   isLoading?: boolean;
+  onClusterClick?: (clusterId: string) => void;
 }
 
 export default function PhotoGrid({
@@ -16,6 +17,7 @@ export default function PhotoGrid({
   eventId,
   event,
   isLoading = false,
+  onClusterClick,
 }: PhotoGridProps) {
   const { t } = useTranslation();
   // Modo busca facial: fotos vêm com matchPercent e já ordenadas por
@@ -106,7 +108,13 @@ export default function PhotoGrid({
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filtered.map((photo) => (
-          <PhotoCard key={photo.id} photo={photo} eventId={eventId} event={event} />
+          <PhotoCard
+            key={photo.id}
+            photo={photo}
+            eventId={eventId}
+            event={event}
+            onClusterClick={onClusterClick}
+          />
         ))}
       </div>
 

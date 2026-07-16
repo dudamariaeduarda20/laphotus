@@ -20,6 +20,8 @@ interface PhotoCardProps {
     reviewCount?: number;
     matchPercent?: number;
     matchPercentile?: number;
+    clusterCount?: number;
+    clusterId?: string;
     photographer?: {
       id: string;
       userId: string;
@@ -34,9 +36,15 @@ interface PhotoCardProps {
       organizationName: string;
     };
   };
+  onClusterClick?: (clusterId: string) => void;
 }
 
-export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
+export default function PhotoCard({
+  photo,
+  eventId,
+  event,
+  onClusterClick,
+}: PhotoCardProps) {
   const { addItem } = useCart();
   const { t } = useTranslation();
   const [added, setAdded] = useState(false);
@@ -88,6 +96,19 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
             <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">
               PREMIUM
             </div>
+          )}
+
+          {/* Cluster count badge — clickable to expand */}
+          {(photo.clusterCount || 0) > 1 && photo.clusterId && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                onClusterClick?.(photo.clusterId!);
+              }}
+              className="absolute top-2 left-2 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-bold shadow cursor-pointer transition"
+            >
+              +{photo.clusterCount! - 1}
+            </button>
           )}
 
           {/* Match score (busca facial) — canto inferior esquerdo, cor por confiança */}
