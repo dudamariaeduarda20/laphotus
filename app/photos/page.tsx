@@ -68,10 +68,10 @@ function PhotosContent() {
               <div className="sticky top-24 space-y-6">
                 {/* Sidebar Header Card — Gradient (Podcast Style) */}
                 <div className="bg-gradient-to-b from-[#ff2f92] to-[#f0bf38] text-white p-8 rounded-lg">
-                  <h3 className="text-2xl font-serif font-bold mb-6 text-center">Filtros</h3>
+                  <h3 className="text-2xl font-serif font-bold mb-6 text-center">{t("events.filtersTitle", "Filtros")}</h3>
                   <div className="space-y-4 text-sm opacity-95">
-                    <div className="font-semibold">Refine sua busca</div>
-                    <p className="text-white/80">Use os filtros abaixo para encontrar eventos e fotos específicas</p>
+                    <div className="font-semibold">{t("events.filtersSubtitle", "Refine sua busca")}</div>
+                    <p className="text-white/80">{t("events.filtersDesc", "Use os filtros abaixo para encontrar eventos e fotos específicas")}</p>
                   </div>
                 </div>
 
@@ -160,7 +160,7 @@ function PhotosContent() {
                         href="/photos"
                         className="inline-block px-8 py-3 bg-[#09419b] text-white font-semibold rounded-lg hover:bg-[#0a2e6b] transition"
                       >
-                        Limpar filtros
+                        {t("events.clearFilters", "Limpar filtros")}
                       </a>
                     </div>
                   ) : (
@@ -194,23 +194,23 @@ function PhotosContent() {
       <section className="bg-[#1a1a1a] text-white py-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-serif font-bold text-5xl mb-6 leading-tight">
-            Não encontrou o que procurava?
+            {t("events.ctaTitle", "Não encontrou o que procurava?")}
           </h2>
           <p className="text-lg text-white/80 mb-10 leading-relaxed">
-            Explore mais eventos, configure alertas, ou navegue por categoria para descobrir novas fotos
+            {t("events.ctaDesc", "Explore mais eventos, configure alertas, ou navegue por categoria para descobrir novas fotos")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/"
               className="px-8 py-4 bg-[#09419b] text-white font-semibold rounded-lg hover:bg-[#0a2e6b] transition"
             >
-              Voltar à Home
+              {t("notFound.home", "Voltar ao início")}
             </a>
             <a
               href="/photos"
               className="px-8 py-4 border-2 border-[#f0bf38] text-[#f0bf38] font-semibold rounded-lg hover:bg-[#f0bf38]/10 transition"
             >
-              Ver todos os eventos
+              {t("home.recent.viewall", "Ver todos os eventos")}
             </a>
           </div>
         </div>
@@ -220,8 +220,9 @@ function PhotosContent() {
 }
 
 export default function PhotosPage() {
+  const { t } = useTranslation();
   return (
-    <Suspense fallback={<div className="text-center py-20">Carregando...</div>}>
+    <Suspense fallback={<div className="text-center py-20">{t("common.loading", "Carregando...")}</div>}>
       <PhotosContent />
     </Suspense>
   );
