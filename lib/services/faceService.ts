@@ -16,6 +16,16 @@ const rekognitionClient = new RekognitionClient({
   },
 });
 
+// Startup diagnostic (logs once per process)
+if (typeof window === "undefined") {
+  const keyOk = !!(process.env.AWS_ACCESS_KEY_ID?.trim());
+  const secretOk = !!(process.env.AWS_SECRET_ACCESS_KEY?.trim());
+  const flag = process.env.AWS_REKOGNITION_ENABLED?.trim() ?? "(not set)";
+  console.log(
+    `[face] startup: hasAccessKey=${keyOk} hasSecret=${secretOk} AWS_REKOGNITION_ENABLED=${flag} isActive=${isUsingAWSRekognition()} threshold=${AWS_FACE_THRESHOLD}`
+  );
+}
+
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-faces-prod";
 
 // Threshold de match AWS (0-100). Default 70 = tolera ângulos/iluminação,
@@ -24,7 +34,7 @@ const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-fac
 // subir é mais rigoroso mas pode perder fotos válidas.
 export const AWS_FACE_THRESHOLD = (() => {
   const v = Number(process.env.AWS_FACE_THRESHOLD);
-  return Number.isFinite(v) && v > 0 && v <= 100 ? v : 70;
+  return Number.isFinite(v) && v > 0 && v <= 100 ? v : 60;
 })();
 
 // Máx. de fotos retornadas por busca (SearchFacesByImage). Limite AWS = 4096.
