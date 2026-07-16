@@ -5,6 +5,8 @@ import prisma from "@/lib/db/prisma";
 import { rateLimits } from "@/lib/middleware/rateLimit";
 import { z } from "zod";
 import Stripe from "stripe";
+import { isBrazil } from "@/lib/services/geolocationService";
+import { createPixCharge, isPixEnabled } from "@/lib/services/pixPaymentService";
 
 const sessionSchema = z.object({
   items: z.array(
@@ -16,6 +18,7 @@ const sessionSchema = z.object({
   subtotal: z.number().min(0),
   discount: z.number().min(0).optional(),
   couponCode: z.string().optional(),
+  paymentMethod: z.enum(["stripe", "pix"]).optional().default("stripe"),
 });
 
 export async function POST(request: NextRequest) {
@@ -60,15 +63,74 @@ export async function POST(request: NextRequest) {
       couponId
     );
 
-    // Initialize Stripe
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    // PIX payment (Brazil only)
+    if (validated.paymentMethod === "pix") {
+      if (!isBrazil(request)) {
+        return NextResponse.json(
+          { error: "PIX apenas disponível no Brasil" },
+          { status: 400 }
+        );
+      }
+
+      if (!isPixEnabled()) {
+        return NextResponse.json(
+          { error: "PIX não configurado" },
+          { status: 400 }
+        );
+      }
+
+      try {
+        // Create PIX charge (amount in cents, EUR to BRL conversion would be done client-side)
+        // For now, we use EUR cents directly as the PIX amount
+        const pixCharge = await createPixCharge(
+          order.id,
+          Math.round(order.total * 100),
+          user?.email || "customer@laphotus.com",
+          "+55 11 0000-0000" // Default phone for PIX
+        );
+
+        // Update order with PIX charge ID
+        const updatedOrder = await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            paymentMethod: "pix",
+            pixChargeId: pixCharge.chargeId,
+          },
+        });
+
+        return NextResponse.json(
+          {
+            orderId: updatedOrder.id,
+            total: updatedOrder.total,
+            paymentMethod: "pix",
+            qrCode: pixCharge.qrCode,
+            qrCodeUrl: pixCharge.qrCodeUrl,
+            copyAndPaste: pixCharge.copyAndPaste,
+            expiresAt: pixCharge.expiresAt,
+          },
+          { status: 201 }
+        );
+      } catch (error) {
+        console.error("[pix] Charge creation error:", error);
+        return NextResponse.json(
+          { error: "Falha ao criar pagamento PIX" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Stripe payment (default)
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      customer_email: (await prisma.user.findUnique({ where: { id: userId } }))
-        ?.email,
+      customer_email: user?.email || undefined,
       success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_URL}/carrinho`,
       line_items: validated.items.map((item) => ({
@@ -87,7 +149,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Update order with Stripe session ID
     const updatedOrder = await prisma.order.update({
       where: { id: order.id },
       data: { stripeSessionId: session.id },
@@ -99,6 +160,7 @@ export async function POST(request: NextRequest) {
         orderId: updatedOrder.id,
         total: updatedOrder.total,
         checkoutUrl: session.url,
+        paymentMethod: "stripe",
       },
       { status: 201 }
     );
