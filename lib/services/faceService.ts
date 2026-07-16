@@ -135,12 +135,26 @@ export async function indexFaceByBytes(
 
   const resp = await rekognitionClient.send(cmd);
   const records = resp.FaceRecords || [];
-  const awsFaceIds = records
+
+  // Filter by confidence > 80%
+  const CONFIDENCE_THRESHOLD = 80;
+  const highConfRecords = records.filter(
+    (r) => (r.Face?.Confidence ?? 0) >= CONFIDENCE_THRESHOLD
+  );
+  const discarded = records.length - highConfRecords.length;
+
+  const awsFaceIds = highConfRecords
     .map((r) => r.Face?.FaceId)
     .filter((id): id is string => !!id);
-  if (awsFaceIds.length === 0) return null;
 
-  const bestConf = Math.max(0, ...records.map((r) => r.Face?.Confidence ?? 0));
+  if (awsFaceIds.length === 0) {
+    console.log(
+      `[face] index photo=${photoId} no high-confidence faces (0/${records.length} passed threshold)`
+    );
+    return null;
+  }
+
+  const bestConf = Math.max(0, ...highConfRecords.map((r) => r.Face?.Confidence ?? 0));
   // Guarda awsFaceId (compat legado) + awsFaceIds[] (multi-face). A busca casa
   // por `contains` em qualquer id, logo ambos os formatos funcionam.
   const payload = {
@@ -149,7 +163,9 @@ export async function indexFaceByBytes(
     faceData: { engine: "aws-rekognition", faces: awsFaceIds.length },
   };
 
-  console.log(`[face] index photo=${photoId} faces=${awsFaceIds.length}`);
+  console.log(
+    `[face] index photo=${photoId} faces=${awsFaceIds.length}/${records.length} (${discarded} below ${CONFIDENCE_THRESHOLD}%)`
+  );
 
   return prisma.faceIndex.upsert({
     where: { userId_photoId: { userId, photoId } },
