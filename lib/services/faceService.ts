@@ -753,7 +753,7 @@ export async function clusterFacesByEventId(eventId: string) {
     // Fetch all face indices for event
     const faceIndices = await prisma.faceIndex.findMany({
       where: { photo: { eventId } },
-      select: { id: true, userId_photoId: true, faceVector: true },
+      select: { id: true, userId: true, photoId: true, faceVector: true },
     });
 
     if (faceIndices.length === 0) return;
