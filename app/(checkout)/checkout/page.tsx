@@ -5,18 +5,74 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 import CartItem from "@/components/CartItem";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type PaymentMethod = "stripe" | "pix" | "mbway";
+
+interface PixResult {
+  paymentMethod: "pix";
+  qrCodeUrl: string;
+  copyAndPaste: string;
+  expiresAt: string;
+}
+
+interface MbwayResult {
+  paymentMethod: "mbway";
+  entityCode: string;
+  reference: string;
+  expiresAt: string;
+}
+
+function useCountdown(expiresAt: string | undefined) {
+  const [remaining, setRemaining] = useState(0);
+  useEffect(() => {
+    if (!expiresAt) return;
+    const target = new Date(expiresAt).getTime();
+    const tick = () => setRemaining(Math.max(0, Math.round((target - Date.now()) / 1000)));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [expiresAt]);
+  const minutes = Math.floor(remaining / 60);
+  const seconds = remaining % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
 
 export default function CheckoutPage() {
   const { items, getTotal, coupon, getDiscount } = useCart();
   const { isAuthenticated, loading: authLoading } = useAuth();
   const { t } = useTranslation();
   const [processingPayment, setProcessingPayment] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("stripe");
+  const [country, setCountry] = useState<string | null>(null);
+  const [paymentResult, setPaymentResult] = useState<PixResult | MbwayResult | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/checkout/geolocation")
+      .then((res) => res.json())
+      .then((data) => setCountry(data.country))
+      .catch(() => setCountry(null));
+  }, []);
+
+  const pixAvailable = country === "BR";
+  const mbwayAvailable = country === "PT";
+  const countdown = useCountdown(paymentResult?.expiresAt);
 
   const subtotal = getTotal();
   const discountAmount = getDiscount(); // montante (€) vindo do carrinho
   const tax = (subtotal - discountAmount) * 0.23;
   const total = subtotal - discountAmount + tax;
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
 
   const handlePayment = async () => {
     setProcessingPayment(true);
@@ -29,6 +85,7 @@ export default function CheckoutPage() {
           subtotal,
           discount: discountAmount, // createOrder espera o montante, não a %
           couponCode: coupon?.code || undefined,
+          paymentMethod,
         }),
       });
 
@@ -37,8 +94,15 @@ export default function CheckoutPage() {
         throw new Error(error.error || t("checkout.err.process"));
       }
 
-      const { checkoutUrl } = await res.json();
-      window.location.assign(checkoutUrl);
+      const data = await res.json();
+
+      if (data.checkoutUrl) {
+        window.location.assign(data.checkoutUrl);
+        return;
+      }
+
+      // PIX/MB Way não redirecionam — mostram QR/referência in-page.
+      setPaymentResult(data);
     } catch (err) {
       alert(err instanceof Error ? err.message : t("checkout.err.payment"));
     } finally {
@@ -120,19 +184,24 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Payment Method (Placeholder for Phase 4) */}
+          {/* Payment Method */}
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               {t("checkout.payment.title")}
             </h2>
 
             <div className="space-y-3">
-              <label className="flex items-center p-4 border-2 border-[#09419b] rounded-lg cursor-pointer bg-[#e8f0ff]">
+              <label
+                className={`flex items-center p-4 border-2 rounded-lg cursor-pointer ${
+                  paymentMethod === "stripe" ? "border-[#09419b] bg-[#e8f0ff]" : "border-gray-300"
+                }`}
+              >
                 <input
                   type="radio"
                   name="payment"
-                  value="card"
-                  defaultChecked
+                  value="stripe"
+                  checked={paymentMethod === "stripe"}
+                  onChange={() => setPaymentMethod("stripe")}
                   className="w-4 h-4"
                 />
                 <div className="ml-3">
@@ -143,26 +212,104 @@ export default function CheckoutPage() {
                 </div>
               </label>
 
-              <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer opacity-50">
-                <input
-                  type="radio"
-                  name="payment"
-                  value="pix"
-                  disabled
-                  className="w-4 h-4"
-                />
-                <div className="ml-3">
-                  <p className="font-semibold text-gray-900">{t("checkout.payment.bank")}</p>
-                  <p className="text-sm text-gray-600">{t("checkout.payment.soon")}</p>
-                </div>
-              </label>
-            </div>
+              {pixAvailable && (
+                <label
+                  className={`flex items-center p-4 border-2 rounded-lg cursor-pointer ${
+                    paymentMethod === "pix" ? "border-[#09419b] bg-[#e8f0ff]" : "border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="pix"
+                    checked={paymentMethod === "pix"}
+                    onChange={() => setPaymentMethod("pix")}
+                    className="w-4 h-4"
+                  />
+                  <div className="ml-3">
+                    <p className="font-semibold text-gray-900">PIX</p>
+                    <p className="text-sm text-gray-600">
+                      {t("checkout.payment.pixDesc", "QR code ou copia e cola, confirmação instantânea")}
+                    </p>
+                  </div>
+                </label>
+              )}
 
-            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
-              <p className="font-semibold mb-1">{t("checkout.demo.title")}</p>
-              <p>{t("checkout.demo.desc")}</p>
+              {mbwayAvailable && (
+                <label
+                  className={`flex items-center p-4 border-2 rounded-lg cursor-pointer ${
+                    paymentMethod === "mbway" ? "border-[#09419b] bg-[#e8f0ff]" : "border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="mbway"
+                    checked={paymentMethod === "mbway"}
+                    onChange={() => setPaymentMethod("mbway")}
+                    className="w-4 h-4"
+                  />
+                  <div className="ml-3">
+                    <p className="font-semibold text-gray-900">MB WAY</p>
+                    <p className="text-sm text-gray-600">
+                      {t("checkout.payment.mbwayDesc", "Confirme o pagamento na app MB WAY")}
+                    </p>
+                  </div>
+                </label>
+              )}
             </div>
           </div>
+
+          {/* PIX / MB Way — instruções pós-criação (QR/copia-e-cola ou entidade/referência) */}
+          {paymentResult?.paymentMethod === "pix" && (
+            <div className="bg-white rounded-lg shadow p-6 text-center">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">
+                {t("checkout.pix.title", "Pague com PIX")}
+              </h2>
+              <img
+                src={paymentResult.qrCodeUrl}
+                alt="QR Code PIX"
+                className="w-48 h-48 mx-auto mb-4 border border-gray-200 rounded-lg"
+              />
+              <p className="text-sm text-gray-600 mb-2">
+                {t("checkout.pix.expiresIn", "Expira em")} <span className="font-semibold">{countdown}</span>
+              </p>
+              <div className="flex items-center gap-2 mt-4">
+                <input
+                  readOnly
+                  value={paymentResult.copyAndPaste}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-xs text-gray-600 truncate"
+                />
+                <button
+                  onClick={() => handleCopy(paymentResult.copyAndPaste)}
+                  className="px-4 py-2 bg-[#09419b] text-white rounded-lg text-sm font-semibold whitespace-nowrap"
+                >
+                  {copied ? t("checkout.pix.copied", "Copiado!") : t("checkout.pix.copy", "Copiar")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {paymentResult?.paymentMethod === "mbway" && (
+            <div className="bg-white rounded-lg shadow p-6 text-center">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">
+                {t("checkout.mbway.title", "Pague com MB WAY")}
+              </h2>
+              <div className="flex justify-center gap-8 mb-4">
+                <div>
+                  <p className="text-sm text-gray-600">{t("checkout.mbway.entity", "Entidade")}</p>
+                  <p className="text-2xl font-bold text-gray-900">{paymentResult.entityCode}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">{t("checkout.mbway.reference", "Referência")}</p>
+                  <p className="text-2xl font-bold text-gray-900">{paymentResult.reference}</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">
+                {t("checkout.pix.expiresIn", "Expira em")} <span className="font-semibold">{countdown}</span>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Order Summary */}
@@ -210,20 +357,23 @@ export default function CheckoutPage() {
               >
                 {t("checkout.loginToFinish")}
               </Link>
+            ) : paymentResult ? (
+              <p className="text-center text-sm text-gray-600 mb-3">
+                {t("checkout.awaitingPayment", "Aguardando confirmação do pagamento…")}
+              </p>
             ) : (
               <button
                 onClick={handlePayment}
                 disabled={processingPayment || authLoading}
                 className="w-full py-3 bg-[#f0bf38] text-white font-semibold rounded-lg hover:bg-[#f0bf38] disabled:opacity-50 mb-3"
               >
-                {processingPayment ? t("checkout.processing") : `💳 ${t("cart.checkout")}`}
+                {processingPayment
+                  ? t("checkout.processing")
+                  : paymentMethod === "stripe"
+                    ? `💳 ${t("cart.checkout")}`
+                    : t("checkout.generatePayment", "Gerar pagamento")}
               </button>
             )}
-
-            <div className="p-3 bg-[#fef7e8] border border-green-200 rounded-lg text-xs text-green-800">
-              <p className="font-semibold mb-1">{t("checkout.demo2.title")}</p>
-              <p>{t("checkout.demo2.desc")}</p>
-            </div>
 
             <div className="mt-4 pt-4 border-t border-gray-200">
               <Link
