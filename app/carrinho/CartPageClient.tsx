@@ -65,7 +65,7 @@ export default function CartPageClient() {
                         {item.eventTitle} • {item.photographerName}
                       </p>
                       <p className="text-sm text-[#f0bf38] font-semibold mt-2">
-                        €{item.price.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        €{(Number(item.price) || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
                     <button
@@ -89,7 +89,7 @@ export default function CartPageClient() {
                   <div className="flex justify-between items-center text-lg">
                     <span className="font-semibold text-[#09419b]">Total</span>
                     <span className="font-bold text-[#f0bf38] text-2xl">
-                      €{total.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      €{(Number(total) || 0).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   </div>
                 </div>

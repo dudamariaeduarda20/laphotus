@@ -42,6 +42,38 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Coage qualquer objeto (inclusive lixo salvo por versões antigas no
+// localStorage) num CartItem válido. Sem isto, um item com `price` undefined
+// crasha o render em `item.price.toLocaleString()` → página "This page
+// couldn't load" sem error boundary. Descarta entradas sem photoId.
+function normalizeItem(raw: any): CartItem | null {
+  if (!raw || typeof raw !== "object") return null;
+  const photoId = typeof raw.photoId === "string" ? raw.photoId : raw.id;
+  if (typeof photoId !== "string" || !photoId) return null;
+  const price = Number(raw.price);
+  return {
+    id: typeof raw.id === "string" ? raw.id : photoId,
+    photoId,
+    name: typeof raw.name === "string" ? raw.name : "Foto",
+    price: Number.isFinite(price) ? price : 0,
+    eventId: typeof raw.eventId === "string" ? raw.eventId : "",
+    eventTitle: typeof raw.eventTitle === "string" ? raw.eventTitle : "Evento",
+    photographerId:
+      typeof raw.photographerId === "string" ? raw.photographerId : "",
+    photographerName:
+      typeof raw.photographerName === "string"
+        ? raw.photographerName
+        : "Fotógrafo",
+  };
+}
+
+function normalizeItems(raw: unknown): CartItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map(normalizeItem)
+    .filter((i): i is CartItem => i !== null);
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [coupon, setCoupon] = useState<AppliedCoupon | null>(null);
@@ -52,7 +84,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem("sports-photos-cart");
     if (saved) {
       try {
-        setItems(JSON.parse(saved));
+        setItems(normalizeItems(JSON.parse(saved)));
       } catch (e) {
         console.error("Failed to load cart:", e);
       }
@@ -85,19 +117,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [coupon, isLoaded]);
 
   const addItem = (item: CartItem) => {
+    const clean = normalizeItem(item);
+    if (!clean) return;
     // Check if already in cart
-    const exists = items.find((i) => i.photoId === item.photoId);
+    const exists = items.find((i) => i.photoId === clean.photoId);
     if (exists) return;
 
-    setItems([...items, item]);
+    setItems([...items, clean]);
   };
 
   // Adiciona vários itens de uma vez (sem duplicar). Um único setState para
   // evitar o bug de closure stale ao chamar addItem em loop.
   const addItems = (newItems: CartItem[]) => {
+    const clean = normalizeItems(newItems);
     setItems((prev) => {
       const seen = new Set(prev.map((i) => i.photoId));
-      const toAdd = newItems.filter((i) => !seen.has(i.photoId));
+      const toAdd = clean.filter((i) => !seen.has(i.photoId));
       return [...prev, ...toAdd];
     });
   };
@@ -113,7 +148,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const getTotal = () => {
-    return items.reduce((sum, item) => sum + item.price, 0);
+    return items.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
   };
 
   const getItemCount = () => items.length;
