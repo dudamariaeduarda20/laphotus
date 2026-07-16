@@ -29,6 +29,7 @@ export async function middleware(request: NextRequest) {
     "/earnings",
     "/downloads",
     "/cart",
+    "/carrinho", // Portuguese cart route
     "/checkout",
     "/success",
     "/my-photos",
@@ -37,6 +38,7 @@ export async function middleware(request: NextRequest) {
     "/settings",
     "/admin",
     "/organizer",
+    "/messages", // Chat messages
   ];
 
   const isProtected = protectedPrefixes.some((p) => pathname.startsWith(p));
