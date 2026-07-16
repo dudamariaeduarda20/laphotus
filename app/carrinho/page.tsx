@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useTranslation } from '@/lib/hooks/useTranslation';
 
+export const dynamic = 'force-dynamic';
+
 export default function CartPage() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
