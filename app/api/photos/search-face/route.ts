@@ -108,6 +108,8 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const eventId = formData.get("eventId") as string | null;
+    const ageRange = formData.get("ageRange") as string | null;
+    const gender = formData.get("gender") as string | null;
 
     if (!file || !eventId) {
       return NextResponse.json(
@@ -117,14 +119,22 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
+    const filters = {
+      ...(ageRange && { ageRange }),
+      ...(gender && { gender }),
+    };
 
     // === Motor principal: AWS Rekognition ===
     if (isUsingAWSRekognition()) {
       let awsMatches: Match[] = [];
       try {
-        awsMatches = (await searchFacesByAWSRekognition(eventId, buffer)).map(
-          (m) => ({ ...m, engine: "aws-rekognition" })
-        );
+        awsMatches = (
+          await searchFacesByAWSRekognition(
+            eventId,
+            buffer,
+            Object.keys(filters).length > 0 ? filters : undefined
+          )
+        ).map((m) => ({ ...m, engine: "aws-rekognition" }));
       } catch (err) {
         console.error("[face] AWS Rekognition error:", err);
         // Não aborta — tenta pgvector como rede de segurança.

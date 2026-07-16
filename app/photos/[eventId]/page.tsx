@@ -51,6 +51,8 @@ export default function EventGalleryPage({
   const [sortBy, setSortBy] = useState<"newest" | "price-asc" | "price-desc">(
     "newest"
   );
+  const [faceFilterAge, setFaceFilterAge] = useState<string>("");
+  const [faceFilterGender, setFaceFilterGender] = useState<string>("");
 
   const router = useRouter();
   const { addItems, applyCoupon } = useCart();
@@ -416,17 +418,65 @@ export default function EventGalleryPage({
               </button>
             </div>
 
+            {/* Demographic Filters */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                {t("face.filter.demographics")}
+              </h3>
+              <div className="space-y-3">
+                {/* Age Range */}
+                <div className="flex items-center gap-3">
+                  <input
+                    type="text"
+                    placeholder="Ex: 20-35"
+                    value={faceFilterAge}
+                    onChange={(e) => setFaceFilterAge(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#09419b]"
+                  />
+                  <label className="text-xs text-gray-600 flex-1">
+                    {t("face.filter.ageRange")}
+                  </label>
+                </div>
+
+                {/* Gender */}
+                <div>
+                  <label className="text-xs text-gray-600 block mb-2">
+                    {t("face.filter.gender")}
+                  </label>
+                  <div className="flex gap-3">
+                    {["Male", "Female"].map((g) => (
+                      <label key={g} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={faceFilterGender === g}
+                          onChange={(e) =>
+                            setFaceFilterGender(e.target.checked ? g : "")
+                          }
+                          className="w-4 h-4 rounded border-gray-300"
+                        />
+                        <span className="text-sm text-gray-700">{t(`face.gender.${g.toLowerCase()}`)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {faceInputMode === "camera" ? (
               <FaceCameraSearch
                 eventId={event.id}
                 onMatch={handleFaceMatch}
                 onLoading={setIsLoadingFace}
+                filterAge={faceFilterAge}
+                filterGender={faceFilterGender}
               />
             ) : (
               <SelfieUpload
                 eventId={event.id}
                 onMatch={handleFaceMatch}
                 onLoading={setIsLoadingFace}
+                filterAge={faceFilterAge}
+                filterGender={faceFilterGender}
               />
             )}
           </div>

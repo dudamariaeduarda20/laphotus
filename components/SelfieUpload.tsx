@@ -7,12 +7,16 @@ interface SelfieUploadProps {
   eventId: string;
   onMatch?: (matches: any[]) => void;
   onLoading?: (loading: boolean) => void;
+  filterAge?: string;
+  filterGender?: string;
 }
 
 export default function SelfieUpload({
   eventId,
   onMatch,
   onLoading,
+  filterAge,
+  filterGender,
 }: SelfieUploadProps) {
   const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
@@ -49,6 +53,8 @@ export default function SelfieUpload({
       const formData = new FormData();
       formData.append("file", file);
       formData.append("eventId", eventId);
+      if (filterAge) formData.append("ageRange", filterAge);
+      if (filterGender) formData.append("gender", filterGender);
 
       const res = await fetch("/api/photos/search-face", {
         method: "POST",

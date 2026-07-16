@@ -267,10 +267,16 @@ model FaceIndex {
   faceData     Json? // {"age": 25, "gender": "M", "emotions": {...}}
   faceClusterId String? // Cluster ID (groups same person's angles); >85% similarity
 
+  // Demographic filters (AWS Rekognition detection)
+  ageRange     String? // JSON: {"Low": 20, "High": 35} or "20-35"
+  gender       String? // "Male", "Female", "Unknown"
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([faceClusterId])
+  @@index([ageRange])
+  @@index([gender])
 
   @@unique([userId, photoId])
   @@index([userId])

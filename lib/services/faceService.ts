@@ -130,7 +130,7 @@ export async function indexFaceByBytes(
     ExternalImageId: photoId,
     MaxFaces: MAX_FACES_PER_PHOTO, // indexa TODOS os rostos (grupo/prova)
     QualityFilter: "AUTO",
-    DetectionAttributes: [],
+    DetectionAttributes: ["AGE_RANGE", "GENDER"],
   });
 
   const resp = await rekognitionClient.send(cmd);
@@ -155,16 +155,29 @@ export async function indexFaceByBytes(
   }
 
   const bestConf = Math.max(0, ...highConfRecords.map((r) => r.Face?.Confidence ?? 0));
+
+  // Extract demographics from best/first face for filtering
+  const bestFaceRecord = highConfRecords[0];
+  const ageRange = bestFaceRecord?.Face && (bestFaceRecord.Face as any).AgeRange
+    ? JSON.stringify({
+        Low: ((bestFaceRecord.Face as any).AgeRange as any).Low,
+        High: ((bestFaceRecord.Face as any).AgeRange as any).High,
+      })
+    : null;
+  const gender = ((bestFaceRecord?.Face as any)?.Gender as any)?.Value || "Unknown";
+
   // Guarda awsFaceId (compat legado) + awsFaceIds[] (multi-face). A busca casa
   // por `contains` em qualquer id, logo ambos os formatos funcionam.
   const payload = {
     faceVector: JSON.stringify({ awsFaceId: awsFaceIds[0], awsFaceIds }),
     confidence: bestConf ? bestConf / 100 : 0.9,
     faceData: { engine: "aws-rekognition", faces: awsFaceIds.length },
+    ageRange,
+    gender,
   };
 
   console.log(
-    `[face] index photo=${photoId} faces=${awsFaceIds.length}/${records.length} (${discarded} below ${CONFIDENCE_THRESHOLD}%)`
+    `[face] index photo=${photoId} faces=${awsFaceIds.length}/${records.length} (${discarded} below ${CONFIDENCE_THRESHOLD}%) age=${ageRange} gender=${gender}`
   );
 
   return prisma.faceIndex.upsert({
@@ -247,10 +260,18 @@ export async function searchFacesByBytes(
  * confiança, evita falsos-positivos. Retorna array ordenado por match%.
  *
  * Cache: resultados guardados por 5min (key = hash(selfie + eventId + threshold + maxFaces)).
+ *
+ * Filters opcionais:
+ * - ageRange: "20-35" → filtra matches com idade detectada entre 20-35
+ * - gender: "Male" | "Female" | "Other" → filtra por gênero detectado
  */
 export async function searchFacesByAWSRekognition(
   eventId: string,
-  imageBytes: Buffer
+  imageBytes: Buffer,
+  filters?: {
+    ageRange?: string;
+    gender?: string;
+  }
 ) {
   if (!isUsingAWSRekognition()) {
     console.warn("[face] Rekognition off — a busca vai tentar pgvector.");
@@ -288,6 +309,31 @@ export async function searchFacesByAWSRekognition(
   );
   if (faceMatches.length === 0) return [];
 
+  // Helper: parse age range filter "20-35" → {min, max}
+  function parseAgeRangeFilter(filter: string): { min: number; max: number } | null {
+    const parts = filter.split("-").map((s) => parseInt(s, 10));
+    if (parts.length === 2 && parts.every((n) => Number.isFinite(n))) {
+      return { min: parts[0], max: parts[1] };
+    }
+    return null;
+  }
+
+  // Helper: check if face's age is within filter range
+  function matchesAgeFilter(faceAgeRange: string | null, filter: string | undefined): boolean {
+    if (!filter) return true;
+    if (!faceAgeRange) return false; // No age data → doesn't match
+
+    try {
+      const parsed = JSON.parse(faceAgeRange) as { Low?: number; High?: number };
+      const filterRange = parseAgeRangeFilter(filter);
+      if (!filterRange) return true; // Invalid filter → accept all
+      // Face matches if its age range overlaps with filter range
+      return parsed.High! >= filterRange.min && parsed.Low! <= filterRange.max;
+    } catch {
+      return false;
+    }
+  }
+
   const matches = await Promise.all(
     faceMatches.map(async (m) => {
       const awsFaceId = m.Face?.FaceId;
@@ -312,6 +358,14 @@ export async function searchFacesByAWSRekognition(
         },
       });
       if (!faceIndex) return null;
+
+      // Apply demographic filters
+      if (filters?.gender && faceIndex.gender !== filters.gender) {
+        return null;
+      }
+      if (filters?.ageRange && !matchesAgeFilter(faceIndex.ageRange, filters.ageRange)) {
+        return null;
+      }
 
       return {
         photoId: faceIndex.photo.id,

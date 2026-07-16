@@ -7,6 +7,8 @@ interface FaceCameraSearchProps {
   eventId: string;
   onMatch?: (matches: Array<{ photoId: string }>) => void;
   onLoading?: (loading: boolean) => void;
+  filterAge?: string;
+  filterGender?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +26,8 @@ export default function FaceCameraSearch({
   eventId,
   onMatch,
   onLoading,
+  filterAge,
+  filterGender,
 }: FaceCameraSearchProps) {
   const { t } = useTranslation();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -158,6 +162,8 @@ export default function FaceCameraSearch({
       const formData = new FormData();
       formData.append("file", blob, "captura.jpg");
       formData.append("eventId", eventId);
+      if (filterAge) formData.append("ageRange", filterAge);
+      if (filterGender) formData.append("gender", filterGender);
 
       const res = await fetch("/api/photos/search-face", {
         method: "POST",
@@ -181,7 +187,7 @@ export default function FaceCameraSearch({
     } finally {
       onLoading?.(false);
     }
-  }, [eventId, onMatch, onLoading, t]);
+  }, [eventId, onMatch, onLoading, t, filterAge, filterGender]);
 
   // Limpeza: pára câmera + loop ao desmontar
   useEffect(() => {
