@@ -258,6 +258,16 @@ export async function POST(request: NextRequest) {
       console.error("Indexação facial falhou para", photo.id, err);
     }
 
+    // Cluster faces in event (group same person's variations)
+    try {
+      const { clusterFacesByEventId } = await import(
+        "@/lib/services/faceService"
+      );
+      await clusterFacesByEventId(eventId);
+    } catch (err) {
+      console.error("Agrupamento facial falhou para evento", eventId, err);
+    }
+
     // Audit log
     await prisma.auditLog.create({
       data: {

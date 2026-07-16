@@ -739,6 +739,105 @@ export async function compareTwoFaces(
 }
 
 /**
+ * Cluster faces by similarity (>85%) within event. Assigns cluster ID to each face.
+ * Union-find: O(N²) SearchFaces calls to find similar faces, then group.
+ * Used post-index to group same person's different angles into 1 cluster.
+ */
+export async function clusterFacesByEventId(eventId: string) {
+  if (!isUsingAWSRekognition()) {
+    console.log("[face] Clustering skipped (Rekognition off)");
+    return;
+  }
+
+  try {
+    // Fetch all face indices for event
+    const faceIndices = await prisma.faceIndex.findMany({
+      where: { photo: { eventId } },
+      select: { id: true, userId_photoId: true, faceVector: true },
+    });
+
+    if (faceIndices.length === 0) return;
+
+    const CLUSTER_THRESHOLD = 85;
+    const clusterMap = new Map<string, string>(); // faceId → clusterId
+    const clusters: Set<string>[] = [];
+
+    // For each face, SearchFaces to find similar ones
+    for (const face of faceIndices) {
+      if (clusterMap.has(face.id)) continue; // Already clustered
+
+      let awsFaceId: string | null = null;
+      try {
+        const parsed = JSON.parse(face.faceVector || "{}");
+        awsFaceId = parsed.awsFaceId || parsed.awsFaceIds?.[0];
+      } catch {
+        continue;
+      }
+
+      if (!awsFaceId) continue;
+
+      // SearchFaces with this face
+      const cmd = new SearchFacesCommand({
+        CollectionId: COLLECTION_ID,
+        FaceId: awsFaceId,
+        MaxFaces: 100,
+        FaceMatchThreshold: CLUSTER_THRESHOLD,
+      });
+
+      const resp = await rekognitionClient.send(cmd);
+      const matches = resp.FaceMatches || [];
+
+      // Find or create cluster
+      let cluster = clusters.find((c) => c.has(face.id));
+      if (!cluster) {
+        cluster = new Set([face.id]);
+        clusters.push(cluster);
+      }
+
+      // Add matches to same cluster
+      for (const match of matches) {
+        const matchId = match.Face?.FaceId;
+        if (matchId) {
+          // Find face by awsFaceId
+          const matchFace = faceIndices.find((f) => {
+            try {
+              const parsed = JSON.parse(f.faceVector || "{}");
+              return (
+                parsed.awsFaceId === matchId || parsed.awsFaceIds?.includes(matchId)
+              );
+            } catch {
+              return false;
+            }
+          });
+          if (matchFace && !clusterMap.has(matchFace.id)) {
+            cluster.add(matchFace.id);
+          }
+        }
+      }
+
+      // Mark all in cluster
+      for (const id of cluster) {
+        clusterMap.set(id, face.id); // Use first face ID as cluster ID
+      }
+    }
+
+    // Assign cluster IDs to DB
+    for (const [faceId, clusterId] of clusterMap) {
+      await prisma.faceIndex.update({
+        where: { id: faceId },
+        data: { faceClusterId: clusterId },
+      });
+    }
+
+    console.log(
+      `[face] Clustered ${faceIndices.length} faces into ${clusters.length} clusters`
+    );
+  } catch (error) {
+    console.error(`[face] Error clustering faces:`, error);
+  }
+}
+
+/**
  * Clustering: agrupa rostos semelhantes (AWS Rekognition)
  */
 export async function clusterSimilarFaces(eventId: string) {
