@@ -130,6 +130,8 @@ export async function POST(request: NextRequest) {
     const isPremium = formData.get("isPremium") === "true";
     // Descritor facial REAL (128-D) extraído no browser via face-api.js
     const faceDescriptorRaw = formData.get("faceDescriptor") as string | null;
+    // Bib number detectado via OCR (browser) ou editado manualmente
+    const detectedBibNumber = formData.get("detectedBibNumber") as string | null;
 
     if (!file || !eventId || !fileName) {
       return NextResponse.json(
@@ -211,6 +213,10 @@ export async function POST(request: NextRequest) {
         height: 2667,
         fileSize: s3Result.fileSize,
         mimeType: file.type || "image/jpeg",
+        // Store detected/edited bib number (will be used for auto-linking to BibNumber)
+        detectedBibNumbers: detectedBibNumber
+          ? JSON.stringify([{ number: detectedBibNumber, confidence: 1 }])
+          : null,
       },
       include: { photographer: true },
     });

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getFaceDescriptor } from "@/lib/faceApi";
+import { detectBibNumber } from "@/lib/utils/ocrService";
 
 interface PhotoUploadProps {
   eventId: string;
@@ -18,6 +19,9 @@ interface QueueItem {
   premium: boolean;
   status: FileStatus;
   errorMsg?: string;
+  detectedBibNumber?: string; // OCR-extracted bib number
+  bibConfidence?: number; // OCR confidence 0-1
+  ocrProcessing?: boolean; // OCR in progress
 }
 
 let _uid = 0;
@@ -58,8 +62,25 @@ export default function PhotoUpload({
       price: 0,
       premium: false,
       status: "pending",
+      ocrProcessing: true,
     }));
     setItems((prev) => [...prev, ...added]);
+
+    // Run OCR detection in background for each file
+    added.forEach((item) => {
+      detectBibNumber(item.file)
+        .then((result) => {
+          patch(item.uid, {
+            detectedBibNumber: result.number || undefined,
+            bibConfidence: result.confidence,
+            ocrProcessing: false,
+          });
+        })
+        .catch((err) => {
+          console.error("[ocr] error detecting bib:", err);
+          patch(item.uid, { ocrProcessing: false });
+        });
+    });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,6 +146,9 @@ export default function PhotoUpload({
         formData.append("isPremium", String(premium));
         if (faceDescriptor) {
           formData.append("faceDescriptor", JSON.stringify(faceDescriptor));
+        }
+        if (item.detectedBibNumber) {
+          formData.append("detectedBibNumber", item.detectedBibNumber);
         }
 
         const response = await fetch("/api/photos", {
@@ -305,7 +329,7 @@ export default function PhotoUpload({
 
               {/* Preço & Premium individuais (ocultos em modo massa) */}
               {!bulkMode && (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Preço (€)
@@ -341,6 +365,43 @@ export default function PhotoUpload({
                   </div>
                 </div>
               )}
+
+              {/* BibNumber OCR Detection */}
+              <div className="border-t border-gray-200 pt-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Nº de Dorsal
+                  </label>
+                  {item.ocrProcessing && (
+                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 rounded text-xs text-blue-700">
+                      <span className="inline-block animate-spin h-3 w-3 border-2 border-blue-300 border-t-blue-700 rounded-full"></span>
+                      OCR em progresso…
+                    </span>
+                  )}
+                  {item.detectedBibNumber && item.bibConfidence !== undefined && (
+                    <span
+                      className={`text-xs px-2 py-1 rounded ${
+                        item.bibConfidence > 0.7
+                          ? "bg-green-50 text-green-700"
+                          : "bg-yellow-50 text-yellow-700"
+                      }`}
+                    >
+                      Detectado: {(item.bibConfidence * 100).toFixed(0)}%
+                    </span>
+                  )}
+                </div>
+                <input
+                  type="text"
+                  value={item.detectedBibNumber || ""}
+                  onChange={(e) =>
+                    patch(item.uid, {
+                      detectedBibNumber: e.target.value || undefined,
+                    })
+                  }
+                  placeholder="Ex: 123 (OCR ou manual)"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
             </div>
           ))}
 
