@@ -16,16 +16,6 @@ const rekognitionClient = new RekognitionClient({
   },
 });
 
-// Startup diagnostic (logs once per process)
-if (typeof window === "undefined") {
-  const keyOk = !!(process.env.AWS_ACCESS_KEY_ID?.trim());
-  const secretOk = !!(process.env.AWS_SECRET_ACCESS_KEY?.trim());
-  const flag = process.env.AWS_REKOGNITION_ENABLED?.trim() ?? "(not set)";
-  console.log(
-    `[face] startup: hasAccessKey=${keyOk} hasSecret=${secretOk} AWS_REKOGNITION_ENABLED=${flag} isActive=${isUsingAWSRekognition()} threshold=${AWS_FACE_THRESHOLD}`
-  );
-}
-
 const COLLECTION_ID = process.env.AWS_REKOGNITION_COLLECTION_ID || "laphotus-faces-prod";
 
 // Threshold de match AWS (0-100). Default 70 = tolera ângulos/iluminação,
@@ -123,6 +113,16 @@ export function isUsingAWSRekognition(): boolean {
 /** Fallback ativo: usando pgvector em lugar de AWS. */
 export function isFallbackMode(): boolean {
   return !isUsingAWSRekognition();
+}
+
+// Startup diagnostic (logs once per process)
+if (typeof window === "undefined") {
+  const keyOk = !!(process.env.AWS_ACCESS_KEY_ID?.trim());
+  const secretOk = !!(process.env.AWS_SECRET_ACCESS_KEY?.trim());
+  const flag = process.env.AWS_REKOGNITION_ENABLED?.trim() ?? "(not set)";
+  console.log(
+    `[face] startup: hasAccessKey=${keyOk} hasSecret=${secretOk} AWS_REKOGNITION_ENABLED=${flag} isActive=${isUsingAWSRekognition()} threshold=${AWS_FACE_THRESHOLD}`
+  );
 }
 
 /**
