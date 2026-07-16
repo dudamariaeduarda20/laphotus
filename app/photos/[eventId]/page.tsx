@@ -89,7 +89,7 @@ export default function EventGalleryPage({
   };
 
   // Converte matches (shape leve do search-face) em objetos foto completos
-  // da galeria, preservando a ordem por similaridade.
+  // da galeria, preservando a ordem por similaridade. Calcula percentile ranking.
   const handleFaceMatch = (matches: any[]) => {
     setFaceMatches(matches);
     if (!event?.photos) {
@@ -98,9 +98,16 @@ export default function EventGalleryPage({
     }
     const byId = new Map(event.photos.map((p: any) => [p.id, p]));
     const ordered = matches
-      .map((m) => {
+      .map((m, idx) => {
         const photo = byId.get(m.photoId);
-        return photo ? { ...photo, matchPercent: m.matchPercent } : null;
+        const percentile = ((matches.length - idx) / matches.length) * 100;
+        return photo
+          ? {
+              ...photo,
+              matchPercent: m.matchPercent,
+              matchPercentile: Math.round(percentile),
+            }
+          : null;
       })
       .filter(Boolean);
     setFacePhotos(ordered);

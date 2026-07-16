@@ -7,6 +7,7 @@ import { useTranslation } from "@/lib/hooks/useTranslation";
 import { useState } from "react";
 import StarRating from "./StarRating";
 import FavoriteButton from "./FavoriteButton";
+import { getConfidenceColor } from "@/lib/utils/faceMatchUtils";
 
 interface PhotoCardProps {
   photo: {
@@ -18,6 +19,7 @@ interface PhotoCardProps {
     averageRating?: number;
     reviewCount?: number;
     matchPercent?: number;
+    matchPercentile?: number;
     photographer?: {
       id: string;
       userId: string;
@@ -88,10 +90,16 @@ export default function PhotoCard({ photo, eventId, event }: PhotoCardProps) {
             </div>
           )}
 
-          {/* Match score (busca facial) — canto inferior esquerdo, azul marca */}
+          {/* Match score (busca facial) — canto inferior esquerdo, cor por confiança */}
           {typeof photo.matchPercent === "number" && (
-            <div className="absolute bottom-2 left-2 bg-[#09419b] text-white px-2 py-1 rounded-full text-xs font-bold shadow">
-              {photo.matchPercent}% match
+            <div
+              className={`absolute bottom-2 left-2 px-2 py-1 rounded-full text-xs font-bold shadow ${
+                photo.matchPercentile
+                  ? getConfidenceColor(photo.matchPercentile)
+                  : "bg-[#09419b] text-white"
+              }`}
+            >
+              {photo.matchPercent}%{photo.matchPercentile ? ` (top ${100 - photo.matchPercentile}%)` : " match"}
             </div>
           )}
 
