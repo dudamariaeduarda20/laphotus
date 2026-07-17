@@ -91,21 +91,21 @@ export default function FilterBar({ events, photographers }: FilterBarProps) {
   };
 
   return (
-    <div className="mb-6 rounded-lg border border-slate-200 bg-white p-6">
+    <div className="mb-6 rounded-lg border border-[#eee] bg-white p-6">
       <div className="space-y-4">
         {/* Search */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-900">
+          <label className="mb-2 block text-sm font-medium text-[#333]">
             Buscar por Evento
           </label>
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+            <Search className="absolute left-3 top-3 h-5 w-5 text-[#999]" />
             <input
               type="text"
               placeholder="Digite o nome do evento..."
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white pl-10 pr-4 py-2 text-slate-900 placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#ddd] bg-white pl-10 pr-4 py-2 text-[#333] placeholder-[#999] focus:border-[#09419b] focus:outline-none"
             />
           </div>
         </div>
@@ -114,13 +114,13 @@ export default function FilterBar({ events, photographers }: FilterBarProps) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {/* Event Filter */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-900">
+            <label className="mb-2 block text-sm font-medium text-[#333]">
               Evento
             </label>
             <select
               value={eventFilter}
               onChange={(e) => handleEventChange(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#ddd] bg-white px-3 py-2 text-[#333] focus:border-[#09419b] focus:outline-none"
             >
               <option value="">Todos os eventos</option>
               {Array.from(events).sort().map((event) => (
@@ -133,13 +133,13 @@ export default function FilterBar({ events, photographers }: FilterBarProps) {
 
           {/* Photographer Filter */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-900">
+            <label className="mb-2 block text-sm font-medium text-[#333]">
               Fotógrafo
             </label>
             <select
               value={photographerFilter}
               onChange={(e) => handlePhotographerChange(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#ddd] bg-white px-3 py-2 text-[#333] focus:border-[#09419b] focus:outline-none"
             >
               <option value="">Todos os fotógrafos</option>
               {Array.from(photographers).sort().map((photographer) => (
@@ -152,27 +152,27 @@ export default function FilterBar({ events, photographers }: FilterBarProps) {
 
           {/* Date From */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-900">
+            <label className="mb-2 block text-sm font-medium text-[#333]">
               Data De
             </label>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => handleDateFromChange(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#ddd] bg-white px-3 py-2 text-[#333] focus:border-[#09419b] focus:outline-none"
             />
           </div>
 
           {/* Date To */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-900">
+            <label className="mb-2 block text-sm font-medium text-[#333]">
               Data Até
             </label>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => handleDateToChange(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#ddd] bg-white px-3 py-2 text-[#333] focus:border-[#09419b] focus:outline-none"
             />
           </div>
         </div>
@@ -182,7 +182,7 @@ export default function FilterBar({ events, photographers }: FilterBarProps) {
           <div className="flex justify-end">
             <button
               onClick={handleReset}
-              className="flex items-center gap-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
+              className="flex items-center gap-2 rounded-lg border-2 border-[#09419b] px-4 py-2 text-sm font-medium text-[#09419b] hover:bg-[#09419b]/5"
             >
               <X className="h-4 w-4" />
               Limpar Filtros

@@ -110,7 +110,7 @@ export default function DashboardClient({ orders }: DashboardClientProps) {
       <FilterBar events={uniqueEvents} photographers={uniquePhotographers} />
 
       {/* Results Count */}
-      <div className="mb-6 text-sm text-slate-600">
+      <div className="mb-6 text-sm text-[#666]">
         {filteredOrders.length > 0 ? (
           <>
             Mostrando <strong>{filteredOrders.length}</strong> de{" "}

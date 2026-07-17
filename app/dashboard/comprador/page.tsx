@@ -59,14 +59,14 @@ export default async function BuyerDashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f5f1e8] py-8 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900">
+          <h1 className="font-serif text-4xl font-bold text-[#09419b]">
             Bem-vindo, {user.name}!
           </h1>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-[#666]">
             Gerencie suas compras e downloads de fotos
           </p>
         </div>
@@ -77,34 +77,34 @@ export default async function BuyerDashboardPage() {
             label="Total de Compras"
             value={totalOrders}
             icon="🛍️"
-            color="bg-blue-50 border-blue-200"
+            color="bg-white border-[#09419b]/30"
           />
           <StatCard
             label="Total Gasto"
             value={`€${totalSpent.toFixed(2)}`}
             icon="💳"
-            color="bg-green-50 border-green-200"
+            color="bg-[#f0bf38]/10 border-[#f0bf38]/40"
           />
           <StatCard
             label="Fotos Compradas"
             value={totalPhotosPurchased}
             icon="📸"
-            color="bg-purple-50 border-purple-200"
+            color="bg-[#ff2f92]/10 border-[#ff2f92]/40"
           />
           <StatCard
             label="Fotos Baixadas"
             value={downloadsCount}
             icon="⬇️"
-            color="bg-orange-50 border-orange-200"
+            color="bg-[#09419b]/10 border-[#09419b]/40"
           />
         </div>
 
         {/* Purchase History */}
         <div>
-          <h2 className="mb-6 text-2xl font-bold text-slate-900">
+          <h2 className="mb-6 font-serif text-2xl font-bold text-[#09419b]">
             Histórico de Compras
           </h2>
-          <Suspense fallback={<div className="text-center py-8">Carregando...</div>}>
+          <Suspense fallback={<div className="text-center py-8 text-[#666]">Carregando...</div>}>
             <DashboardClient orders={orders} />
           </Suspense>
         </div>
